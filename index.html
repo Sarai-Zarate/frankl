@@ -296,7 +296,48 @@ function selP(el,v){document.querySelectorAll('.pc').forEach(function(c){c.class
 function togS(el,v){el.classList.toggle('selected');if(el.classList.contains('selected')){selSigs.push(v)}else{selSigs=selSigs.filter(function(s){return s!==v})}}
 function showNS(id){document.querySelectorAll('.ns').forEach(function(s){s.classList.remove('active')});document.getElementById(id).classList.add('active')}
 function goSig(){if(selPulse==='grounded'){bldRes();showNS('ns-result');return}showNS('ns-signals')}
-function goRes(){bldRes();showNS('ns-result')}
+function goRes(){bldRes();showNSfunction goRes(){
+  showNS('ns-result');
+  document.getElementById('n-tag').innerHTML='<div class="n-tag t-sct">Frankl is thinking...</div>';
+  document.getElementById('n-title').textContent='One moment...';
+  document.getElementById('n-body').textContent='';
+  document.getElementById('n-mech').textContent='';
+  document.getElementById('n-src').textContent='';
+  document.getElementById('n-truth').textContent='';
+  document.getElementById('n-ott').textContent='';
+  document.getElementById('n-otb').textContent='';
+  document.getElementById('n-ota').textContent='';
+
+  const evidence = Array.from(document.querySelectorAll('.ev-item'))
+    .map(el => el.textContent.replace('✓','').trim());
+
+  fetch('/api/name', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      state: selPulse,
+      signals: selSigs,
+      anchors: ['Influential','Significant','Wealthy'],
+      evidence: evidence,
+      signature: 'Starts with comparison online, moves to unworthiness, lands on abandonment story, numbs with wine and cleaning'
+    })
+  })
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById('n-tag').innerHTML='<div class="n-tag t-sct">Frankl</div>';
+    document.getElementById('n-title').textContent='';
+    document.getElementById('n-body').textContent=data.response;
+    document.getElementById('n-mech').textContent='';
+    document.getElementById('n-src').textContent='';
+    document.getElementById('n-truth').textContent='';
+    document.getElementById('n-ott').textContent='';
+    document.getElementById('n-otb').textContent='';
+    document.getElementById('n-ota').textContent='';
+  })
+  .catch(() => {
+    bldRes();
+  });
+}
 function bldRes(){
 var hC=selSigs.indexOf('comparison')>-1,hA=selSigs.indexOf('abandonment')>-1,hB=selSigs.indexOf('body')>-1,hCr=selSigs.indexOf('crying')>-1,hAv=selSigs.indexOf('avoidance')>-1;
 var tag,ti,bo,me,sr,tr,ot,ob,oa;
