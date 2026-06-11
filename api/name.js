@@ -15,16 +15,30 @@ The user has reported:
 
 Their identity anchors are: Influential, Significant, Wealthy
 
-Recent evidence from their life:
+Fresh evidence from their life today:
 ${(evidence||[]).map(e => '- ' + e).join('\n')}
 
 Their spiral signature: starts with comparison online, moves to unworthiness, lands on abandonment story, numbs with wine and cleaning.
 
-Write a response that names exactly what is happening, explains the mechanism without jargon, reflects one specific true thing from their evidence, and gives one action small enough to do in 30 seconds. Warm, direct, zero judgment. Prose only, no bullets, under 180 words. Never use the word journey.`;
+Respond in exactly this structure with these exact labels:
+
+WHAT IS HAPPENING:
+[One precise sentence naming the pattern. No jargon. Direct.]
+
+WHY THIS MAKES SENSE:
+[2-3 sentences explaining the neurological or psychological mechanism. Make it feel like relief, not diagnosis. End with a source: Porges, Sweller, Ryan & Deci, or similar.]
+
+WHAT IS ACTUALLY TRUE:
+[1-2 sentences reflecting something specific from their evidence list back to them. Ground it in a real thing they did or have. Make it feel like a mirror, not encouragement.]
+
+ONE THING RIGHT NOW:
+[One action. 30 seconds or less. Specific. Physical or behavioral. Start with an arrow: →]
+
+Rules: warm, direct, zero judgment, zero nagging. Never use the word journey. Never generic. Always specific to their actual evidence.`;
 
   const body = JSON.stringify({
     model: 'claude-sonnet-4-20250514',
-    max_tokens: 300,
+    max_tokens: 400,
     messages: [{ role: 'user', content: prompt }]
   });
 
@@ -59,8 +73,30 @@ Write a response that names exactly what is happening, explains the mechanism wi
       r.end();
     });
 
-    res.status(200).json({ response: text });
+    const sections = {
+      what: extract(text, 'WHAT IS HAPPENING:'),
+      why: extract(text, 'WHY THIS MAKES SENSE:'),
+      truth: extract(text, 'WHAT IS ACTUALLY TRUE:'),
+      action: extract(text, 'ONE THING RIGHT NOW:')
+    };
+
+    res.status(200).json(sections);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+}
+
+function extract(text, label) {
+  const labels = [
+    'WHAT IS HAPPENING:',
+    'WHY THIS MAKES SENSE:',
+    'WHAT IS ACTUALLY TRUE:',
+    'ONE THING RIGHT NOW:'
+  ];
+  const start = text.indexOf(label);
+  if (start === -1) return '';
+  const after = text.slice(start + label.length);
+  const nextLabel = labels.find(l => l !== label && after.indexOf(l) > -1);
+  const end = nextLabel ? after.indexOf(nextLabel) : after.length;
+  return after.slice(0, end).trim();
 }

@@ -322,17 +322,16 @@ function goRes(){
       signature: 'Starts with comparison online, moves to unworthiness, lands on abandonment story, numbs with wine and cleaning'
     })
   })
-  .then(r => r.json())
-  .then(data => {
+.then(data => {
     document.getElementById('n-tag').innerHTML='<div class="n-tag t-sct">Frankl</div>';
-    document.getElementById('n-title').textContent='';
-    document.getElementById('n-body').textContent=data.response;
-    document.getElementById('n-mech').textContent='';
+    document.getElementById('n-title').textContent=data.what||'';
+    document.getElementById('n-body').textContent='';
+    document.getElementById('n-mech').textContent=data.why||'';
     document.getElementById('n-src').textContent='';
-    document.getElementById('n-truth').textContent='';
-    document.getElementById('n-ott').textContent='';
+    document.getElementById('n-truth').textContent=data.truth||'';
+    document.getElementById('n-ott').textContent='One thing';
     document.getElementById('n-otb').textContent='';
-    document.getElementById('n-ota').textContent='';
+    document.getElementById('n-ota').textContent=data.action||'';
   })
   .catch(() => {
     bldRes();
