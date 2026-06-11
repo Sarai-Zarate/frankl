@@ -470,12 +470,25 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 }
 .ev-list{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
 .ev-item{
-  display:flex;align-items:flex-start;gap:10px;
-  background:var(--cream-d);border-radius:var(--rs);
-  padding:10px 14px;font-size:14px;color:var(--ink2);
-  line-height:1.5;font-weight:300;border:1px solid var(--border)
+  display:flex;align-items:center;gap:10px;
+  border-radius:8px;
+  padding:12px 16px;font-size:14px;
+  line-height:1.5;font-weight:400;
+  border:none;
 }
-.ev-chk{color:var(--forest);flex-shrink:0;margin-top:2px;font-weight:600}
+.ev-item[data-age="today"]{background:var(--ev-today);color:var(--ev-today-ink)}
+.ev-item[data-age="yesterday"]{background:var(--ev-yesterday);color:var(--ev-yesterday-ink)}
+.ev-item[data-age="this week"]{background:var(--ev-week);color:var(--ev-week-ink)}
+.ev-item[data-age="this month"]{background:var(--ev-month);color:var(--ev-month-ink)}
+.ev-chk{display:none}
+.ev-date{
+  margin-left:auto;
+  font-family:var(--fm);font-size:10px;font-weight:500;
+  letter-spacing:0.08em;
+  opacity:0.65;
+  white-space:nowrap;
+  flex-shrink:0
+}
 .add-row{display:flex;gap:8px;margin-bottom:2rem}
 .add-input{
   flex:1;font-size:14px;font-family:var(--fb);
@@ -809,12 +822,12 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 
     <span class="mirror-label">Today's evidence</span>
     <ul class="ev-list" id="ev-list">
-      <li class="ev-item"><span class="ev-chk">✓</span>Accepted into BTG — a vetted platform for expert consultants</li>
-      <li class="ev-item"><span class="ev-chk">✓</span>Completed MIT xPRO: Designing and Building AI Products and Services</li>
-      <li class="ev-item"><span class="ev-chk">✓</span>Recognized by Influential Women</li>
-      <li class="ev-item"><span class="ev-chk">✓</span>Exercised and made a 30g protein meal</li>
-      <li class="ev-item"><span class="ev-chk">✓</span>Built three working Franklyn prototypes from scratch</li>
-      <li class="ev-item"><span class="ev-chk">✓</span>Working on agent-to-agent AI strategy with fiancé at JPMorgan</li>
+      <li class="ev-item" data-age="today"><div class="ev-chk">✓</div><span>Accepted into BTG — a vetted platform for expert consultants</span><span class="ev-date">today</span></li>
+      <li class="ev-item" data-age="today"><div class="ev-chk">✓</div><span>Completed MIT xPRO: Designing and Building AI Products and Services</span><span class="ev-date">today</span></li>
+      <li class="ev-item" data-age="yesterday"><div class="ev-chk">✓</div><span>Recognized by Influential Women</span><span class="ev-date">yesterday</span></li>
+      <li class="ev-item" data-age="yesterday"><div class="ev-chk">✓</div><span>Exercised and made a 30g protein meal</span><span class="ev-date">yesterday</span></li>
+      <li class="ev-item" data-age="this week"><div class="ev-chk">✓</div><span>Built three working Franklyn prototypes from scratch</span><span class="ev-date">this week</span></li>
+      <li class="ev-item" data-age="this month"><div class="ev-chk">✓</div><span>Working on agent-to-agent AI strategy with fiancé at JPMorgan</span><span class="ev-date">this month</span></li>
     </ul>
     <div class="add-row">
       <input type="text" class="add-input" id="new-ev" placeholder="Add another truth from today…">
@@ -1113,13 +1126,50 @@ function resetN(){
 }
 
 // ── MEANING MIRROR ──────────────────────────────────────
+const monthColors = [
+  '#b03a20','#c47a5a','#c8920a','#7a9e7e',
+  '#2a5c3a','#1e5566','#2a4a7a','#3a3a7a',
+  '#6a3a7a','#c4848a','#4a2c1a','#2e2c2a'
+];
+
+function hexToRgb(hex){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return {r,g,b};
+}
+function blend(hex, amount){
+  const {r,g,b}=hexToRgb(hex);
+  const rr=Math.round(r+(245-r)*amount);
+  const gg=Math.round(g+(240-g)*amount);
+  const bb=Math.round(b+(228-b)*amount);
+  return `rgb(${rr},${gg},${bb})`;
+}
+function isDark(hex){
+  const {r,g,b}=hexToRgb(hex);
+  return (r*0.299+g*0.587+b*0.114)<140;
+}
+
+const currentMonth = new Date().getMonth();
+const base = monthColors[currentMonth];
+const d = document.documentElement;
+d.style.setProperty('--month-color', base);
+d.style.setProperty('--ev-today',     blend(base, 0.72));
+d.style.setProperty('--ev-yesterday', blend(base, 0.45));
+d.style.setProperty('--ev-week',      blend(base, 0.2));
+d.style.setProperty('--ev-month',     base);
+d.style.setProperty('--ev-today-ink',     '#1e3a42');
+d.style.setProperty('--ev-yesterday-ink', isDark(blend(base,0.45)) ? '#f5f0e4' : '#1a1814');
+d.style.setProperty('--ev-week-ink',      isDark(blend(base,0.2))  ? '#f5f0e4' : '#1a1814');
+d.style.setProperty('--ev-month-ink',     '#f5f0e4');
+
 function addEv(){
   var inp=document.getElementById('new-ev'), v=inp.value.trim();
   if(!v)return;
   var li=document.createElement('li');
   li.className='ev-item';
-  li.innerHTML='<span class="ev-chk">✓</span>'+v;
-  document.getElementById('ev-list').appendChild(li);
+  li.setAttribute('data-age','today');
+  li.innerHTML='<div class="ev-chk">✓</div><span>'+v+'</span><span class="ev-date">today</span>';
+  var list=document.getElementById('ev-list');
+  list.insertBefore(li, list.firstChild);
   inp.value='';
 }
 document.getElementById('new-ev').addEventListener('keydown',function(e){
