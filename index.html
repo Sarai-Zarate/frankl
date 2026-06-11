@@ -296,7 +296,7 @@ function selP(el,v){document.querySelectorAll('.pc').forEach(function(c){c.class
 function togS(el,v){el.classList.toggle('selected');if(el.classList.contains('selected')){selSigs.push(v)}else{selSigs=selSigs.filter(function(s){return s!==v})}}
 function showNS(id){document.querySelectorAll('.ns').forEach(function(s){s.classList.remove('active')});document.getElementById(id).classList.add('active')}
 function goSig(){if(selPulse==='grounded'){bldRes();showNS('ns-result');return}showNS('ns-signals')}
-function goRes(){bldRes();showNSfunction goRes(){
+function goRes(){
   showNS('ns-result');
   document.getElementById('n-tag').innerHTML='<div class="n-tag t-sct">Frankl is thinking...</div>';
   document.getElementById('n-title').textContent='One moment...';
