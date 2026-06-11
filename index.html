@@ -236,6 +236,12 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
   box-shadow:0 2px 8px rgba(0,0,0,0.18)
 }
 .tab-btn.active .tab-label{font-weight:600;color:var(--ink)}
+@keyframes tabPulse{
+  0%{box-shadow:0 0 0 0 rgba(74,44,26,0.35)}
+  70%{box-shadow:0 0 0 10px rgba(74,44,26,0)}
+  100%{box-shadow:0 0 0 0 rgba(74,44,26,0)}
+}
+.tab-btn.pulse{animation:tabPulse 0.6s ease-out}
 .tab-btn.active .tab-icon{opacity:1}
 .tab-btn.active:nth-child(1) .tab-icon{color:var(--amber)}
 .tab-btn.active:nth-child(2) .tab-icon{color:var(--rose)}
@@ -594,8 +600,8 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
   </div>
 
   <div class="hero-actions">
-    <a href="#tools" class="btn-primary">Start your morning anchor</a>
-    <a href="#tools" class="btn-ghost">I need help right now</a>
+  <button onclick="activateTab('morning')" class="btn-primary">Start your morning anchor</button>
+<button onclick="activateTab('naming')" class="btn-ghost">I need help right now</button>
   </div>
 </section>
 
@@ -646,7 +652,11 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 
   <!-- MORNING ANCHOR -->
   <div class="tab-panel active" id="tab-morning">
-    <div class="rsteps" id="rsteps">
+    <div class="anchor-heading">
+  <span class="sec-eyebrow">Morning Anchor</span>
+  <h3 style="font-family:var(--fd);font-size:clamp(20px,3vw,26px);font-weight:700;color:var(--ink);letter-spacing:-0.02em;margin-bottom:1.5rem">Five steps. Thirty seconds each. Before anything else.</h3>
+</div>
+<div class="rsteps" id="rsteps">
 
       <div class="rstep active" id="rs1">
         <div class="r-spine"><div class="r-node" id="rn1">○</div><div class="r-line"></div></div>
@@ -922,6 +932,17 @@ const heroObs = new IntersectionObserver((entries)=>{
 heroObs.observe(heroEl);
 
 // ── TABS ────────────────────────────────────────────────
+function activateTab(n){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active','pulse'));
+  document.getElementById('tab-'+n).classList.add('active');
+  var idx={morning:0,naming:1,mirror:2}[n];
+  var btn=document.querySelectorAll('.tab-btn')[idx];
+  btn.classList.add('active');
+  setTimeout(function(){btn.classList.add('pulse')},10);
+  btn.addEventListener('animationend',function(){btn.classList.remove('pulse')},{once:true});
+  document.getElementById('tools').scrollIntoView({behavior:'smooth'});
+}
 function switchTab(n, btn){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
