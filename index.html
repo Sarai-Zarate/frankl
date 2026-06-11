@@ -322,7 +322,8 @@ function goRes(){
       signature: 'Starts with comparison online, moves to unworthiness, lands on abandonment story, numbs with wine and cleaning'
     })
   })
-.then(data => {
+  .then(r => r.json())
+  .then(data => {
     document.getElementById('n-tag').innerHTML='<div class="n-tag t-sct">Frankl</div>';
     document.getElementById('n-title').textContent=data.what||'';
     document.getElementById('n-body').textContent='';
