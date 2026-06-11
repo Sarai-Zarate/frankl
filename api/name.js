@@ -5,36 +5,31 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { state, signals, anchors, evidence } = req.body;
+  const { state, signals, evidence } = req.body;
 
-  const prompt = `You are Frankl, a warm psychologically grounded AI informed by polyvagal theory, self-determination theory, and cognitive load theory. You are not a therapist but you understand the nervous system deeply.
-
-The user has reported:
-- Current state: ${state}
-- Signals present: ${(signals||[]).join(', ')}
-
-Their identity anchors are: Influential, Significant, Wealthy
-
-Fresh evidence from their life today:
-${(evidence||[]).map(e => '- ' + e).join('\n')}
-
-Their spiral signature: starts with comparison online, moves to unworthiness, lands on abandonment story, numbs with wine and cleaning.
-
-Respond in exactly this structure with these exact labels:
-
-WHAT IS HAPPENING:
-[One precise sentence naming the pattern. No jargon. Direct.]
-
-WHY THIS MAKES SENSE:
-[2-3 sentences explaining the neurological or psychological mechanism. Make it feel like relief, not diagnosis. End with a source: Porges, Sweller, Ryan & Deci, or similar.]
-
-WHAT IS ACTUALLY TRUE:
-[1-2 sentences reflecting something specific from their evidence list back to them. Ground it in a real thing they did or have. Make it feel like a mirror, not encouragement.]
-
-ONE THING RIGHT NOW:
-[One action. 30 seconds or less. Specific. Physical or behavioral. Start with an arrow: →]
-
-Rules: warm, direct, zero judgment, zero nagging. Never use the word journey. Never generic. Always specific to their actual evidence.`;
+  const prompt = [
+    'You are Frankl, a warm psychologically grounded AI.',
+    'Current state: ' + state,
+    'Signals: ' + (signals||[]).join(', '),
+    'Anchors: Influential, Significant, Wealthy',
+    'Evidence: ' + (evidence||[]).join(' | '),
+    'Spiral: comparison -> unworthiness -> abandonment -> numbing.',
+    '',
+    'Reply with exactly these four labeled sections:',
+    'WHAT IS HAPPENING:',
+    '(one sentence naming the pattern)',
+    '',
+    'WHY THIS MAKES SENSE:',
+    '(2-3 sentences on the mechanism, cite Porges or Sweller)',
+    '',
+    'WHAT IS ACTUALLY TRUE:',
+    '(1-2 sentences from their real evidence)',
+    '',
+    'ONE THING RIGHT NOW:',
+    '(one action starting with arrow, 30 seconds max)',
+    '',
+    'Warm, direct, specific, no bullets in answers, never use journey.'
+  ].join('\n');
 
   const body = JSON.stringify({
     model: 'claude-sonnet-4-20250514',
@@ -60,12 +55,8 @@ Rules: warm, direct, zero judgment, zero nagging. Never use the word journey. Ne
         let data = '';
         resp.on('data', chunk => data += chunk);
         resp.on('end', () => {
-          try {
-            const parsed = JSON.parse(data);
-            resolve(parsed.content[0].text);
-          } catch(e) {
-            reject(e);
-          }
+          try { resolve(JSON.parse(data).content[0].text); }
+          catch(e) { reject(new Error(data)); }
         });
       });
       r.on('error', reject);
@@ -73,30 +64,28 @@ Rules: warm, direct, zero judgment, zero nagging. Never use the word journey. Ne
       r.end();
     });
 
-    const sections = {
-      what: extract(text, 'WHAT IS HAPPENING:'),
-      why: extract(text, 'WHY THIS MAKES SENSE:'),
-      truth: extract(text, 'WHAT IS ACTUALLY TRUE:'),
-      action: extract(text, 'ONE THING RIGHT NOW:')
-    };
+    console.log('RAW:', text);
 
-    res.status(200).json(sections);
-  } catch (error) {
+    function extract(t, label, nexts) {
+      const i = t.indexOf(label);
+      if (i === -1) return '';
+      let s = t.slice(i + label.length);
+      for (const n of nexts) {
+        const j = s.indexOf(n);
+        if (j !== -1) s = s.slice(0, j);
+      }
+      return s.trim();
+    }
+
+    const all = ['WHAT IS HAPPENING:', 'WHY THIS MAKES SENSE:', 'WHAT IS ACTUALLY TRUE:', 'ONE THING RIGHT NOW:'];
+    res.status(200).json({
+      what:   extract(text, all[0], all.slice(1)),
+      why:    extract(text, all[1], all.slice(2)),
+      truth:  extract(text, all[2], all.slice(3)),
+      action: extract(text, all[3], [])
+    });
+
+  } catch(error) {
     res.status(500).json({ error: error.message });
   }
-}
-
-function extract(text, label) {
-  const labels = [
-    'WHAT IS HAPPENING:',
-    'WHY THIS MAKES SENSE:',
-    'WHAT IS ACTUALLY TRUE:',
-    'ONE THING RIGHT NOW:'
-  ];
-  const start = text.indexOf(label);
-  if (start === -1) return '';
-  const after = text.slice(start + label.length);
-  const nextLabel = labels.find(l => l !== label && after.indexOf(l) > -1);
-  const end = nextLabel ? after.indexOf(nextLabel) : after.length;
-  return after.slice(0, end).trim();
-}
+};
