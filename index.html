@@ -17,8 +17,8 @@
   --cream-d:  #ede6d4;   /* warm cream darker */
   --gold:     #c8920a;   /* goldenrod */
   --amber:    #b07030;   /* amber/copper */
-  --burgundy: #6e1f4e;   /* burgundy/plum — primary accent */
-  --burg-l:   #f5eaf1;   /* burgundy light tint */
+  --burgundy: #4a2c1a;   /* dark walnut — primary accent */
+  --burg-l:   #ede5df;   /* walnut light tint */
   --terracot: #b03a20;   /* terracotta red */
   --terr-l:   #faeee9;   /* terracotta light tint */
   --forest:   #2a5c3a;   /* forest green */
@@ -32,7 +32,7 @@
   --state-grounded:  #7a9e7e;   /* dusty sage */
   --state-scattered: #c4a052;   /* muted ochre */
   --state-anxious:   #c47a5a;   /* dusty terracotta */
-  --state-spiral:    #8a4060;   /* muted burgundy */
+  --state-spiral:    #3a1e0e;   /* deep walnut */
 
   --ink:  #1a1814;
   --ink2: #3a3632;
@@ -71,7 +71,7 @@ nav{
   cursor:pointer;text-decoration:none;display:inline-block;
   transition:background var(--tr)
 }
-.nav-cta:hover{background:#5a1840}
+.nav-cta:hover{background:#321a0a}
 
 /* HERO */
 .hero{
@@ -144,7 +144,7 @@ nav{
   cursor:pointer;text-decoration:none;display:inline-block;
   transition:background var(--tr),transform var(--tr)
 }
-.btn-primary:hover{background:#5a1840;transform:translateY(-1px)}
+.btn-primary:hover{background:#321a0a;transform:translateY(-1px)}
 .btn-ghost{
   font-family:var(--fb);font-size:14px;font-weight:500;
   background:transparent;color:var(--ink2);
@@ -527,6 +527,17 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 }
 .is-action{font-size:13px;color:rgba(245,240,228,0.6);font-weight:300}
 
+.disclaimer{
+  margin-top:2.5rem;
+  font-size:12px;
+  color:var(--ink4);
+  line-height:1.7;
+  font-style:italic;
+  max-width:600px;
+  border-top:1px solid var(--border);
+  padding-top:1.5rem
+}
+
 /* DONE STATES */
 #r-done{display:none;text-align:center;padding:2rem 1rem}
 #r-done .done-word{
@@ -823,6 +834,8 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       <div class="is-txt">"You're looking at the wrong data. You got into BTG today. You completed MIT xPRO. You built something real. Influential, significant, wealthy — those are still yours. Close the tab."</div>
       <div class="is-action">→ One action: close the comparison tab. Then come back here.</div>
     </div>
+
+    <p class="disclaimer">Franklyn is not a substitute for therapy or professional mental health support. It is a personal operating system grounded in published psychological research by Stephen Porges, Viktor Frankl, Richard Ryan, Edward Deci, and John Sweller.</p>
   </div>
 
 </section>
