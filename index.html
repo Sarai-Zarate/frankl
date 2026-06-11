@@ -3,143 +3,533 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Frankl</title>
+<title>Franklyn</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
---ink:#1a1814;--ink2:#3d3a35;--ink3:#6b6760;--ink4:#9e9b96;
---surface:#f7f5f1;--surface2:#eeecea;--warm:#fdfcfa;
---a1:#2d1f5e;--a1l:#ede9f9;--a2:#0d4a35;--a2l:#e0f2ea;--a3:#5c2d00;--a3l:#fdf0e0;
---accent:#c4502a;--border:rgba(26,24,20,0.10);--borderS:rgba(26,24,20,0.18);
---fd:'DM Serif Display',Georgia,serif;--fb:'Inter',system-ui,sans-serif;--fm:'JetBrains Mono',monospace;
---r:12px;--rs:6px;--tr:0.2s ease}
+  /* Warm Earth Retreat palette */
+  --slate:    #4a6670;   /* background slate teal */
+  --slate-d:  #3a525b;   /* darker slate */
+  --cream:    #f5f0e4;   /* cream white */
+  --cream-d:  #ede6d4;   /* warm cream darker */
+  --gold:     #c8920a;   /* goldenrod */
+  --amber:    #b07030;   /* amber/copper */
+  --burgundy: #6e1f4e;   /* burgundy/plum — primary accent */
+  --burg-l:   #f5eaf1;   /* burgundy light tint */
+  --terracot: #b03a20;   /* terracotta red */
+  --terr-l:   #faeee9;   /* terracotta light tint */
+  --forest:   #2a5c3a;   /* forest green */
+  --forest-l: #e5f2ea;   /* forest light tint */
+  --teal-d:   #1e5566;   /* dark teal */
+  --teal-l:   #e3eff2;   /* teal light tint */
+  --nearblk:  #1a1814;   /* near black */
+  --rose:     #c4848a;   /* dusty rose */
+
+  --ink:  #1a1814;
+  --ink2: #3a3632;
+  --ink3: #6a6560;
+  --ink4: #9e9990;
+
+  --border:  rgba(26,24,20,0.10);
+  --borderS: rgba(26,24,20,0.18);
+
+  --fd:'DM Serif Display',Georgia,serif;
+  --fb:'Inter',system-ui,sans-serif;
+  --fm:'JetBrains Mono',monospace;
+  --r:10px;--rs:6px;--tr:0.2s ease
+}
+
 html{font-size:16px;scroll-behavior:smooth}
-body{font-family:var(--fb);background:var(--warm);color:var(--ink);line-height:1.6;min-height:100vh}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(253,252,250,0.92);backdrop-filter:blur(12px);border-bottom:0.5px solid var(--border);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between}
-.nav-logo{font-family:var(--fd);font-size:20px;color:var(--ink);letter-spacing:-0.02em}
-.nav-logo span{color:var(--accent);font-style:italic}
+body{font-family:var(--fb);background:var(--cream);color:var(--ink);line-height:1.6;min-height:100vh}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:var(--slate-d);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  padding:0 2rem;height:56px;
+  display:flex;align-items:center;justify-content:space-between
+}
+.nav-logo{font-family:var(--fd);font-size:22px;color:var(--cream);letter-spacing:-0.01em}
+.nav-logo span{color:var(--gold);font-style:italic}
 .nav-links{display:flex;gap:2rem;align-items:center}
-.nav-links a{font-size:13px;color:var(--ink3);text-decoration:none;transition:color var(--tr)}
-.nav-links a:hover{color:var(--ink)}
-.nav-cta{font-size:13px;font-weight:500;background:var(--ink);color:var(--warm);border:none;border-radius:20px;padding:7px 18px;cursor:pointer;text-decoration:none;display:inline-block}
-.hero{padding:140px 2rem 80px;max-width:720px;margin:0 auto;text-align:center}
-.eyebrow{display:inline-block;font-family:var(--fm);font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:1.5rem}
-.eyebrow::before,.eyebrow::after{content:'—';margin:0 8px;color:var(--accent);opacity:0.6}
-.hero-title{font-family:var(--fd);font-size:clamp(42px,7vw,68px);line-height:1.08;letter-spacing:-0.03em;color:var(--ink);margin-bottom:1.5rem}
-.hero-title em{font-style:italic;color:var(--accent)}
-.hero-sub{font-size:17px;color:var(--ink2);line-height:1.7;max-width:540px;margin:0 auto 2.5rem;font-weight:300}
+.nav-links a{font-size:13px;color:rgba(245,240,228,0.65);text-decoration:none;transition:color var(--tr);letter-spacing:0.02em}
+.nav-links a:hover{color:var(--cream)}
+.nav-cta{
+  font-size:13px;font-weight:600;
+  background:var(--burgundy);color:var(--cream);
+  border:none;border-radius:20px;padding:7px 18px;
+  cursor:pointer;text-decoration:none;display:inline-block;
+  transition:background var(--tr)
+}
+.nav-cta:hover{background:#5a1840}
+
+/* HERO */
+.hero{
+  background:var(--slate);
+  padding:130px 2rem 90px;
+  text-align:center;
+  position:relative;
+  overflow:hidden
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%, rgba(200,146,10,0.12) 0%, transparent 60%);
+  pointer-events:none
+}
+
+.hero-wordmark{
+  font-family:var(--fd);
+  font-size:clamp(52px,9vw,88px);
+  line-height:1;
+  color:var(--cream);
+  letter-spacing:-0.03em;
+  margin-bottom:2rem
+}
+.hero-wordmark span{color:var(--gold);font-style:italic}
+
+.hero-desc{
+  font-size:clamp(14px,1.8vw,17px);
+  color:rgba(245,240,228,0.55);
+  font-weight:300;
+  line-height:1.7;
+  max-width:520px;
+  margin:0 auto 2.5rem;
+  font-style:italic
+}
+
+/* QUOTE */
+.quote-wrap{
+  min-height:90px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  max-width:640px;margin:0 auto 2.5rem
+}
+.quote-text{
+  font-family:var(--fd);
+  font-size:clamp(16px,2.4vw,22px);
+  font-style:italic;
+  color:rgba(245,240,228,0.92);
+  line-height:1.65;
+  opacity:0;
+  transition:opacity 0.7s ease;
+  text-align:center
+}
+.quote-text.show{opacity:1}
+.quote-attr{
+  margin-top:10px;
+  font-family:var(--fm);
+  font-size:10px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  opacity:0;
+  transition:opacity 0.7s ease 0.15s
+}
+.quote-attr.show{opacity:1}
+
 .hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.btn-primary{font-family:var(--fb);font-size:14px;font-weight:500;background:var(--ink);color:var(--warm);border:none;border-radius:24px;padding:12px 28px;cursor:pointer;text-decoration:none;display:inline-block}
-.btn-ghost{font-family:var(--fb);font-size:14px;background:transparent;color:var(--ink2);border:0.5px solid var(--borderS);border-radius:24px;padding:12px 28px;cursor:pointer;text-decoration:none;display:inline-block}
-.anc-sec{padding:0 2rem 80px;max-width:860px;margin:0 auto}
-.sec-label{font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px;display:block}
-.anc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.anc-card{border-radius:var(--r);padding:1.25rem 1.5rem;border:0.5px solid var(--border)}
-.anc-card.a1{background:var(--a1l);border-color:rgba(45,31,94,0.12)}
-.anc-card.a2{background:var(--a2l);border-color:rgba(13,74,53,0.12)}
-.anc-card.a3{background:var(--a3l);border-color:rgba(92,45,0,0.12)}
-.anc-word{font-family:var(--fd);font-size:22px;letter-spacing:-0.02em;margin-bottom:6px}
-.a1 .anc-word{color:var(--a1)}.a2 .anc-word{color:var(--a2)}.a3 .anc-word{color:var(--a3)}
-.anc-proof{font-size:13px;line-height:1.55;color:var(--ink2)}
-hr.div{max-width:860px;margin:0 auto 64px;border:none;border-top:0.5px solid var(--border)}
-.tabs-sec{padding:0 2rem 80px;max-width:860px;margin:0 auto}
-.tabs-title{font-family:var(--fd);font-size:32px;letter-spacing:-0.02em;color:var(--ink);margin-bottom:8px}
-.tabs-sub{font-size:15px;color:var(--ink3);font-weight:300;margin-bottom:1.5rem}
-.tab-nav{display:flex;gap:4px;background:var(--surface);border-radius:10px;padding:4px;margin-bottom:1.5rem;border:0.5px solid var(--border)}
-.tab-btn{flex:1;padding:8px 12px;font-size:13px;color:var(--ink3);background:transparent;border:none;border-radius:7px;cursor:pointer;transition:all var(--tr);font-family:var(--fb);white-space:nowrap}
-.tab-btn.active{background:var(--warm);color:var(--ink);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
-.tab-panel{display:none}.tab-panel.active{display:block}
+.btn-primary{
+  font-family:var(--fb);font-size:14px;font-weight:600;
+  background:var(--burgundy);color:var(--cream);
+  border:none;border-radius:24px;padding:13px 30px;
+  cursor:pointer;text-decoration:none;display:inline-block;
+  transition:background var(--tr),transform var(--tr)
+}
+.btn-primary:hover{background:#5a1840;transform:translateY(-1px)}
+.btn-ghost{
+  font-family:var(--fb);font-size:14px;font-weight:500;
+  background:transparent;color:var(--cream);
+  border:1px solid rgba(245,240,228,0.35);border-radius:24px;padding:13px 30px;
+  cursor:pointer;text-decoration:none;display:inline-block;
+  transition:border-color var(--tr),transform var(--tr)
+}
+.btn-ghost:hover{border-color:rgba(245,240,228,0.7);transform:translateY(-1px)}
+
+/* ANCHORS SECTION */
+.anc-sec{padding:64px 2rem;max-width:900px;margin:0 auto}
+
+.sec-eyebrow{
+  font-family:var(--fm);font-size:10px;font-weight:500;
+  letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--ink4);margin-bottom:8px;display:block
+}
+.sec-title{
+  font-family:var(--fd);font-size:clamp(28px,4vw,38px);
+  font-weight:700;color:var(--ink);
+  letter-spacing:-0.02em;margin-bottom:10px;line-height:1.2
+}
+.sec-desc{
+  font-size:15px;color:var(--ink3);font-weight:300;
+  line-height:1.7;max-width:560px;margin-bottom:2rem
+}
+
+.anc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.anc-card{
+  border-radius:var(--r);padding:1.5rem;
+  border:1px solid transparent;
+  position:relative;overflow:hidden
+}
+.anc-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px
+}
+.anc-card.a1{background:var(--burgundy);border-color:var(--burgundy)}
+.anc-card.a1::before{background:rgba(255,255,255,0.15)}
+.anc-card.a2{background:var(--gold);border-color:var(--gold)}
+.anc-card.a2::before{background:rgba(255,255,255,0.15)}
+.anc-card.a3{background:var(--teal-d);border-color:var(--teal-d)}
+.anc-card.a3::before{background:rgba(255,255,255,0.15)}
+.anc-card .anc-word{color:var(--cream)}
+.anc-card .anc-proof{color:rgba(245,240,228,0.78)}
+
+.anc-word{
+  font-family:var(--fd);font-size:26px;font-weight:700;
+  letter-spacing:-0.02em;margin-bottom:8px;
+  color:var(--cream)
+}
+.anc-proof{font-size:13px;line-height:1.6;color:rgba(245,240,228,0.78);font-weight:300}
+
+/* DIVIDER */
+hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(--border)}
+
+/* TOOLS SECTION */
+.tools-sec{padding:0 2rem 80px;max-width:900px;margin:0 auto}
+
+.tab-nav{
+  display:flex;gap:6px;
+  background:var(--slate);
+  border-radius:12px;padding:6px;
+  margin-bottom:2rem
+}
+.tab-btn{
+  flex:1;padding:12px 10px;
+  font-size:13px;font-weight:500;
+  color:rgba(245,240,228,0.6);
+  background:transparent;border:none;
+  border-radius:8px;cursor:pointer;
+  transition:all 0.25s ease;
+  font-family:var(--fb);
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  position:relative
+}
+.tab-btn .tab-icon{font-size:20px;display:block}
+.tab-btn .tab-label{font-size:12px;letter-spacing:0.03em;white-space:nowrap}
+.tab-btn:hover{
+  background:rgba(245,240,228,0.10);
+  color:var(--cream);
+  transform:translateY(-1px)
+}
+.tab-btn.active{
+  background:var(--cream);
+  color:var(--ink);
+  box-shadow:0 2px 8px rgba(0,0,0,0.18)
+}
+.tab-btn.active .tab-label{font-weight:600}
+
+/* pulse ring on inactive tabs */
+.tab-btn:not(.active)::after{
+  content:'';
+  position:absolute;
+  inset:-2px;border-radius:10px;
+  border:1.5px solid rgba(245,240,228,0.15);
+  pointer-events:none
+}
+.tab-btn:not(.active):hover::after{
+  border-color:rgba(245,240,228,0.35)
+}
+
+.tab-panel{display:none}
+.tab-panel.active{display:block;animation:fadeUp 0.3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* RITUAL STEPS */
 .rsteps{display:flex;flex-direction:column;gap:0}
-.rstep{display:flex;gap:0;opacity:0.4;transition:opacity var(--tr)}
+.rstep{display:flex;gap:0;opacity:0.35;transition:opacity var(--tr)}
 .rstep.active,.rstep.done{opacity:1}
 .r-spine{display:flex;flex-direction:column;align-items:center;width:44px;flex-shrink:0}
-.r-node{width:30px;height:30px;border-radius:50%;border:0.5px solid var(--borderS);background:var(--warm);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--ink3);flex-shrink:0;transition:all var(--tr)}
-.rstep.active .r-node{background:var(--ink);color:var(--warm);border-color:var(--ink)}
-.rstep.done .r-node{background:var(--a2);color:var(--warm);border-color:var(--a2)}
-.r-line{width:0.5px;flex:1;min-height:20px;background:var(--border)}
+.r-node{
+  width:32px;height:32px;border-radius:50%;
+  border:1px solid var(--borderS);
+  background:var(--cream);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:500;color:var(--ink3);
+  flex-shrink:0;transition:all var(--tr)
+}
+.rstep.active .r-node{background:var(--slate);color:var(--cream);border-color:var(--slate)}
+.rstep.done .r-node{background:var(--forest);color:var(--cream);border-color:var(--forest)}
+.r-line{width:1px;flex:1;min-height:20px;background:var(--border)}
 .r-body{flex:1;padding:0 0 2rem 16px}
-.r-timing{font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink4);margin-bottom:4px}
-.r-name{font-size:15px;font-weight:500;color:var(--ink);margin-bottom:6px}
-.r-desc{font-size:14px;color:var(--ink3);line-height:1.6;margin-bottom:12px;font-weight:300}
-.r-quote{border-left:2px solid var(--accent);padding:8px 14px;font-size:14px;color:var(--ink2);font-style:italic;line-height:1.6;margin-bottom:12px;background:var(--surface);border-radius:0 var(--rs) var(--rs) 0}
-.r-input{width:100%;font-size:14px;font-family:var(--fb);padding:10px 14px;border-radius:var(--rs);border:0.5px solid var(--borderS);background:var(--warm);color:var(--ink);resize:none;margin-bottom:10px;line-height:1.5}
-.r-input:focus{outline:none;border-color:var(--ink)}
-.r-btn{font-size:13px;font-weight:500;background:var(--ink);color:var(--warm);border:none;border-radius:20px;padding:8px 18px;cursor:pointer}
+.r-timing{
+  font-family:var(--fm);font-size:10px;font-weight:500;
+  letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--ink4);margin-bottom:4px
+}
+.r-name{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.r-desc{font-size:14px;color:var(--ink3);line-height:1.65;margin-bottom:12px;font-weight:300}
+.r-quote{
+  border-left:3px solid var(--amber);padding:8px 14px;
+  font-size:14px;color:var(--ink2);font-style:italic;
+  line-height:1.6;margin-bottom:12px;
+  background:var(--cream-d);border-radius:0 var(--rs) var(--rs) 0
+}
+.r-input{
+  width:100%;font-size:14px;font-family:var(--fb);
+  padding:10px 14px;border-radius:var(--rs);
+  border:1px solid var(--borderS);
+  background:var(--cream);color:var(--ink);
+  resize:none;margin-bottom:10px;line-height:1.5
+}
+.r-input:focus{outline:none;border-color:var(--slate)}
+.r-btn{
+  font-size:13px;font-weight:600;
+  background:var(--slate);color:var(--cream);
+  border:none;border-radius:20px;padding:9px 20px;
+  cursor:pointer;transition:background var(--tr)
+}
+.r-btn:hover{background:var(--slate-d)}
 .r-btn:disabled{opacity:0.3;cursor:default}
-.pills-row{display:flex;gap:8px;margin-bottom:12px}
-.pill{padding:6px 14px;border-radius:20px;font-size:13px;font-weight:500;border:0.5px solid var(--border)}
-.p-i{background:var(--a1l);color:var(--a1)}.p-s{background:var(--a2l);color:var(--a2)}.p-w{background:var(--a3l);color:var(--a3)}
+
+.pills-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.pill{
+  padding:5px 14px;border-radius:20px;
+  font-size:12px;font-weight:600;border:1px solid transparent
+}
+.p-i{background:var(--burgundy);color:var(--cream);border-color:var(--burgundy)}
+.p-s{background:var(--gold);color:var(--cream);border-color:var(--gold)}
+.p-w{background:var(--teal-d);color:var(--cream);border-color:var(--teal-d)}
+
 .timer-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-.timer-num{font-family:var(--fd);font-size:32px;color:var(--ink);min-width:64px}
-.timer-btn{font-size:13px;font-weight:500;background:transparent;color:var(--ink);border:0.5px solid var(--borderS);border-radius:20px;padding:7px 16px;cursor:pointer}
-.frankl-rule{background:var(--surface);border-radius:var(--r);border:0.5px solid var(--border);padding:1.25rem 1.5rem;margin-bottom:12px}
-.rule-text{font-size:14px;color:var(--ink2);line-height:1.7;font-weight:300}
-.ns{display:none}.ns.active{display:block}
+.timer-num{font-family:var(--fd);font-size:34px;color:var(--ink);min-width:64px}
+.timer-btn{
+  font-size:13px;font-weight:500;
+  background:transparent;color:var(--ink);
+  border:1px solid var(--borderS);border-radius:20px;
+  padding:7px 16px;cursor:pointer;transition:all var(--tr)
+}
+.timer-btn:hover{background:var(--cream-d)}
+
+.frankl-rule{
+  background:var(--cream-d);border-radius:var(--r);
+  border:1px solid var(--border);padding:1.25rem 1.5rem;margin-bottom:12px
+}
+.rule-text{font-size:14px;color:var(--ink2);line-height:1.75;font-weight:300}
+
+/* NAMING ENGINE */
+.ns{display:none}
+.ns.active{display:block}
+
 .pulse-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:1.5rem}
-.pc{background:var(--warm);border:0.5px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;cursor:pointer;transition:all var(--tr)}
-.pc:hover{background:var(--surface);border-color:var(--borderS)}
-.pc.selected{border:1.5px solid var(--ink);background:var(--surface)}
-.pc-icon{font-size:18px;color:var(--ink3);margin-bottom:8px}
-.pc-name{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:3px}
+.pc{
+  background:var(--cream);border:1.5px solid var(--border);
+  border-radius:var(--r);padding:1rem 1.25rem;
+  cursor:pointer;transition:all 0.2s ease;
+  position:relative
+}
+.pc::after{
+  content:'tap to select';
+  position:absolute;bottom:8px;right:10px;
+  font-size:10px;font-family:var(--fm);
+  letter-spacing:0.06em;color:var(--ink4);
+  opacity:0;transition:opacity 0.2s ease
+}
+.pc:hover::after{opacity:1}
+.pc:hover{background:var(--cream-d);border-color:var(--borderS);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.pc.selected{border-color:var(--slate);background:var(--teal-l)}
+.pc-icon{font-size:20px;margin-bottom:8px}
+.pc-name{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px}
 .pc-desc{font-size:12px;color:var(--ink4);line-height:1.5}
+
 .sig-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem}
-.si{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:var(--rs);background:var(--surface);border:0.5px solid transparent;cursor:pointer;transition:all var(--tr)}
-.si:hover{border-color:var(--borderS)}
-.si.selected{border-color:var(--ink);background:var(--surface2)}
-.si-chk{width:18px;height:18px;border-radius:50%;border:0.5px solid var(--borderS);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;margin-top:1px;transition:all var(--tr)}
-.si.selected .si-chk{background:var(--ink);border-color:var(--ink);color:var(--warm)}
+.si{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:11px 14px;border-radius:var(--rs);
+  background:var(--cream);border:1.5px solid var(--border);
+  cursor:pointer;transition:all 0.2s ease
+}
+.si:hover{border-color:var(--borderS);background:var(--cream-d);transform:translateX(3px)}
+.si.selected{border-color:var(--slate);background:var(--teal-l)}
+.si-chk{
+  width:20px;height:20px;border-radius:50%;
+  border:1.5px solid var(--borderS);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;font-size:10px;margin-top:1px;
+  transition:all var(--tr);color:transparent
+}
+.si.selected .si-chk{background:var(--slate);border-color:var(--slate);color:var(--cream)}
 .si-txt{font-size:14px;color:var(--ink2);line-height:1.5;font-weight:300}
-.n-tag{display:inline-block;font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:4px 10px;border-radius:20px;margin-bottom:12px}
-.t-cmp{background:#fdf0f0;color:#7a2020}.t-abd{background:#fdf0f8;color:#5c1a3a}.t-sct{background:var(--a3l);color:var(--a3)}.t-dep{background:var(--a2l);color:var(--a2)}.t-grd{background:var(--a2l);color:var(--a2)}
-.n-title{font-family:var(--fd);font-size:26px;letter-spacing:-0.02em;color:var(--ink);margin-bottom:10px;line-height:1.2}
-.n-body{font-size:14px;color:var(--ink2);line-height:1.7;font-weight:300;margin-bottom:1.25rem}
-.mech-box{background:var(--surface);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:1.25rem;border:0.5px solid var(--border)}
-.mech-label{font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink4);margin-bottom:8px}
+
+/* RESULT CARDS */
+.n-tag{
+  display:inline-block;font-family:var(--fm);
+  font-size:10px;font-weight:500;letter-spacing:0.12em;
+  text-transform:uppercase;padding:4px 12px;
+  border-radius:20px;margin-bottom:14px
+}
+.t-cmp{background:#fdf0f0;color:#7a2020}
+.t-abd{background:var(--burg-l);color:var(--burgundy)}
+.t-sct{background:var(--terr-l);color:var(--terracot)}
+.t-dep{background:var(--forest-l);color:var(--forest)}
+.t-grd{background:var(--teal-l);color:var(--teal-d)}
+
+.n-title{
+  font-family:var(--fd);font-size:clamp(22px,3vw,30px);
+  font-weight:700;letter-spacing:-0.02em;
+  color:var(--ink);margin-bottom:10px;line-height:1.2
+}
+.n-body{font-size:14px;color:var(--ink2);line-height:1.75;font-weight:300;margin-bottom:1.25rem}
+
+.mech-box{
+  background:var(--cream-d);border-radius:var(--r);
+  padding:1rem 1.25rem;margin-bottom:1.25rem;border:1px solid var(--border)
+}
+.mech-label{
+  font-family:var(--fm);font-size:10px;font-weight:500;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--ink4);margin-bottom:8px
+}
 .mech-txt{font-size:14px;color:var(--ink2);line-height:1.7;font-weight:300}
-.mech-src{font-size:12px;color:var(--ink4);margin-top:8px;font-style:italic}
-.truth-box{border-left:3px solid var(--accent);background:var(--warm);border-top:0.5px solid var(--border);border-right:0.5px solid var(--border);border-bottom:0.5px solid var(--border);border-radius:0 var(--rs) var(--rs) 0;padding:12px 16px;margin-bottom:1.5rem}
-.truth-label{font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+
+.truth-box{
+  border-left:3px solid var(--amber);
+  background:var(--cream);
+  border-top:1px solid var(--border);
+  border-right:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  border-radius:0 var(--rs) var(--rs) 0;
+  padding:12px 16px;margin-bottom:1.5rem
+}
+.truth-label{
+  font-family:var(--fm);font-size:10px;font-weight:500;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--amber);margin-bottom:6px
+}
 .truth-txt{font-size:15px;color:var(--ink);line-height:1.65;font-style:italic}
-.ot-box{background:var(--ink);border-radius:var(--r);padding:1.25rem 1.5rem;margin-bottom:1.5rem}
-.ot-label{font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:rgba(253,252,250,0.4);margin-bottom:8px}
-.ot-title{font-size:15px;font-weight:500;color:var(--warm);margin-bottom:6px}
-.ot-body{font-size:14px;color:rgba(253,252,250,0.7);line-height:1.65;font-weight:300;margin-bottom:12px}
-.ot-action{font-family:var(--fm);font-size:12px;color:rgba(253,252,250,0.85);background:rgba(255,255,255,0.08);padding:8px 12px;border-radius:var(--rs)}
-.ne-btn{width:100%;padding:11px;font-size:14px;font-weight:500;font-family:var(--fb);border-radius:24px;cursor:pointer;border:0.5px solid var(--borderS);background:var(--ink);color:var(--warm);transition:background var(--tr);margin-bottom:8px}
+
+.ot-box{
+  background:var(--slate);border-radius:var(--r);
+  padding:1.25rem 1.5rem;margin-bottom:1.5rem
+}
+.ot-label{
+  font-family:var(--fm);font-size:10px;font-weight:500;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:rgba(245,240,228,0.4);margin-bottom:8px
+}
+.ot-title{font-size:15px;font-weight:700;color:var(--cream);margin-bottom:6px}
+.ot-body{font-size:14px;color:rgba(245,240,228,0.7);line-height:1.65;font-weight:300;margin-bottom:12px}
+.ot-action{
+  font-family:var(--fm);font-size:12px;
+  color:rgba(245,240,228,0.85);
+  background:rgba(255,255,255,0.08);
+  padding:8px 12px;border-radius:var(--rs)
+}
+
+.ne-btn{
+  width:100%;padding:12px;font-size:14px;font-weight:600;
+  font-family:var(--fb);border-radius:24px;cursor:pointer;
+  border:none;background:var(--slate);color:var(--cream);
+  transition:background var(--tr);margin-bottom:8px
+}
+.ne-btn:hover{background:var(--slate-d)}
 .ne-btn:disabled{opacity:0.35;cursor:default}
-.ne-ghost{width:100%;padding:10px;font-size:13px;font-family:var(--fb);border-radius:24px;cursor:pointer;border:0.5px solid var(--border);background:transparent;color:var(--ink3)}
-.mirror-label{font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px;display:block}
+.ne-ghost{
+  width:100%;padding:11px;font-size:13px;font-family:var(--fb);
+  border-radius:24px;cursor:pointer;
+  border:1px solid var(--border);background:transparent;color:var(--ink3);
+  transition:border-color var(--tr)
+}
+.ne-ghost:hover{border-color:var(--borderS)}
+
+/* MEANING MIRROR */
+.mirror-label{
+  font-family:var(--fm);font-size:10px;font-weight:500;
+  letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--ink4);margin-bottom:12px;display:block
+}
 .ev-list{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
-.ev-item{display:flex;align-items:flex-start;gap:10px;background:var(--surface);border-radius:var(--rs);padding:10px 14px;font-size:14px;color:var(--ink2);line-height:1.5;font-weight:300;border:0.5px solid var(--border)}
-.ev-chk{color:var(--a2);flex-shrink:0;margin-top:1px}
+.ev-item{
+  display:flex;align-items:flex-start;gap:10px;
+  background:var(--cream-d);border-radius:var(--rs);
+  padding:10px 14px;font-size:14px;color:var(--ink2);
+  line-height:1.5;font-weight:300;border:1px solid var(--border)
+}
+.ev-chk{color:var(--forest);flex-shrink:0;margin-top:2px;font-weight:600}
 .add-row{display:flex;gap:8px;margin-bottom:2rem}
-.add-input{flex:1;font-size:14px;font-family:var(--fb);padding:9px 14px;border-radius:24px;border:0.5px solid var(--borderS);background:var(--warm);color:var(--ink)}
-.add-input:focus{outline:none;border-color:var(--ink)}
-.add-btn{font-size:13px;font-weight:500;font-family:var(--fb);padding:9px 18px;border-radius:24px;border:0.5px solid var(--borderS);background:var(--warm);color:var(--ink);cursor:pointer;white-space:nowrap}
-.sig-card{background:var(--warm);border:0.5px solid var(--border);border-radius:var(--r);padding:0.25rem 1rem;margin-bottom:1.5rem}
-.sig-step{display:flex;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--border)}
+.add-input{
+  flex:1;font-size:14px;font-family:var(--fb);
+  padding:9px 14px;border-radius:24px;
+  border:1px solid var(--borderS);background:var(--cream);color:var(--ink)
+}
+.add-input:focus{outline:none;border-color:var(--slate)}
+.add-btn{
+  font-size:13px;font-weight:600;font-family:var(--fb);
+  padding:9px 18px;border-radius:24px;
+  border:1px solid var(--borderS);
+  background:var(--cream);color:var(--ink);cursor:pointer;
+  white-space:nowrap;transition:background var(--tr)
+}
+.add-btn:hover{background:var(--cream-d)}
+
+.sig-card{
+  background:var(--cream);border:1px solid var(--border);
+  border-radius:var(--r);padding:0.25rem 1rem;margin-bottom:1.5rem
+}
+.sig-step{
+  display:flex;gap:12px;padding:14px 0;
+  border-bottom:1px solid var(--border)
+}
 .sig-step:last-child{border-bottom:none}
-.sig-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0;margin-top:1px}
-.sn1{background:#fdf0f0;color:#7a2020}.sn2{background:var(--a3l);color:var(--a3)}.sn3{background:#fdf0f8;color:#5c1a3a}.sn4{background:var(--a1l);color:var(--a1)}
-.sig-name{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:3px}
-.sig-desc{font-size:13px;color:var(--ink3);line-height:1.5;font-weight:300}
-.interrupt-strip{background:var(--ink);border-radius:var(--r);padding:1.25rem 1.5rem}
-.is-label{font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:rgba(253,252,250,0.4);margin-bottom:8px}
-.is-txt{font-size:15px;color:var(--warm);line-height:1.6;font-style:italic;margin-bottom:10px}
-.is-action{font-size:13px;color:rgba(253,252,250,0.6);font-weight:300}
-footer{text-align:center;padding:3rem 2rem;border-top:0.5px solid var(--border);margin-top:4rem}
-.footer-name{font-family:var(--fd);font-size:28px;color:var(--ink);letter-spacing:-0.02em;margin-bottom:6px}
-.footer-name span{color:var(--accent);font-style:italic}
-.footer-sub{font-size:13px;color:var(--ink4);font-weight:300}
-@media(max-width:640px){.anc-grid,.pulse-grid{grid-template-columns:1fr}.nav-links{display:none}.hero{padding:100px 1.5rem 60px}.tabs-sec,.anc-sec{padding-left:1.5rem;padding-right:1.5rem}.tab-btn{font-size:12px;padding:7px 8px}}
+.sig-num{
+  width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:600;flex-shrink:0;margin-top:2px
+}
+.sn1{background:var(--terracot);color:var(--cream)}
+.sn2{background:var(--amber);color:var(--cream)}
+.sn3{background:var(--burgundy);color:var(--cream)}
+.sn4{background:var(--teal-d);color:var(--cream)}
+.sig-name{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.sig-desc{font-size:13px;color:var(--ink3);line-height:1.55;font-weight:300}
+
+.interrupt-strip{
+  background:var(--slate);border-radius:var(--r);padding:1.5rem
+}
+.is-label{
+  font-family:var(--fm);font-size:10px;font-weight:500;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:rgba(245,240,228,0.45);margin-bottom:10px
+}
+.is-txt{
+  font-size:15px;color:var(--cream);
+  line-height:1.65;font-style:italic;margin-bottom:10px
+}
+.is-action{font-size:13px;color:rgba(245,240,228,0.6);font-weight:300}
+
+/* DONE STATES */
+#r-done{display:none;text-align:center;padding:2rem 1rem}
+#r-done .done-word{
+  font-family:var(--fd);font-size:clamp(28px,5vw,40px);
+  font-weight:700;color:var(--ink);margin-bottom:8px
+}
+#r-done .done-sub{font-size:15px;color:var(--ink3);font-weight:300;line-height:1.7;margin-bottom:1.5rem}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  .anc-grid{grid-template-columns:1fr}
+  .pulse-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .hero{padding:100px 1.25rem 70px}
+  .anc-sec,.tools-sec{padding-left:1.25rem;padding-right:1.25rem}
+  .tab-btn .tab-label{font-size:11px}
+}
 </style>
 </head>
 <body>
+
+<!-- NAV -->
 <nav>
-  <div class="nav-logo">Frank<span>l</span></div>
+  <div class="nav-logo">Frankl<span>yn</span></div>
   <div class="nav-links">
     <a href="#anchors">Anchors</a>
     <a href="#tools">Tools</a>
@@ -147,219 +537,560 @@ footer{text-align:center;padding:3rem 2rem;border-top:0.5px solid var(--border);
   <a href="#tools" class="nav-cta">Open app</a>
 </nav>
 
-<section class="hero">
-  <span class="eyebrow">Named for Viktor Frankl</span>
-  <h1 class="hero-title">Before the spiral<br><em>takes hold</em></h1>
-  <p class="hero-sub">A psychologically grounded daily operating system that interrupts the cascade from overwhelm to anxiety — by reflecting your own meaning back to you at the moment it matters most.</p>
+<!-- HERO -->
+<section class="hero" id="hero">
+  <h1 class="hero-wordmark">Frankl<span>yn</span></h1>
+
+  <p class="hero-desc">A psychologically grounded daily operating system that interrupts the cascade from overwhelm to anxiety by reflecting your own meaning back to you at the moment it matters most.</p>
+
+  <div class="quote-wrap">
+    <div class="quote-text" id="quoteText"></div>
+    <div class="quote-attr" id="quoteAttr"></div>
+  </div>
+
   <div class="hero-actions">
     <a href="#tools" class="btn-primary">Start your morning anchor</a>
-    <a href="#tools" class="btn-ghost">I'm in the spiral now</a>
+    <a href="#tools" class="btn-ghost">I need help right now</a>
   </div>
 </section>
 
+<!-- ANCHORS -->
 <section class="anc-sec" id="anchors">
-  <span class="sec-label">Your identity anchors</span>
+  <span class="sec-eyebrow">Your foundation</span>
+  <h2 class="sec-title">Identity Anchors</h2>
+  <p class="sec-desc">Identity anchors are not goals. They are not affirmations. They are the three things that are true about you even when you feel nothing like yourself. When the spiral starts, these are what you return to.</p>
+
   <div class="anc-grid">
-    <div class="anc-card a1"><div class="anc-word">Influential</div><div class="anc-proof">You designed a psychological framework grounded in MIT research. Influence being built, not waited for.</div></div>
-    <div class="anc-card a2"><div class="anc-word">Significant</div><div class="anc-proof">BTG accepted you. MIT xPRO certified you. Influential Women recognized you. The evidence exists.</div></div>
-    <div class="anc-card a3"><div class="anc-word">Wealthy</div><div class="anc-proof">You exercised. You made a real meal. Wealth starts in how you treat yourself — long before the bank account.</div></div>
+    <div class="anc-card a1">
+      <div class="anc-word">Influential</div>
+      <div class="anc-proof">You designed a psychological framework grounded in MIT research. Influence being built, not waited for.</div>
+    </div>
+    <div class="anc-card a2">
+      <div class="anc-word">Significant</div>
+      <div class="anc-proof">BTG accepted you. MIT xPRO certified you. Influential Women recognized you. The evidence exists.</div>
+    </div>
+    <div class="anc-card a3">
+      <div class="anc-word">Wealthy</div>
+      <div class="anc-proof">You exercised. You made a real meal. Wealth starts in how you treat yourself long before the bank account.</div>
+    </div>
   </div>
 </section>
 
 <hr class="div">
 
-<section class="tabs-sec" id="tools">
-  <span class="sec-label">Frankl tools</span>
-  <h2 class="tabs-title">What do you need right now?</h2>
-  <p class="tabs-sub">Three tools. Each built around how your specific nervous system works.</p>
+<!-- TOOLS -->
+<section class="tools-sec" id="tools">
+  <span class="sec-eyebrow">Franklyn tools</span>
+  <h2 class="sec-title">What do you need right now?</h2>
+  <p class="sec-desc">Three tools. Each built around how your specific nervous system works. Tap one to begin.</p>
+
   <div class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('morning')">Morning anchor</button>
-    <button class="tab-btn" onclick="switchTab('naming')">Naming engine</button>
-    <button class="tab-btn" onclick="switchTab('mirror')">Meaning mirror</button>
+    <button class="tab-btn active" onclick="switchTab('morning',this)">
+      <span class="tab-icon">☀️</span>
+      <span class="tab-label">Morning Anchor</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('naming',this)">
+      <span class="tab-icon">🌀</span>
+      <span class="tab-label">Name the Spiral</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('mirror',this)">
+      <span class="tab-icon">🪞</span>
+      <span class="tab-label">Meaning Mirror</span>
+    </button>
   </div>
 
   <!-- MORNING ANCHOR -->
   <div class="tab-panel active" id="tab-morning">
     <div class="rsteps" id="rsteps">
-      <div class="rstep active" id="rs1"><div class="r-spine"><div class="r-node" id="rn1">&#9675;</div><div class="r-line"></div></div><div class="r-body"><div class="r-timing">30 seconds</div><div class="r-name">Read your anchors out loud</div><div class="r-desc">Identity anchors are not goals or affirmations. They are who you are becoming, stated as present truth. Read them out loud — your own voice carrying these words sends a signal to your nervous system that you are safe and grounded before the day begins.</div><div class="pills-row"><div class="pill p-i">Influential</div><div class="pill p-s">Significant</div><div class="pill p-w">Wealthy</div></div><button class="r-btn" onclick="cRS(1)">I said them out loud →</button></div></div>
-      <div class="rstep" id="rs2"><div class="r-spine"><div class="r-node" id="rn2">2</div><div class="r-line"></div></div><div class="r-body"><div class="r-timing">30 seconds</div><div class="r-name">Name one true thing from yesterday</div><div class="r-desc">Not what you didn't finish. One thing that happened that is real evidence you are moving forward.</div><div class="r-quote">Yesterday I…</div><textarea class="r-input" id="y-input" rows="2" placeholder="e.g. I got into BTG and built the Meaning Mirror"></textarea><button class="r-btn" id="rb2" disabled onclick="cRS(2)">That's true →</button></div></div>
-      <div class="rstep" id="rs3"><div class="r-spine"><div class="r-node" id="rn3">3</div><div class="r-line"></div></div><div class="r-body"><div class="r-timing">30 seconds</div><div class="r-name">Name the one thing that matters today</div><div class="r-desc">Your mind can only truly hold one thing at a time. When you name one clear intention before anything else, you protect yourself from the scattered feeling that opens the door to the spiral. What is the one thing that matters today?</div><div class="r-quote">Today the one thing that matters is…</div><textarea class="r-input" id="t-input" rows="2" placeholder="e.g. Open BTG and read three project briefs"></textarea><button class="r-btn" id="rb3" disabled onclick="cRS(3)">That's my one thing →</button></div></div>
-      <div class="rstep" id="rs4"><div class="r-spine"><div class="r-node" id="rn4">4</div><div class="r-line"></div></div><div class="r-body"><div class="r-timing">30 seconds</div><div class="r-name">Body check-in</div><div class="r-desc">One hand on your chest. In for 4 counts, out for 6. This activates the vagal brake — Porges. Your nervous system shifts before the day begins.</div><div class="timer-row"><div class="timer-num" id="t-disp">0:30</div><button class="timer-btn" id="t-btn" onclick="startT()">&#9654; Start</button></div><button class="r-btn" id="rb4" disabled onclick="cRS(4)">I breathed →</button></div></div>
-      <div class="rstep" id="rs5"><div class="r-spine"><div class="r-node" id="rn5">5</div></div><div class="r-body"><div class="r-timing">Every morning — before LinkedIn, before email</div><div class="r-name">The Frankl rule</div><div class="frankl-rule"><div class="sec-label" style="margin-bottom:6px;">Before you open anything</div><div class="rule-text">You are building something that has never existed. The people on LinkedIn are not ahead of you — they are on different paths. You open comparison tabs only after your one thing is done. Not before.</div></div><button class="r-btn" onclick="cRitual()">I'm ready to build →</button></div></div>
+
+      <div class="rstep active" id="rs1">
+        <div class="r-spine"><div class="r-node" id="rn1">○</div><div class="r-line"></div></div>
+        <div class="r-body">
+          <div class="r-timing">30 seconds</div>
+          <div class="r-name">Read your anchors out loud</div>
+          <div class="r-desc">Identity anchors are who you are becoming, stated as present truth. Read them out loud. Your own voice carrying these words sends a signal to your nervous system that you are safe and grounded before the day begins.</div>
+          <div class="pills-row">
+            <div class="pill p-i">Influential</div>
+            <div class="pill p-s">Significant</div>
+            <div class="pill p-w">Wealthy</div>
+          </div>
+          <button class="r-btn" onclick="cRS(1)">I said them out loud →</button>
+        </div>
+      </div>
+
+      <div class="rstep" id="rs2">
+        <div class="r-spine"><div class="r-node" id="rn2">2</div><div class="r-line"></div></div>
+        <div class="r-body">
+          <div class="r-timing">30 seconds</div>
+          <div class="r-name">Name one true thing from yesterday</div>
+          <div class="r-desc">Not what you did not finish. One thing that happened that is real evidence you are moving forward.</div>
+          <div class="r-quote">Yesterday I…</div>
+          <textarea class="r-input" id="y-input" rows="2" placeholder="e.g. I got into BTG and built the Meaning Mirror"></textarea>
+          <button class="r-btn" id="rb2" disabled onclick="cRS(2)">That's true →</button>
+        </div>
+      </div>
+
+      <div class="rstep" id="rs3">
+        <div class="r-spine"><div class="r-node" id="rn3">3</div><div class="r-line"></div></div>
+        <div class="r-body">
+          <div class="r-timing">30 seconds</div>
+          <div class="r-name">Name the one thing that matters today</div>
+          <div class="r-desc">Your mind can only truly hold one thing at a time. When you name one clear intention before anything else, you protect yourself from the scattered feeling that opens the door to the spiral.</div>
+          <div class="r-quote">Today the one thing that matters is…</div>
+          <textarea class="r-input" id="t-input" rows="2" placeholder="e.g. Open BTG and read three project briefs"></textarea>
+          <button class="r-btn" id="rb3" disabled onclick="cRS(3)">That's my one thing →</button>
+        </div>
+      </div>
+
+      <div class="rstep" id="rs4">
+        <div class="r-spine"><div class="r-node" id="rn4">4</div><div class="r-line"></div></div>
+        <div class="r-body">
+          <div class="r-timing">30 seconds</div>
+          <div class="r-name">Body check-in</div>
+          <div class="r-desc">One hand on your chest. In for 4 counts, out for 6. This activates the vagal brake. Your nervous system shifts before the day begins.</div>
+          <div class="timer-row">
+            <div class="timer-num" id="t-disp">0:30</div>
+            <button class="timer-btn" id="t-btn" onclick="startT()">▶ Start</button>
+          </div>
+          <button class="r-btn" id="rb4" disabled onclick="cRS(4)">I breathed →</button>
+        </div>
+      </div>
+
+      <div class="rstep" id="rs5">
+        <div class="r-spine"><div class="r-node" id="rn5">5</div></div>
+        <div class="r-body">
+          <div class="r-timing">Every morning before LinkedIn, before email</div>
+          <div class="r-name">The Franklyn rule</div>
+          <div class="frankl-rule">
+            <div class="rule-text">You are building something that has never existed. The people on LinkedIn are not ahead of you. They are on different paths. You open comparison tabs only after your one thing is done. Not before.</div>
+          </div>
+          <button class="r-btn" onclick="cRitual()">I'm ready to build →</button>
+        </div>
+      </div>
+
     </div>
-    <div id="r-done" style="display:none;text-align:center;padding:2rem 1rem;">
-      <div style="font-family:var(--fd);font-size:32px;color:var(--ink);margin-bottom:8px;">You're anchored.</div>
-      <div style="font-size:15px;color:var(--ink3);font-weight:300;margin-bottom:1.5rem;">Influential. Significant. Wealthy.<br>Now go do your one thing.</div>
-      <div class="pills-row" style="justify-content:center;margin-bottom:1.5rem;"><div class="pill p-i">Influential</div><div class="pill p-s">Significant</div><div class="pill p-w">Wealthy</div></div>
+    <div id="r-done">
+      <div class="done-word">You're anchored.</div>
+      <div class="done-sub">Influential. Significant. Wealthy.<br>Now go do your one thing.</div>
+      <div class="pills-row" style="justify-content:center;margin-bottom:1.5rem">
+        <div class="pill p-i">Influential</div>
+        <div class="pill p-s">Significant</div>
+        <div class="pill p-w">Wealthy</div>
+      </div>
       <button class="btn-ghost" onclick="resetR()">Start again</button>
     </div>
   </div>
 
   <!-- NAMING ENGINE -->
   <div class="tab-panel" id="tab-naming">
+
     <div class="ns active" id="ns-pulse">
-      <p style="font-size:18px;font-weight:500;color:var(--ink);margin-bottom:6px;">Where are you right now?</p>
-      <p style="font-size:14px;color:var(--ink3);margin-bottom:1.5rem;font-weight:300;">Not where you think you should be. Where you actually are.</p>
+      <p style="font-size:20px;font-weight:700;color:var(--ink);margin-bottom:6px">Where are you right now?</p>
+      <p style="font-size:14px;color:var(--ink3);margin-bottom:1.5rem;font-weight:300">Not where you think you should be. Where you actually are.</p>
       <div class="pulse-grid">
-        <div class="pc" onclick="selP(this,'grounded')"><div class="pc-icon">&#10003;</div><div class="pc-name">Grounded</div><div class="pc-desc">Focused, present, able to work</div></div>
-        <div class="pc" onclick="selP(this,'scattered')"><div class="pc-icon">&#8767;</div><div class="pc-name">Scattered</div><div class="pc-desc">Distracted, tabs open, can't land</div></div>
-        <div class="pc" onclick="selP(this,'anxious')"><div class="pc-icon">&#9651;</div><div class="pc-name">Anxious</div><div class="pc-desc">Chest tight, comparison firing</div></div>
-        <div class="pc" onclick="selP(this,'spiral')"><div class="pc-icon">&#8635;</div><div class="pc-name">Spiraling</div><div class="pc-desc">Overwhelmed, the story is running</div></div>
+        <div class="pc" onclick="selP(this,'grounded')">
+          <div class="pc-icon">✓</div>
+          <div class="pc-name">Grounded</div>
+          <div class="pc-desc">Focused, present, able to work</div>
+        </div>
+        <div class="pc" onclick="selP(this,'scattered')">
+          <div class="pc-icon">∿</div>
+          <div class="pc-name">Scattered</div>
+          <div class="pc-desc">Distracted, tabs open, can't land</div>
+        </div>
+        <div class="pc" onclick="selP(this,'anxious')">
+          <div class="pc-icon">△</div>
+          <div class="pc-name">Anxious</div>
+          <div class="pc-desc">Chest tight, comparison firing</div>
+        </div>
+        <div class="pc" onclick="selP(this,'spiral')">
+          <div class="pc-icon">↻</div>
+          <div class="pc-name">Spiraling</div>
+          <div class="pc-desc">Overwhelmed, the story is running</div>
+        </div>
       </div>
       <button class="ne-btn" id="p-cont" disabled onclick="goSig()">Continue →</button>
     </div>
+
     <div class="ns" id="ns-signals">
-      <p style="font-size:18px;font-weight:500;color:var(--ink);margin-bottom:6px;">What's happening right now?</p>
-      <p style="font-size:14px;color:var(--ink3);margin-bottom:1.25rem;font-weight:300;">Select everything that's true.</p>
+      <p style="font-size:20px;font-weight:700;color:var(--ink);margin-bottom:6px">What's happening right now?</p>
+      <p style="font-size:14px;color:var(--ink3);margin-bottom:1.25rem;font-weight:300">Select everything that's true.</p>
       <div class="sig-list">
-        <div class="si" onclick="togS(this,'comparison')"><div class="si-chk">&#10003;</div><div class="si-txt">I've been looking at what others are doing online</div></div>
-        <div class="si" onclick="togS(this,'competence')"><div class="si-chk">&#10003;</div><div class="si-txt">I feel like I don't have enough knowledge or credibility</div></div>
-        <div class="si" onclick="togS(this,'abandonment')"><div class="si-chk">&#10003;</div><div class="si-txt">Thoughts about people not loving me or being ahead of me</div></div>
-        <div class="si" onclick="togS(this,'body')"><div class="si-chk">&#10003;</div><div class="si-txt">I haven't eaten or I'm physically depleted</div></div>
-        <div class="si" onclick="togS(this,'avoidance')"><div class="si-chk">&#10003;</div><div class="si-txt">I want to clean, drink, or do anything except the one thing</div></div>
-        <div class="si" onclick="togS(this,'crying')"><div class="si-chk">&#10003;</div><div class="si-txt">I've been crying or feel like I might</div></div>
+        <div class="si" onclick="togS(this,'comparison')"><div class="si-chk">✓</div><div class="si-txt">I've been looking at what others are doing online</div></div>
+        <div class="si" onclick="togS(this,'competence')"><div class="si-chk">✓</div><div class="si-txt">I feel like I don't have enough knowledge or credibility</div></div>
+        <div class="si" onclick="togS(this,'abandonment')"><div class="si-chk">✓</div><div class="si-txt">Thoughts about people not loving me or being ahead of me</div></div>
+        <div class="si" onclick="togS(this,'body')"><div class="si-chk">✓</div><div class="si-txt">I haven't eaten or I'm physically depleted</div></div>
+        <div class="si" onclick="togS(this,'avoidance')"><div class="si-chk">✓</div><div class="si-txt">I want to clean, drink, or do anything except the one thing</div></div>
+        <div class="si" onclick="togS(this,'crying')"><div class="si-chk">✓</div><div class="si-txt">I've been crying or feel like I might</div></div>
       </div>
       <button class="ne-btn" onclick="goRes()">Name what's happening →</button>
       <button class="ne-ghost" onclick="goRes()">Skip — just show me</button>
     </div>
+
     <div class="ns" id="ns-result">
       <div id="n-tag"></div>
       <div class="n-title" id="n-title"></div>
       <div class="n-body" id="n-body"></div>
-      <div class="mech-box"><div class="mech-label">Why this makes sense</div><div class="mech-txt" id="n-mech"></div><div class="mech-src" id="n-src"></div></div>
+      <div class="mech-box"><div class="mech-label">Why this makes sense</div><div class="mech-txt" id="n-mech"></div></div>
       <div class="truth-box"><div class="truth-label">What's actually true right now</div><div class="truth-txt" id="n-truth"></div></div>
-      <div class="ot-box"><div class="ot-label">One thing — right now</div><div class="ot-title" id="n-ott"></div><div class="ot-body" id="n-otb"></div><div class="ot-action" id="n-ota"></div></div>
+      <div class="ot-box">
+        <div class="ot-label">One thing right now</div>
+        <div class="ot-title" id="n-ott"></div>
+        <div class="ot-body" id="n-otb"></div>
+        <div class="ot-action" id="n-ota"></div>
+      </div>
       <button class="ne-btn" onclick="goDone()">I did the one thing →</button>
       <button class="ne-ghost" onclick="resetN()">Check in again</button>
     </div>
+
     <div class="ns" id="ns-done">
-      <div style="text-align:center;padding:2rem 1rem;">
-        <div style="font-family:var(--fd);font-size:28px;color:var(--ink);margin-bottom:8px;" id="nd-title">Pattern interrupted.</div>
-        <div style="font-size:14px;color:var(--ink3);font-weight:300;line-height:1.6;margin-bottom:1.5rem;" id="nd-sub"></div>
-        <div class="pills-row" style="justify-content:center;margin-bottom:1.5rem;"><div class="pill p-i">Influential</div><div class="pill p-s">Significant</div><div class="pill p-w">Wealthy</div></div>
+      <div style="text-align:center;padding:2rem 1rem">
+        <div style="font-family:var(--fd);font-size:clamp(26px,4vw,36px);font-weight:700;color:var(--ink);margin-bottom:8px" id="nd-title">Pattern interrupted.</div>
+        <div style="font-size:14px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:1.5rem" id="nd-sub"></div>
+        <div class="pills-row" style="justify-content:center;margin-bottom:1.5rem">
+          <div class="pill p-i">Influential</div>
+          <div class="pill p-s">Significant</div>
+          <div class="pill p-w">Wealthy</div>
+        </div>
         <button class="btn-ghost" onclick="resetN()">Check in again</button>
       </div>
     </div>
+
   </div>
 
   <!-- MEANING MIRROR -->
   <div class="tab-panel" id="tab-mirror">
-    <div class="anc-grid" style="margin-bottom:2rem;">
-      <div class="anc-card a1"><div class="anc-word">Influential</div><div class="anc-proof">MIT xPRO certified. Frankl architect. Recognized by Influential Women. Building agent-to-agent AI strategy.</div></div>
-      <div class="anc-card a2"><div class="anc-word">Significant</div><div class="anc-proof">BTG accepted you today. You think in systems others don't have access to. You study people and mechanisms at depth.</div></div>
-      <div class="anc-card a3"><div class="anc-word">Wealthy</div><div class="anc-proof">You exercised. 30g protein meal. Building the physical substrate wealth runs on.</div></div>
+    <div class="anc-grid" style="margin-bottom:2rem">
+      <div class="anc-card a1">
+        <div class="anc-word">Influential</div>
+        <div class="anc-proof">MIT xPRO certified. Franklyn architect. Recognized by Influential Women. Building agent-to-agent AI strategy.</div>
+      </div>
+      <div class="anc-card a2">
+        <div class="anc-word">Significant</div>
+        <div class="anc-proof">BTG accepted you today. You think in systems others don't have access to. You study people and mechanisms at depth.</div>
+      </div>
+      <div class="anc-card a3">
+        <div class="anc-word">Wealthy</div>
+        <div class="anc-proof">You exercised. 30g protein meal. Building the physical substrate wealth runs on.</div>
+      </div>
     </div>
+
     <span class="mirror-label">Today's evidence</span>
     <ul class="ev-list" id="ev-list">
       <li class="ev-item"><span class="ev-chk">✓</span>Accepted into BTG — a vetted platform for expert consultants</li>
       <li class="ev-item"><span class="ev-chk">✓</span>Completed MIT xPRO: Designing and Building AI Products and Services</li>
       <li class="ev-item"><span class="ev-chk">✓</span>Recognized by Influential Women</li>
       <li class="ev-item"><span class="ev-chk">✓</span>Exercised and made a 30g protein meal</li>
-      <li class="ev-item"><span class="ev-chk">✓</span>Built three working Frankl prototypes from scratch</li>
+      <li class="ev-item"><span class="ev-chk">✓</span>Built three working Franklyn prototypes from scratch</li>
       <li class="ev-item"><span class="ev-chk">✓</span>Working on agent-to-agent AI strategy with fiancé at JPMorgan</li>
     </ul>
     <div class="add-row">
       <input type="text" class="add-input" id="new-ev" placeholder="Add another truth from today…">
       <button class="add-btn" onclick="addEv()">+ Add</button>
     </div>
+
     <span class="mirror-label">Your spiral signature</span>
     <div class="sig-card">
-      <div class="sig-step"><div class="sig-num sn1">1</div><div><div class="sig-name">Comparison trigger</div><div class="sig-desc">Online research → someone appears ahead → nervous system reads gap as threat before conscious awareness intervenes</div></div></div>
-      <div class="sig-step"><div class="sig-num sn2">2</div><div><div class="sig-name">Unworthiness floods in</div><div class="sig-desc">"I don't have the knowledge, the credibility, I can't do this" — working memory fills with extraneous load</div></div></div>
-      <div class="sig-step"><div class="sig-num sn3">3</div><div><div class="sig-name">Abandonment story activates</div><div class="sig-desc">Old wound, new trigger. Dorsal vagal circuit engaging. The story feels true because it's ancient.</div></div></div>
-      <div class="sig-step"><div class="sig-num sn4">4</div><div><div class="sig-name">Numbing and control</div><div class="sig-desc">Wine to numb. Cleaning to control. Nervous system seeking safety through any available action.</div></div></div>
+      <div class="sig-step"><div class="sig-num sn1">1</div><div><div class="sig-name">Comparison trigger</div><div class="sig-desc">Online research into someone who appears ahead. Your nervous system reads the gap as a threat before conscious awareness can intervene.</div></div></div>
+      <div class="sig-step"><div class="sig-num sn2">2</div><div><div class="sig-name">Unworthiness floods in</div><div class="sig-desc">"I don't have the knowledge, the credibility, I can't do this." Working memory fills with noise and the real work disappears.</div></div></div>
+      <div class="sig-step"><div class="sig-num sn3">3</div><div><div class="sig-name">Abandonment story activates</div><div class="sig-desc">Old wound, new trigger. The dorsal vagal circuit engages. The story feels true because it is ancient.</div></div></div>
+      <div class="sig-step"><div class="sig-num sn4">4</div><div><div class="sig-name">Numbing and control</div><div class="sig-desc">Wine to numb. Cleaning to control. Your nervous system seeking safety through any available action.</div></div></div>
     </div>
+
     <div class="interrupt-strip">
-      <div class="is-label">Frankl's pattern interrupt — fires at step 1</div>
+      <div class="is-label">Franklyn's pattern interrupt — fires at step 1</div>
       <div class="is-txt">"You're looking at the wrong data. You got into BTG today. You completed MIT xPRO. You built something real. Influential, significant, wealthy — those are still yours. Close the tab."</div>
       <div class="is-action">→ One action: close the comparison tab. Then come back here.</div>
     </div>
   </div>
+
 </section>
 
-<footer>
-  <div class="footer-name">Frank<span>l</span></div>
-  <div class="footer-sub">Built with meaning. For the builder who already knows what matters.</div>
-</footer>
-
 <script>
-var cRStep=1,tSecs=30,tInt=null,selPulse=null,selSigs=[];
-function switchTab(n){document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active')});document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});document.getElementById('tab-'+n).classList.add('active');var m={morning:0,naming:1,mirror:2};document.querySelectorAll('.tab-btn')[m[n]].classList.add('active')}
-function cRS(n){var s=document.getElementById('rs'+n),nd=document.getElementById('rn'+n);s.classList.remove('active');s.classList.add('done');nd.textContent='✓';var nx=n+1;if(nx<=5){document.getElementById('rs'+nx).classList.add('active');document.getElementById('rn'+nx).textContent=''}}
-document.getElementById('y-input').addEventListener('input',function(){document.getElementById('rb2').disabled=this.value.trim().length<3});
-document.getElementById('t-input').addEventListener('input',function(){document.getElementById('rb3').disabled=this.value.trim().length<3});
-function startT(){var b=document.getElementById('t-btn');b.textContent='⏸ Pause';b.onclick=pauseT;tInt=setInterval(function(){tSecs--;var m=Math.floor(tSecs/60),s=tSecs%60;document.getElementById('t-disp').textContent=m+':'+(s<10?'0':'')+s;if(tSecs<=0){clearInterval(tInt);document.getElementById('t-disp').textContent='done';document.getElementById('rb4').disabled=false;b.style.display='none'}},1000)}
-function pauseT(){clearInterval(tInt);var b=document.getElementById('t-btn');b.textContent='▶ Resume';b.onclick=startT}
-function cRitual(){cRS(5);setTimeout(function(){document.getElementById('rsteps').style.display='none';document.getElementById('r-done').style.display='block'},300)}
-function resetR(){document.getElementById('rsteps').style.display='block';document.getElementById('r-done').style.display='none';cRStep=1;tSecs=30;clearInterval(tInt);document.getElementById('t-disp').textContent='0:30';var tb=document.getElementById('t-btn');tb.style.display='';tb.textContent='▶ Start';tb.onclick=startT;document.getElementById('rb4').disabled=true;document.getElementById('y-input').value='';document.getElementById('t-input').value='';for(var i=1;i<=5;i++){var s=document.getElementById('rs'+i),n=document.getElementById('rn'+i);s.classList.remove('active','done');n.textContent=i===1?'○':String(i)}document.getElementById('rs1').classList.add('active')}
-function selP(el,v){document.querySelectorAll('.pc').forEach(function(c){c.classList.remove('selected')});el.classList.add('selected');selPulse=v;document.getElementById('p-cont').disabled=false}
-function togS(el,v){el.classList.toggle('selected');if(el.classList.contains('selected')){selSigs.push(v)}else{selSigs=selSigs.filter(function(s){return s!==v})}}
-function showNS(id){document.querySelectorAll('.ns').forEach(function(s){s.classList.remove('active')});document.getElementById(id).classList.add('active')}
-function goSig(){if(selPulse==='grounded'){bldRes();showNS('ns-result');return}showNS('ns-signals')}
+// ── QUOTES ──────────────────────────────────────────────
+const quotes = [
+  {text:"Between stimulus and response there is a space. In that space is our power to choose our response.",attr:"Viktor Frankl"},
+  {text:"Life is not primarily a quest for pleasure or power but a quest for meaning.",attr:"Viktor Frankl"},
+  {text:"When we are no longer able to change a situation, we are challenged to change ourselves.",attr:"Viktor Frankl"},
+  {text:"Those who have a why to live can bear almost any how.",attr:"Viktor Frankl"},
+  {text:"Everything can be taken from a man but one thing — to choose one's attitude in any given set of circumstances.",attr:"Viktor Frankl"},
+  {text:"The last of human freedoms is to choose one's attitude in any given set of circumstances.",attr:"Viktor Frankl"},
+  {text:"Live as if you were living for the second time.",attr:"Viktor Frankl"},
+  {text:"Meaning is not invented. It is detected.",attr:"Viktor Frankl"},
+  {text:"The nervous system does not distinguish between a real and imagined threat. Safety is a physiological state, not a thought.",attr:"Stephen Porges — Polyvagal Theory"},
+  {text:"Connection is the biological imperative of the human nervous system. We are wired to co-regulate.",attr:"Stephen Porges — Polyvagal Theory"},
+  {text:"The social engagement system evolved so we could feel safe enough to grow. Safety comes first.",attr:"Stephen Porges — Polyvagal Theory"},
+  {text:"Neuroception happens before perception. Your body knows before your mind does.",attr:"Stephen Porges — Polyvagal Theory"},
+  {text:"The vagal brake is what allows us to be present. When it releases, the spiral begins.",attr:"Stephen Porges — Polyvagal Theory"},
+  {text:"Regulation is not calm. Regulation is the capacity to return.",attr:"Stephen Porges — Polyvagal Theory"},
+  {text:"Human beings have a natural tendency toward growth. The conditions either support it or they don't.",attr:"Ryan and Deci — Self-Determination Theory"},
+  {text:"Autonomy does not mean doing whatever you want. It means acting from your own values.",attr:"Richard Ryan — Self-Determination Theory"},
+  {text:"Intrinsic motivation is not a bonus. It is the foundation of anything worth building.",attr:"Edward Deci — Self-Determination Theory"},
+  {text:"Controlled motivation produces compliance. Autonomous motivation produces commitment.",attr:"Ryan and Deci — Self-Determination Theory"},
+  {text:"Vitality comes from having three needs met: competence, relatedness, and autonomy.",attr:"Edward Deci — Self-Determination Theory"},
+  {text:"When basic psychological needs are thwarted, people don't fail to grow. They protect themselves instead.",attr:"Richard Ryan — Self-Determination Theory"},
+  {text:"Working memory is severely limited. Everything that competes for it takes something away from what matters.",attr:"John Sweller — Cognitive Load Theory"},
+  {text:"When cognitive load exceeds capacity, learning stops. So does clear thinking.",attr:"John Sweller — Cognitive Load Theory"},
+  {text:"Extraneous load is noise that crowds out the signal. Remove it first.",attr:"John Sweller — Cognitive Load Theory"},
+  {text:"The best design removes itself from the way and lets the thinking happen.",attr:"John Sweller — Cognitive Load Theory"},
+  {text:"Intrinsic load is the complexity that belongs. Extraneous load is the complexity you added by accident.",attr:"John Sweller — Cognitive Load Theory"},
+  {text:"Discipline equals freedom.",attr:"Jocko Willink"},
+  {text:"The moment you wake up is where you start winning or losing the day.",attr:"Jocko Willink"},
+  {text:"Extreme ownership means there are no excuses. Only solutions.",attr:"Jocko Willink"},
+  {text:"Don't wait for motivation. Motivation follows action, not the other way around.",attr:"Jocko Willink"},
+  {text:"Default aggressive on the things that matter. Everything else can wait.",attr:"Jocko Willink"}
+];
+
+(function showQuote(){
+  const idx = Math.floor(Math.random() * quotes.length);
+  const q = quotes[idx];
+  const t = document.getElementById('quoteText');
+  const a = document.getElementById('quoteAttr');
+  t.textContent = '\u201C' + q.text + '\u201D';
+  a.textContent = q.attr;
+  requestAnimationFrame(()=>{
+    t.classList.add('show');
+    a.classList.add('show');
+  });
+})();
+
+// Re-fire quote when user scrolls back to hero
+const heroEl = document.getElementById('hero');
+const heroObs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const t = document.getElementById('quoteText');
+      const a = document.getElementById('quoteAttr');
+      t.classList.remove('show'); a.classList.remove('show');
+      setTimeout(()=>{
+        const idx = Math.floor(Math.random() * quotes.length);
+        const q = quotes[idx];
+        t.textContent = '\u201C' + q.text + '\u201D';
+        a.textContent = q.attr;
+        t.classList.add('show'); a.classList.add('show');
+      }, 400);
+    }
+  });
+},{threshold:0.6});
+heroObs.observe(heroEl);
+
+// ── TABS ────────────────────────────────────────────────
+function switchTab(n, btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+n).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── MORNING RITUAL ──────────────────────────────────────
+var tSecs=30, tInt=null;
+
+document.getElementById('y-input').addEventListener('input',function(){
+  document.getElementById('rb2').disabled = this.value.trim().length < 3;
+});
+document.getElementById('t-input').addEventListener('input',function(){
+  document.getElementById('rb3').disabled = this.value.trim().length < 3;
+});
+
+function cRS(n){
+  var s=document.getElementById('rs'+n), nd=document.getElementById('rn'+n);
+  s.classList.remove('active'); s.classList.add('done'); nd.textContent='✓';
+  var nx=n+1;
+  if(nx<=5){ document.getElementById('rs'+nx).classList.add('active'); }
+}
+function startT(){
+  var b=document.getElementById('t-btn');
+  b.textContent='⏸ Pause'; b.onclick=pauseT;
+  tInt=setInterval(function(){
+    tSecs--;
+    var m=Math.floor(tSecs/60), s=tSecs%60;
+    document.getElementById('t-disp').textContent=m+':'+(s<10?'0':'')+s;
+    if(tSecs<=0){
+      clearInterval(tInt);
+      document.getElementById('t-disp').textContent='done';
+      document.getElementById('rb4').disabled=false;
+      b.style.display='none';
+    }
+  },1000);
+}
+function pauseT(){
+  clearInterval(tInt);
+  var b=document.getElementById('t-btn');
+  b.textContent='▶ Resume'; b.onclick=startT;
+}
+function cRitual(){
+  cRS(5);
+  setTimeout(function(){
+    document.getElementById('rsteps').style.display='none';
+    document.getElementById('r-done').style.display='block';
+  },300);
+}
+function resetR(){
+  document.getElementById('rsteps').style.display='block';
+  document.getElementById('r-done').style.display='none';
+  tSecs=30; clearInterval(tInt);
+  document.getElementById('t-disp').textContent='0:30';
+  var tb=document.getElementById('t-btn');
+  tb.style.display=''; tb.textContent='▶ Start'; tb.onclick=startT;
+  document.getElementById('rb4').disabled=true;
+  document.getElementById('y-input').value='';
+  document.getElementById('t-input').value='';
+  document.getElementById('rb2').disabled=true;
+  document.getElementById('rb3').disabled=true;
+  for(var i=1;i<=5;i++){
+    var s=document.getElementById('rs'+i), nd=document.getElementById('rn'+i);
+    s.classList.remove('active','done');
+    nd.textContent = i===1?'○':String(i);
+  }
+  document.getElementById('rs1').classList.add('active');
+}
+
+// ── NAMING ENGINE ───────────────────────────────────────
+var selPulse=null, selSigs=[];
+
+function selP(el,v){
+  document.querySelectorAll('.pc').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected'); selPulse=v;
+  document.getElementById('p-cont').disabled=false;
+}
+function togS(el,v){
+  el.classList.toggle('selected');
+  if(el.classList.contains('selected')){ selSigs.push(v); }
+  else { selSigs=selSigs.filter(s=>s!==v); }
+}
+function showNS(id){
+  document.querySelectorAll('.ns').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function goSig(){
+  if(selPulse==='grounded'){ bldRes(); showNS('ns-result'); return; }
+  showNS('ns-signals');
+}
 function goRes(){
   showNS('ns-result');
-  document.getElementById('n-tag').innerHTML='<div class="n-tag t-sct">Frankl is thinking...</div>';
-  document.getElementById('n-title').textContent='One moment...';
-  document.getElementById('n-body').textContent='';
-  document.getElementById('n-mech').textContent='';
-  document.getElementById('n-src').textContent='';
-  document.getElementById('n-truth').textContent='';
-  document.getElementById('n-ott').textContent='';
-  document.getElementById('n-otb').textContent='';
-  document.getElementById('n-ota').textContent='';
+  document.getElementById('n-tag').innerHTML='<div class="n-tag t-sct">Franklyn is thinking…</div>';
+  document.getElementById('n-title').textContent='One moment…';
+  ['n-body','n-mech','n-truth','n-ott','n-otb','n-ota'].forEach(id=>document.getElementById(id).textContent='');
 
-  const evidence = Array.from(document.querySelectorAll('.ev-item'))
-    .map(el => el.textContent.replace('✓','').trim());
+  const evidence = Array.from(document.querySelectorAll('.ev-item')).map(el=>el.textContent.replace('✓','').trim());
 
-  fetch('/api/name', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      state: selPulse,
-      signals: selSigs,
-      anchors: ['Influential','Significant','Wealthy'],
-      evidence: evidence,
-      signature: 'Starts with comparison online, moves to unworthiness, lands on abandonment story, numbs with wine and cleaning'
+  fetch('/api/name',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      state:selPulse, signals:selSigs,
+      anchors:['Influential','Significant','Wealthy'],
+      evidence:evidence,
+      signature:'Starts with comparison online, moves to unworthiness, lands on abandonment story, numbs with wine and cleaning'
     })
   })
-  .then(r => r.json())
-  .then(data => {
-    document.getElementById('n-tag').innerHTML='<div class="n-tag t-sct">Frankl</div>';
+  .then(r=>r.json())
+  .then(data=>{
+    document.getElementById('n-tag').innerHTML='<div class="n-tag t-sct">Franklyn</div>';
     document.getElementById('n-title').textContent=data.what||'';
-    document.getElementById('n-body').textContent='';
     document.getElementById('n-mech').textContent=data.why||'';
-    document.getElementById('n-src').textContent='';
     document.getElementById('n-truth').textContent=data.truth||'';
     document.getElementById('n-ott').textContent='One thing';
-    document.getElementById('n-otb').textContent='';
     document.getElementById('n-ota').textContent=data.action||'';
   })
-  .catch(() => {
-    bldRes();
-  });
+  .catch(()=>{ bldRes(); });
 }
+
 function bldRes(){
-var hC=selSigs.indexOf('comparison')>-1,hA=selSigs.indexOf('abandonment')>-1,hB=selSigs.indexOf('body')>-1,hCr=selSigs.indexOf('crying')>-1,hAv=selSigs.indexOf('avoidance')>-1;
-var tag,ti,bo,me,sr,tr,ot,ob,oa;
-if(selPulse==='grounded'){tag='<div class="n-tag t-grd">Regulated state</div>';ti='You are in a ventral vagal state.';bo='This is where your best work happens — where you can build, connect, create, and think clearly. Porges calls this the social engagement system at full capacity.';me='When the ventral vagal circuit is active, the prefrontal cortex has full access. Working memory is available. You can hold complexity without being overwhelmed.';sr='Porges, Polyvagal Theory — ventral vagal state';tr='You checked in while regulated. That builds the self-awareness that makes Frankl smarter over time.';ot='Protect this state';ob="You're regulated right now. The one thing that protects this is not opening comparison tabs.";oa='→ Close everything except your one thing. Work for 25 minutes.'}
-else if(selPulse==='spiral'||hCr||hA){tag='<div class="n-tag t-abd">Abandonment story active</div>';ti='The spiral has reached the old wound.';bo="This isn't about the business anymore. Your nervous system has moved from \"I might fail\" to \"the people who should love me don't.\" That's an older story triggered by a newer pain. Both feel real. Neither is the truth of this moment.";me="When the sympathetic nervous system is overwhelmed, the dorsal vagal circuit activates — the oldest defense system. It creates a story of isolation and abandonment. This is your nervous system trying to make sense of threat using the oldest narrative it has. The story isn't a lie. It's old data applied to a new situation.";sr='Porges, Polyvagal Theory — dorsal vagal activation and dissolution';tr='"Your fiancé is building AI with you. You are not alone. The abandonment story fires when you\'re depleted — not because it\'s true. Once you get going, you are going to change this industry."';ot='Body first — everything else after';ob="You cannot think your way out of a dorsal vagal state. The story keeps running until your nervous system gets a safety signal. That signal comes through the body first.";oa='→ One hand on your chest. Eyes closed. Four breaths. Nothing else for 90 seconds.'}
-else if(selPulse==='anxious'||hC){tag='<div class="n-tag t-cmp">Comparison trigger active</div>';ti="You're looking at the wrong data.";bo="Your nervous system read someone else's curated highlight reel and filed it as evidence that you are behind. It isn't evidence of anything except that other people post their wins. This is step one of your spiral. It does not have to go further.";me="Neuroception — Porges' term for subconscious threat scanning — reads \"others are ahead\" as survival-level danger because your path to influential, significant, wealthy feels threatened. The anxiety isn't irrational. It's a nervous system doing its job with incomplete information.";sr='Porges, neuroception — Ryan & Deci, autonomy threat response';tr='"You got into BTG. You completed MIT xPRO. You were recognized as an influential woman. You are building something that does not exist yet. The people on LinkedIn are not ahead of you — they are on different paths."';ot='Close the tab. Right now.';ob='Not after one more scroll. Now. The comparison data is extraneous cognitive load — Sweller — and it is actively crowding out the working memory you need to build.';oa='→ Close the comparison tab. Open BTG. Read one project brief. That\'s it.'}
-else if(selPulse==='scattered'||hAv){tag='<div class="n-tag t-sct">Scattered — pre-spiral state</div>';ti='Your working memory is full.';bo="You're not failing to focus — your cognitive capacity is genuinely maxed out. Too many tabs, too many open loops, too many things competing for the same limited working memory. Catching it here is catching it early.";me="Sweller's cognitive load theory is precise: when intrinsic load combines with extraneous load — noise, tabs, notifications, open decisions — working memory capacity is exceeded. The result isn't weakness. It's a full system.";sr='Sweller, Cognitive Load Theory — extraneous load';tr='"Scattered isn\'t broken. Scattered is a full nervous system asking for a smaller input. One thing. One tab. One decision. Everything else can wait."';ot='Reduce the load — right now';ob="Close every tab that isn't your one thing. Write a list so your brain stops holding them. Then you do one thing.";oa='→ Close all tabs. Write your one thing at the top of a blank document. Start there.'}
-else if(hB){tag='<div class="n-tag t-dep">Physical depletion</div>';ti="You can't build from an empty tank.";bo="The anxiety and scattered focus are physiological right now, not just psychological. A depleted body runs a depleted nervous system. Your prefrontal cortex is the first to go offline when blood sugar drops.";me="The Mental Performance Handbook is explicit: physical state is the foundation of cognitive performance, not a separate concern. Nutrition, sleep, and movement are the substrate everything else runs on.";sr='Pattyn & Hauffa, Handbook of Mental Performance';tr='"Eating is not giving up. Eating is building. The 30g protein meal this morning was the right call. Do it again."';ot='Feed the builder first';ob="Before any screen — eat something real with protein. This is infrastructure, not a reward.";oa='→ Step away from the screen. Eat with protein. Return in 20 minutes.'}
-else{tag='<div class="n-tag t-sct">State detected</div>';ti='Something is happening.';bo="You checked in. That means part of you knows something is off. That self-awareness is the most important tool you have.";me="Checking in before the spiral fully activates is the highest-leverage moment. The earlier the interrupt, the less energy it takes to return to a regulated state. You caught this early.";sr='Polyvagal Theory — window of tolerance';tr='"You noticed. That\'s the whole game. Influential, significant, wealthy — those are still yours."';ot='One breath. One truth.';ob="You don't need a full intervention. You need one anchor and one next step.";oa='→ Say your three anchors out loud. Then open your one thing.'}
-document.getElementById('n-tag').innerHTML=tag;
-document.getElementById('n-title').textContent=ti;
-document.getElementById('n-body').textContent=bo;
-document.getElementById('n-mech').textContent=me;
-document.getElementById('n-src').textContent=sr;
-document.getElementById('n-truth').textContent=tr;
-document.getElementById('n-ott').textContent=ot;
-document.getElementById('n-otb').textContent=ob;
-document.getElementById('n-ota').textContent=oa}
-function goDone(){var dm={grounded:['State protected.','You checked in while regulated. That builds self-awareness over time.'],scattered:['Load reduced.','Working memory has room again. Go do your one thing.'],anxious:['Pattern interrupted at step one.','The comparison data was not evidence. Go build.'],spiral:['You named it. The story has less power now.','Naming it is the first step out. The abandonment story quiets when your nervous system feels safe again.']};var d=dm[selPulse]||['Pattern interrupted.','You showed up. That matters.'];document.getElementById('nd-title').textContent=d[0];document.getElementById('nd-sub').textContent=d[1];showNS('ns-done')}
-function resetN(){selPulse=null;selSigs=[];document.querySelectorAll('.pc').forEach(function(c){c.classList.remove('selected')});document.querySelectorAll('.si').forEach(function(s){s.classList.remove('selected')});document.getElementById('p-cont').disabled=true;showNS('ns-pulse')}
-function addEv(){var inp=document.getElementById('new-ev'),v=inp.value.trim();if(!v)return;var li=document.createElement('li');li.className='ev-item';li.innerHTML='<span class="ev-chk">✓</span>'+v;document.getElementById('ev-list').appendChild(li);inp.value=''}
-document.getElementById('new-ev').addEventListener('keydown',function(e){if(e.key==='Enter')addEv()});
+  var hC=selSigs.indexOf('comparison')>-1,
+      hA=selSigs.indexOf('abandonment')>-1,
+      hB=selSigs.indexOf('body')>-1,
+      hCr=selSigs.indexOf('crying')>-1,
+      hAv=selSigs.indexOf('avoidance')>-1;
+  var tag,ti,bo,me,tr,ot,ob,oa;
+
+  if(selPulse==='grounded'){
+    tag='<div class="n-tag t-grd">Regulated</div>';
+    ti='You are in a ventral vagal state.';
+    bo='This is where your best work happens. Where you can build, connect, create, and think clearly. Porges calls this the social engagement system at full capacity.';
+    me='When the ventral vagal circuit is active, the prefrontal cortex has full access. Working memory is available. You can hold complexity without being overwhelmed.';
+    tr='You checked in while regulated. That builds the self-awareness that makes Franklyn smarter over time.';
+    ot='Protect this state';ob="You're regulated right now. The one thing that protects this is not opening comparison tabs.";oa='→ Close everything except your one thing. Work for 25 minutes.'
+  }else if(selPulse==='spiral'||hCr||hA){
+    tag='<div class="n-tag t-abd">Abandonment story active</div>';
+    ti='The spiral has reached the old wound.';
+    bo="This isn't about the business anymore. Your nervous system has moved from \"I might fail\" to \"the people who should love me don't.\" That's an older story triggered by a newer pain. Both feel real. Neither is the truth of this moment.";
+    me='When the sympathetic nervous system is overwhelmed, the dorsal vagal circuit activates. It creates a story of isolation and abandonment. This is your nervous system trying to make sense of threat using the oldest narrative it has. The story is not a lie. It is old data applied to a new situation.';
+    tr='"Your fiancé is building AI with you. You are not alone. The abandonment story fires when you\'re depleted, not because it\'s true. Once you get going, you are going to change this industry."';
+    ot='Body first. Everything else after.';ob="You cannot think your way out of a dorsal vagal state. The story keeps running until your nervous system gets a safety signal. That signal comes through the body first.";oa='→ One hand on your chest. Eyes closed. Four breaths. Nothing else for 90 seconds.'
+  }else if(selPulse==='anxious'||hC){
+    tag='<div class="n-tag t-cmp">Comparison trigger active</div>';
+    ti="You're looking at the wrong data.";
+    bo="Your nervous system read someone else's curated highlight reel and filed it as evidence that you are behind. It isn't evidence of anything except that other people post their wins. This is step one of your spiral. It does not have to go further.";
+    me='Neuroception reads \"others are ahead\" as survival-level danger because your path to influential, significant, wealthy feels threatened. The anxiety isn\'t irrational. It\'s a nervous system doing its job with incomplete information.';
+    tr='"You got into BTG. You completed MIT xPRO. You were recognized as an influential woman. You are building something that does not exist yet. The people on LinkedIn are not ahead of you. They are on different paths."';
+    ot='Close the tab. Right now.';ob='Not after one more scroll. Now. The comparison data is extraneous cognitive load and it is actively crowding out the working memory you need to build.';oa='→ Close the comparison tab. Open BTG. Read one project brief. That\'s it.'
+  }else if(selPulse==='scattered'||hAv){
+    tag='<div class="n-tag t-sct">Scattered — catching it early</div>';
+    ti='Your working memory is full.';
+    bo="You're not failing to focus. Your cognitive capacity is genuinely maxed out. Too many tabs, too many open loops, too many things competing for the same limited working memory. Catching it here is catching it early.";
+    me="Sweller's cognitive load theory is precise: when intrinsic load combines with extraneous load, working memory capacity is exceeded. The result isn't weakness. It's a full system.";
+    tr='"Scattered isn\'t broken. Scattered is a full nervous system asking for a smaller input. One thing. One tab. One decision. Everything else can wait."';
+    ot='Reduce the load right now.';ob="Close every tab that isn't your one thing. Write a list so your brain stops holding them. Then start.";oa='→ Close all tabs. Write your one thing at the top of a blank document. Start there.'
+  }else if(hB){
+    tag='<div class="n-tag t-dep">Physical depletion</div>';
+    ti="You can't build from an empty tank.";
+    bo="The anxiety and scattered focus are physiological right now, not just psychological. A depleted body runs a depleted nervous system. Your prefrontal cortex is the first to go offline when blood sugar drops.";
+    me="Physical state is the foundation of cognitive performance, not a separate concern. Nutrition, sleep, and movement are the substrate everything else runs on.";
+    tr='"Eating is not giving up. Eating is building. The 30g protein meal this morning was the right call. Do it again."';
+    ot='Feed the builder first.';ob="Before any screen, eat something real with protein. This is infrastructure, not a reward.";oa='→ Step away from the screen. Eat. Return in 20 minutes.'
+  }else{
+    tag='<div class="n-tag t-sct">You checked in</div>';
+    ti='Something is happening.';
+    bo="You checked in. That means part of you knows something is off. That self-awareness is the most important tool you have.";
+    me="Checking in before the spiral fully activates is the highest-leverage moment. The earlier the interrupt, the less energy it takes to return to a regulated state.";
+    tr='"You noticed. That\'s the whole game. Influential, significant, wealthy — those are still yours."';
+    ot='One breath. One truth.';ob="You don't need a full intervention. You need one anchor and one next step.";oa='→ Say your three anchors out loud. Then open your one thing.'
+  }
+
+  document.getElementById('n-tag').innerHTML=tag;
+  document.getElementById('n-title').textContent=ti;
+  document.getElementById('n-body').textContent=bo;
+  document.getElementById('n-mech').textContent=me;
+  document.getElementById('n-truth').textContent=tr;
+  document.getElementById('n-ott').textContent=ot;
+  document.getElementById('n-otb').textContent=ob;
+  document.getElementById('n-ota').textContent=oa;
+}
+
+function goDone(){
+  var dm={
+    grounded:['State protected.','You checked in while regulated. That builds self-awareness over time.'],
+    scattered:['Load reduced.','Working memory has room again. Go do your one thing.'],
+    anxious:['Pattern interrupted at step one.','The comparison data was not evidence. Go build.'],
+    spiral:['You named it. The story has less power now.','The abandonment story quiets when your nervous system feels safe again. You showed up.']
+  };
+  var d=dm[selPulse]||['Pattern interrupted.','You showed up. That matters.'];
+  document.getElementById('nd-title').textContent=d[0];
+  document.getElementById('nd-sub').textContent=d[1];
+  showNS('ns-done');
+}
+function resetN(){
+  selPulse=null; selSigs=[];
+  document.querySelectorAll('.pc').forEach(c=>c.classList.remove('selected'));
+  document.querySelectorAll('.si').forEach(s=>s.classList.remove('selected'));
+  document.getElementById('p-cont').disabled=true;
+  showNS('ns-pulse');
+}
+
+// ── MEANING MIRROR ──────────────────────────────────────
+function addEv(){
+  var inp=document.getElementById('new-ev'), v=inp.value.trim();
+  if(!v)return;
+  var li=document.createElement('li');
+  li.className='ev-item';
+  li.innerHTML='<span class="ev-chk">✓</span>'+v;
+  document.getElementById('ev-list').appendChild(li);
+  inp.value='';
+}
+document.getElementById('new-ev').addEventListener('keydown',function(e){
+  if(e.key==='Enter') addEv();
+});
 </script>
 </body>
 </html>
