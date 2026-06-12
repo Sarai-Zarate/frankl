@@ -105,7 +105,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
   70%{box-shadow:0 0 0 12px rgba(34,103,58,0)}
   100%{box-shadow:0 0 0 0 rgba(34,103,58,0)}
 }
-.r-node.pulse-loop{animation:nodePulse 1.8s ease-out infinite;background:#22673a;color:#fff;border-color:#22673a}
+.r-node.pulse-loop,.rstep.active .r-node.pulse-loop{animation:nodePulse 1.8s ease-out infinite;background:#22673a;color:#fff;border-color:#22673a}
 
 .tab-panel{display:none}
 .tab-panel.active{display:block;animation:fadeUp 0.3s ease}
@@ -204,8 +204,23 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .meaning-prompt{background:var(--cream);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem}
 .mp-tag{font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink4);margin-bottom:3px;display:block}
 .mp-q{font-size:13px;color:var(--ink2);font-weight:400;margin-bottom:8px;line-height:1.5}
-.mp-input{width:100%;font-size:13px;font-family:var(--fb);padding:8px 10px;border-radius:var(--rs);border:1px solid var(--borderS);background:var(--cream-d);color:var(--ink);resize:none;line-height:1.5}
+.mp-input{width:100%;font-size:13px;font-family:var(--fb);padding:8px 10px;border-radius:var(--rs);border:1px solid var(--borderS);background:var(--cream-d);color:var(--ink);resize:none;line-height:1.5;transition:opacity 0.2s}
 .mp-input:focus{outline:none;border-color:var(--charcoal)}
+.mp-input[readonly]{background:transparent;border-color:transparent;padding-left:0;opacity:1;color:var(--ink2)}
+.mp-footer{display:flex;align-items:center;gap:10px;margin-top:8px}
+.mp-claim-btn{font-size:12px;font-weight:600;font-family:var(--fb);padding:6px 16px;border-radius:20px;border:none;background:var(--charcoal);color:var(--cream);cursor:pointer;transition:background var(--tr)}
+.mp-claim-btn:hover{background:var(--charcoal-l)}
+.mp-edit-btn{font-size:11px;font-family:var(--fb);color:var(--ink4);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px}
+.mp-edit-btn:hover{color:var(--ink)}
+.meaning-prompt.claimed-creative{border-left:4px solid var(--amber)}
+.meaning-prompt.claimed-experiential{border-left:4px solid var(--teal-d)}
+.meaning-prompt.claimed-attitudinal{border-left:4px solid var(--burgundy)}
+.ms-footer{display:flex;align-items:center;gap:10px;margin-top:10px}
+.ms-claim-btn{font-size:12px;font-weight:600;font-family:var(--fb);padding:6px 16px;border-radius:20px;border:none;background:var(--charcoal);color:var(--cream);cursor:pointer;transition:background var(--tr)}
+.ms-claim-btn:hover{background:var(--charcoal-l)}
+.ms-edit-btn{font-size:11px;font-family:var(--fb);color:var(--ink4);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px}
+.ms-edit-btn:hover{color:var(--ink)}
+.meaning-sentence.claimed{border-color:var(--forest);background:var(--forest-l)}
 .habit-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
 .habit-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:var(--r);background:var(--cream);border:1px solid var(--border);transition:all 0.2s ease}
 .habit-item.done-today{background:var(--forest-l);border-color:var(--forest)}
@@ -688,9 +703,13 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     </div>
 
     <div class="mirror-section">
-      <div class="meaning-sentence">
+      <div class="meaning-sentence" id="ms-card">
         <span class="ms-label">What I am building toward</span>
-        <textarea class="ms-input" id="ms-sentence" rows="2" placeholder="Finish this sentence — the reason this matters is…" onblur="saveMeaningField('sentence',this.value)"></textarea>
+        <textarea class="ms-input" id="ms-sentence" rows="2" placeholder="Finish this sentence — the reason this matters is…"></textarea>
+        <div class="ms-footer">
+          <button class="ms-claim-btn" id="ms-claim" onclick="claimMeaning('sentence')">This is my direction →</button>
+          <button class="ms-edit-btn" id="ms-edit" style="display:none" onclick="editMeaning('sentence')">Edit</button>
+        </div>
       </div>
     </div>
 
@@ -698,20 +717,32 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       <span class="mirror-label">Today's meaning</span>
       <p style="font-size:13px;color:var(--ink4);font-weight:300;margin-bottom:1rem;line-height:1.6">Three sources of meaning — Viktor Frankl. Fill in what is true today. Resets each morning.</p>
       <div class="meaning-prompts">
-        <div class="meaning-prompt">
+        <div class="meaning-prompt" id="mp-card-creative">
           <span class="mp-tag">Creative values</span>
           <div class="mp-q">What did you create, give, or contribute today?</div>
-          <textarea class="mp-input" id="mp-creative" rows="2" placeholder="Even something small counts…" onblur="saveMeaningField('creative',this.value)"></textarea>
+          <textarea class="mp-input" id="mp-creative" rows="2" placeholder="Even something small counts…"></textarea>
+          <div class="mp-footer">
+            <button class="mp-claim-btn" id="mp-claim-creative" onclick="claimMeaning('creative')">This is true →</button>
+            <button class="mp-edit-btn" id="mp-edit-creative" style="display:none" onclick="editMeaning('creative')">Edit</button>
+          </div>
         </div>
-        <div class="meaning-prompt">
+        <div class="meaning-prompt" id="mp-card-experiential">
           <span class="mp-tag">Experiential values</span>
           <div class="mp-q">What did you receive or experience that mattered?</div>
-          <textarea class="mp-input" id="mp-experiential" rows="2" placeholder="A conversation, something you noticed, a moment of connection…" onblur="saveMeaningField('experiential',this.value)"></textarea>
+          <textarea class="mp-input" id="mp-experiential" rows="2" placeholder="A conversation, something you noticed, a moment of connection…"></textarea>
+          <div class="mp-footer">
+            <button class="mp-claim-btn" id="mp-claim-experiential" onclick="claimMeaning('experiential')">This is true →</button>
+            <button class="mp-edit-btn" id="mp-edit-experiential" style="display:none" onclick="editMeaning('experiential')">Edit</button>
+          </div>
         </div>
-        <div class="meaning-prompt">
+        <div class="meaning-prompt" id="mp-card-attitudinal">
           <span class="mp-tag">Attitudinal values</span>
           <div class="mp-q">What hard thing did you face and hold today?</div>
-          <textarea class="mp-input" id="mp-attitudinal" rows="2" placeholder="Frankl called this the highest source of meaning — the attitude you take toward unavoidable suffering…" onblur="saveMeaningField('attitudinal',this.value)"></textarea>
+          <textarea class="mp-input" id="mp-attitudinal" rows="2" placeholder="Frankl called this the highest source of meaning — the attitude you take toward unavoidable suffering…"></textarea>
+          <div class="mp-footer">
+            <button class="mp-claim-btn" id="mp-claim-attitudinal" onclick="claimMeaning('attitudinal')">This is true →</button>
+            <button class="mp-edit-btn" id="mp-edit-attitudinal" style="display:none" onclick="editMeaning('attitudinal')">Edit</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1276,16 +1307,94 @@ function getToday(){return new Date().toISOString().slice(0,10);}
 function loadMeaningFields(){
   var m=DB.get('meaning')||{};
   var today=getToday();
-  if(m.date!==today){m.creative='';m.experiential='';m.attitudinal='';m.date=today;DB.set('meaning',m);}
-  var c=document.getElementById('mp-creative'),e=document.getElementById('mp-experiential'),a=document.getElementById('mp-attitudinal'),s=document.getElementById('ms-sentence');
-  if(c)c.value=m.creative||'';
-  if(e)e.value=m.experiential||'';
-  if(a)a.value=m.attitudinal||'';
-  if(s)s.value=m.sentence||'';
+  if(m.date!==today){
+    m.creative='';m.experiential='';m.attitudinal='';
+    m.creative_claimed=false;m.experiential_claimed=false;m.attitudinal_claimed=false;
+    m.date=today;DB.set('meaning',m);
+  }
+  ['creative','experiential','attitudinal'].forEach(function(key){
+    var inp=document.getElementById('mp-'+key);
+    if(!inp)return;
+    inp.value=m[key]||'';
+    if(m[key+'_claimed'])applyClaimedState(key,true);
+  });
+  var s=document.getElementById('ms-sentence');
+  if(s){
+    var sm=DB.get('meaning_sentence')||{};
+    s.value=sm.text||'';
+    if(sm.claimed)applyClaimedState('sentence',true);
+  }
 }
 function saveMeaningField(key,val){
-  var m=DB.get('meaning')||{};
-  m.date=getToday();m[key]=val;DB.set('meaning',m);
+  if(key==='sentence'){
+    var sm=DB.get('meaning_sentence')||{};
+    sm.text=val;DB.set('meaning_sentence',sm);
+  } else {
+    var m=DB.get('meaning')||{};
+    m.date=getToday();m[key]=val;DB.set('meaning',m);
+  }
+}
+function applyClaimedState(key,claimed){
+  if(key==='sentence'){
+    var card=document.getElementById('ms-card');
+    var inp=document.getElementById('ms-sentence');
+    var claimBtn=document.getElementById('ms-claim');
+    var editBtn=document.getElementById('ms-edit');
+    if(!card)return;
+    if(claimed){
+      card.classList.add('claimed');
+      if(inp){inp.readOnly=true;}
+      if(claimBtn)claimBtn.style.display='none';
+      if(editBtn)editBtn.style.display='inline-block';
+    } else {
+      card.classList.remove('claimed');
+      if(inp){inp.readOnly=false;}
+      if(claimBtn)claimBtn.style.display='inline-block';
+      if(editBtn)editBtn.style.display='none';
+    }
+  } else {
+    var card=document.getElementById('mp-card-'+key);
+    var inp=document.getElementById('mp-'+key);
+    var claimBtn=document.getElementById('mp-claim-'+key);
+    var editBtn=document.getElementById('mp-edit-'+key);
+    if(!card)return;
+    if(claimed){
+      card.classList.add('claimed-'+key);
+      if(inp){inp.readOnly=true;}
+      if(claimBtn)claimBtn.style.display='none';
+      if(editBtn)editBtn.style.display='inline-block';
+    } else {
+      card.classList.remove('claimed-'+key);
+      if(inp){inp.readOnly=false;}
+      if(claimBtn)claimBtn.style.display='inline-block';
+      if(editBtn)editBtn.style.display='none';
+    }
+  }
+}
+function claimMeaning(key){
+  var inp=document.getElementById(key==='sentence'?'ms-sentence':'mp-'+key);
+  if(!inp||!inp.value.trim())return;
+  saveMeaningField(key,inp.value.trim());
+  if(key==='sentence'){
+    var sm=DB.get('meaning_sentence')||{};
+    sm.claimed=true;DB.set('meaning_sentence',sm);
+  } else {
+    var m=DB.get('meaning')||{};
+    m[key+'_claimed']=true;DB.set('meaning',m);
+  }
+  applyClaimedState(key,true);
+}
+function editMeaning(key){
+  if(key==='sentence'){
+    var sm=DB.get('meaning_sentence')||{};
+    sm.claimed=false;DB.set('meaning_sentence',sm);
+  } else {
+    var m=DB.get('meaning')||{};
+    m[key+'_claimed']=false;DB.set('meaning',m);
+  }
+  applyClaimedState(key,false);
+  var inp=document.getElementById(key==='sentence'?'ms-sentence':'mp-'+key);
+  if(inp){inp.focus();}
 }
 
 // === HABITS ===
