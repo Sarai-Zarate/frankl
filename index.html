@@ -247,6 +247,9 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .chat-send{font-size:13px;font-weight:600;font-family:var(--fb);padding:10px 18px;border-radius:24px;border:none;background:var(--charcoal);color:var(--cream);cursor:pointer;white-space:nowrap;transition:background var(--tr);align-self:flex-end}
 .chat-send:hover{background:var(--charcoal-l)}
 .chat-send:disabled{opacity:0.3;cursor:default}
+.chat-mic{width:40px;height:40px;border-radius:50%;border:1px solid var(--borderS);background:var(--cream);color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;align-self:flex-end;transition:all var(--tr)}
+.chat-mic:hover{background:var(--cream-d);border-color:var(--charcoal)}
+.chat-mic.listening{background:var(--burgundy);border-color:var(--burgundy);color:var(--cream);animation:nodePulse 1.2s ease-out infinite}
 
 #r-done{display:none;text-align:center;padding:2rem 1rem}
 #r-done .done-word{font-family:var(--fd);font-size:clamp(28px,5vw,40px);font-weight:700;color:var(--ink);margin-bottom:8px}
@@ -338,12 +341,21 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     </div>
 
     <div class="ob-step" id="ob6">
+      <div class="ob-eyebrow">Your spiral signature</div>
+      <div class="ob-q">When it gets loud, what do you reach for?</div>
+      <div class="ob-hint">When the feeling becomes too much, your nervous system moves toward something that offers relief — even temporarily. There is no judgment here. Franklyn needs to know this so it can recognize it before it becomes the whole day.</div>
+      <div class="ob-examples">Examples: <span>A drink or two · A hard workout · Cleaning the house · Scrolling for hours · Isolating and going quiet · Eating or not eating · Picking a fight · Sleeping it off</span></div>
+      <textarea class="ob-input ob-ta" id="ob-numb" rows="2" placeholder="I reach for…"></textarea>
+      <button class="ob-btn" id="ob6-btn" disabled onclick="obNext(6)">Continue →</button>
+    </div>
+
+    <div class="ob-step" id="ob7">
       <div class="ob-eyebrow">Your evidence</div>
       <div class="ob-q">What is one true thing about you right now?</div>
       <div class="ob-hint">Not a goal. Not a hope. Something that already happened. Real evidence you are moving forward.</div>
       <div class="ob-examples">Example: <span>I signed up for something that scared me · I showed up today · I built something real this week</span></div>
       <textarea class="ob-input ob-ta" id="ob-ev" rows="2" placeholder="I…"></textarea>
-      <button class="ob-btn" id="ob6-btn" disabled onclick="obFinish()">Let's begin →</button>
+      <button class="ob-btn" id="ob7-btn" disabled onclick="obFinish()">Let's begin →</button>
     </div>
   </div>
 </div>
@@ -553,6 +565,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     <div class="chat-wrap">
       <div class="chat-msgs" id="chat-msgs"></div>
       <div class="chat-input-row">
+        <button class="chat-mic" id="chat-mic" onclick="chatMicToggle()" title="Speak to Franklyn">🎙</button>
         <textarea class="chat-input" id="chat-input" rows="1" placeholder="What's going on right now…"></textarea>
         <button class="chat-send" id="chat-send" onclick="chatSend()">Send</button>
       </div>
@@ -569,7 +582,7 @@ const DB={
 };
 
 // === ONBOARDING ===
-function obProgress(n){document.getElementById('ob-bar').style.width=((n/6)*100)+'%';}
+function obProgress(n){document.getElementById('ob-bar').style.width=((n/7)*100)+'%';}
 function obNext(n){
   document.getElementById('ob'+n).classList.remove('active');
   document.getElementById('ob'+(n+1)).classList.add('active');
@@ -591,6 +604,7 @@ function obFinish(){
     ],
     spiralTrigger:document.getElementById('ob-trig').value.trim(),
     spiralFeeling:document.getElementById('ob-feel').value.trim(),
+    spiralNumb:document.getElementById('ob-numb').value.trim(),
     signals:rawSignals,
     onboarded:true,
     createdAt:Date.now()
@@ -618,7 +632,8 @@ obWire(['ob-a1','ob-a2','ob-a3'],'ob2-btn');
 obWire(['ob-trig'],'ob3-btn');
 obWire(['ob-feel'],'ob4-btn');
 obWire(['ob-s1','ob-s2'],'ob5-btn');
-obWire(['ob-ev'],'ob6-btn');
+obWire(['ob-numb'],'ob6-btn');
+obWire(['ob-ev'],'ob7-btn');
 
 // === PATTERN INTERRUPT STRIP ===
 function updateInterruptStrip(user,evidence){
@@ -692,10 +707,12 @@ function initApp(user){
   var doneSub=document.querySelector('#r-done .done-sub');
   if(doneSub)doneSub.innerHTML=a1+'. '+a2+'. '+a3+'.<br>Now go do your one thing.';
 
-  // Spiral signature
+  // Spiral signature — all four steps from user's own words
   var sigDescs=document.querySelectorAll('.sig-desc');
   if(user.spiralTrigger&&sigDescs[0])sigDescs[0].textContent=user.spiralTrigger;
   if(user.spiralFeeling&&sigDescs[1])sigDescs[1].textContent=user.spiralFeeling;
+  if(sigDescs[2])sigDescs[2].textContent='Old wound, new trigger. The dorsal vagal circuit engages. The story feels true because it is ancient and the body remembers it.';
+  if(user.spiralNumb&&sigDescs[3])sigDescs[3].textContent=user.spiralNumb;
 
   // Pattern interrupt strip
   var evidence=DB.get('evidence')||[];
@@ -974,6 +991,7 @@ function chatAppend(role,text){
   wrap.appendChild(bubble);
   msgs.appendChild(wrap);
   msgs.scrollTop=msgs.scrollHeight;
+  if(role==='franklyn')franklySpeak(text);
 }
 
 function chatTyping(){
@@ -1024,6 +1042,80 @@ function chatSend(){
     document.getElementById('chat-send').disabled=false;
   });
 }
+
+// === VOICE ===
+var recognition=null;
+var synthesis=window.speechSynthesis;
+var franklyVoice=null;
+
+function voiceInit(){
+  var SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SpeechRecognition){return;}
+  recognition=new SpeechRecognition();
+  recognition.continuous=false;
+  recognition.interimResults=true;
+  recognition.lang='en-US';
+  recognition.onresult=function(e){
+    var transcript='';
+    for(var i=e.resultIndex;i<e.results.length;i++){
+      transcript+=e.results[i][0].transcript;
+    }
+    document.getElementById('chat-input').value=transcript;
+    document.getElementById('chat-input').style.height='auto';
+    document.getElementById('chat-input').style.height=Math.min(document.getElementById('chat-input').scrollHeight,100)+'px';
+  };
+  recognition.onend=function(){
+    document.getElementById('chat-mic').classList.remove('listening');
+    document.getElementById('chat-mic').textContent='🎙';
+  };
+  recognition.onerror=function(){
+    document.getElementById('chat-mic').classList.remove('listening');
+    document.getElementById('chat-mic').textContent='🎙';
+  };
+  // Pick best available voice
+  function pickVoice(){
+    var voices=synthesis.getVoices();
+    var preferred=['Samantha','Karen','Moira','Google UK English Female','Microsoft Aria'];
+    for(var i=0;i<preferred.length;i++){
+      var match=voices.find(function(v){return v.name.indexOf(preferred[i])>-1;});
+      if(match){franklyVoice=match;return;}
+    }
+    franklyVoice=voices.find(function(v){return v.lang==='en-US';})||voices[0]||null;
+  }
+  if(synthesis.getVoices().length){pickVoice();}
+  synthesis.onvoiceschanged=pickVoice;
+}
+
+function chatMicToggle(){
+  if(!recognition){
+    alert('Voice is not supported in this browser. Try Chrome.');
+    return;
+  }
+  var mic=document.getElementById('chat-mic');
+  if(mic.classList.contains('listening')){
+    recognition.stop();
+    mic.classList.remove('listening');
+    mic.textContent='🎙';
+  } else {
+    document.getElementById('chat-input').value='';
+    recognition.start();
+    mic.classList.add('listening');
+    mic.textContent='⏹';
+  }
+}
+
+function franklySpeak(text){
+  if(!synthesis)return;
+  synthesis.cancel();
+  var utt=new SpeechSynthesisUtterance(text);
+  utt.rate=0.92;
+  utt.pitch=0.95;
+  utt.volume=1;
+  if(franklyVoice)utt.voice=franklyVoice;
+  synthesis.speak(utt);
+}
+
+voiceInit();
 
 document.getElementById('chat-input').addEventListener('input',function(){
   this.style.height='auto';
