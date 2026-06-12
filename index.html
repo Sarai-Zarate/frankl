@@ -702,9 +702,10 @@ function obNext(n){
   obProgress(n+1);
 }
 function obFinish(){
+  var btn=document.getElementById('ob6-btn');
+  btn.disabled=true;btn.textContent='Setting up your Franklyn…';
   var numbText=document.getElementById('ob-numb').value.trim();
-  var behaviors=parseBehaviors(numbText);
-  var user={
+  var userData={
     name:document.getElementById('ob-name').value.trim(),
     anchors:[
       document.getElementById('ob-a1').value.trim(),
@@ -714,17 +715,23 @@ function obFinish(){
     spiralTrigger:document.getElementById('ob-trig').value.trim(),
     spiralFeeling:document.getElementById('ob-feel').value.trim(),
     spiralNumb:numbText,
-    signals:behaviors,
     onboarded:true,
     createdAt:Date.now()
   };
-  DB.set('user',user);
   var evText=document.getElementById('ob-ev').value.trim();
-  DB.set('evidence',evText?[{text:evText,createdAt:Date.now()}]:[]);
-  DB.set('checkins',[]);
-  document.getElementById('onboarding').style.display='none';
-  initApp(user);
-  window.scrollTo({top:0,behavior:'instant'});
+  function finish(signals){
+    userData.signals=signals;
+    DB.set('user',userData);
+    DB.set('evidence',evText?[{text:evText,createdAt:Date.now()}]:[]);
+    DB.set('checkins',[]);
+    document.getElementById('onboarding').style.display='none';
+    initApp(userData);
+    window.scrollTo({top:0,behavior:'instant'});
+  }
+  fetch('/api/signals',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:numbText})})
+    .then(function(r){return r.json();})
+    .then(function(data){finish(data.signals&&data.signals.length?data.signals:parseBehaviors(numbText));})
+    .catch(function(){finish(parseBehaviors(numbText));});
 }
 function obWire(ids,btnId){
   var btn=document.getElementById(btnId);
@@ -788,13 +795,21 @@ function addSig(){
   var inp=document.getElementById('new-sig');
   var v=inp.value.trim();
   if(!v)return;
-  var user=DB.get('user')||{};
-  var signals=user.signals||[];
-  signals.push(v);
-  user.signals=signals;
-  DB.set('user',user);
-  renderSignals(signals);
-  inp.value='';
+  var btn=document.querySelector('.add-row .add-btn');
+  inp.disabled=true;btn.disabled=true;btn.textContent='…';
+  function commitSig(text){
+    var user=DB.get('user')||{};
+    var signals=user.signals||[];
+    signals.push(text);
+    user.signals=signals;
+    DB.set('user',user);
+    renderSignals(signals);
+    inp.value='';inp.disabled=false;btn.disabled=false;btn.textContent='+ Add';
+  }
+  fetch('/api/signals',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:v})})
+    .then(function(r){return r.json();})
+    .then(function(data){commitSig(data.signals&&data.signals[0]?data.signals[0]:v);})
+    .catch(function(){commitSig(v);});
 }
 
 // === RENDER SIGNALS ===
