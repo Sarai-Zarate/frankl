@@ -257,6 +257,11 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .chat-agree-help{font-size:13px;font-family:var(--fb);padding:9px 20px;border-radius:24px;border:1px solid var(--border);background:transparent;color:var(--ink3);cursor:pointer;text-decoration:none;display:inline-block}
 .chat-agree-help:hover{border-color:var(--ink)}
 .chat-crisis{background:#fdf5f0;border:1px solid #e8c4b0;border-radius:var(--r);padding:1rem 1.25rem;font-size:13px;color:var(--ink2);line-height:1.7;font-weight:300}
+.chat-ground-btn{width:100%;padding:10px;font-size:13px;font-family:var(--fb);font-weight:500;border:1px solid var(--border);border-radius:24px;background:transparent;color:var(--ink3);cursor:pointer;margin-top:8px;transition:all var(--tr)}
+.chat-ground-btn:hover{background:var(--cream-d);border-color:var(--charcoal);color:var(--ink)}
+.chat-context-opts{display:flex;flex-direction:column;gap:8px;padding:4px 0}
+.chat-context-opt{text-align:left;padding:11px 16px;border-radius:12px;border:1px solid var(--borderS);background:var(--cream);color:var(--ink);font-size:13px;font-family:var(--fb);cursor:pointer;transition:all 0.2s ease;font-weight:300;line-height:1.4}
+.chat-context-opt:hover{background:var(--cream-d);border-color:var(--charcoal);transform:translateX(3px)}
 
 .chat-wrap{display:flex;flex-direction:column;height:520px;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--cream)}
 .chat-msgs{flex:1;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:14px}
@@ -345,9 +350,9 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 
     <div class="ob-step" id="ob3">
       <button class="ob-back" onclick="obBack(3)">← Back</button>
-      <div class="ob-eyebrow">Your spiral signature</div>
+      <div class="ob-eyebrow">Your spiral — part one</div>
       <div class="ob-q">What most reliably pulls you out of yourself?</div>
-      <div class="ob-hint">The moment things start to shift. A situation, a thought, something you see online. Describe it in your own words.</div>
+      <div class="ob-hint">The moment things start to shift. A situation, a thought, something you see. Describe it in your own words.</div>
       <div class="ob-examples">Example: <span>Seeing someone else's success and immediately comparing where I am to where they are</span></div>
       <textarea class="ob-input ob-ta" id="ob-trig" rows="3" placeholder="When I…"></textarea>
       <button class="ob-btn" id="ob3-btn" disabled onclick="obNext(3)">Continue →</button>
@@ -355,45 +360,32 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 
     <div class="ob-step" id="ob4">
       <button class="ob-back" onclick="obBack(4)">← Back</button>
-      <div class="ob-eyebrow">Your spiral signature</div>
-      <div class="ob-q">When it starts, what do you notice first?</div>
-      <div class="ob-hint">In your body, your thoughts, your behavior. There is no wrong answer here.</div>
-      <div class="ob-examples">Example: <span>My chest tightens, I start feeling like I am not good enough, and I find something else to do instead of the thing that matters</span></div>
-      <textarea class="ob-input ob-ta" id="ob-feel" rows="3" placeholder="I notice…"></textarea>
+      <div class="ob-eyebrow">Your spiral — part two</div>
+      <div class="ob-q">When it starts, where do you feel it in your body?</div>
+      <div class="ob-hint">Before the thoughts get loud, the body already knows. What does it feel like physically — not emotionally, physically.</div>
+      <div class="ob-examples">Examples: <span>My chest tightens · My heart races · I feel heavy · I go numb · My stomach drops · I feel restless · I can't breathe properly · My throat closes</span></div>
+      <textarea class="ob-input ob-ta" id="ob-feel" rows="3" placeholder="I feel it in…"></textarea>
       <button class="ob-btn" id="ob4-btn" disabled onclick="obNext(4)">Continue →</button>
     </div>
 
     <div class="ob-step" id="ob5">
       <button class="ob-back" onclick="obBack(5)">← Back</button>
-      <div class="ob-eyebrow">Your check-in signals</div>
-      <div class="ob-q">When you are starting to spiral, what do you notice? Name up to four things in your own words.</div>
-      <div class="ob-hint">These will become your personal check-in options. The first two are required. Use the language you actually use with yourself.</div>
-      <div class="ob-examples">Examples: <span>My chest gets tight · I start scrolling instead of working · I feel behind everyone · I want to cancel plans · I feel like crying · I stop eating · I go quiet</span></div>
-      <input class="ob-input" id="ob-s1" type="text" placeholder="First signal (required)" autocomplete="off">
-      <input class="ob-input" id="ob-s2" type="text" placeholder="Second signal (required)" autocomplete="off">
-      <input class="ob-input" id="ob-s3" type="text" placeholder="Third signal (optional)" autocomplete="off">
-      <input class="ob-input" id="ob-s4" type="text" placeholder="Fourth signal (optional)" autocomplete="off">
+      <div class="ob-eyebrow">Your spiral — part three</div>
+      <div class="ob-q">When it gets loud, what do you reach for?</div>
+      <div class="ob-hint">When the feeling becomes too much, the nervous system moves toward something that offers relief — even temporarily. These become your personal check-in options so Franklyn can recognize the pattern early. There is no judgment here.</div>
+      <div class="ob-examples">Examples: <span>A drink · Cleaning · Scrolling · Procrastinating · Isolating · A hard workout · Eating or not eating · Going quiet · Picking a fight</span></div>
+      <textarea class="ob-input ob-ta" id="ob-numb" rows="3" placeholder="I reach for…"></textarea>
       <button class="ob-btn" id="ob5-btn" disabled onclick="obNext(5)">Continue →</button>
     </div>
 
     <div class="ob-step" id="ob6">
       <button class="ob-back" onclick="obBack(6)">← Back</button>
-      <div class="ob-eyebrow">Your spiral signature</div>
-      <div class="ob-q">When it gets loud, what do you reach for?</div>
-      <div class="ob-hint">When the feeling becomes too much, your nervous system moves toward something that offers relief — even temporarily. There is no judgment here. Franklyn needs to know this so it can recognize it before it becomes the whole day.</div>
-      <div class="ob-examples">Examples: <span>A drink or two · A hard workout · Cleaning the house · Scrolling for hours · Isolating and going quiet · Eating or not eating · Picking a fight · Sleeping it off</span></div>
-      <textarea class="ob-input ob-ta" id="ob-numb" rows="2" placeholder="I reach for…"></textarea>
-      <button class="ob-btn" id="ob6-btn" disabled onclick="obNext(6)">Continue →</button>
-    </div>
-
-    <div class="ob-step" id="ob7">
-      <button class="ob-back" onclick="obBack(7)">← Back</button>
       <div class="ob-eyebrow">Your evidence</div>
       <div class="ob-q">What is one true thing about you right now?</div>
       <div class="ob-hint">Not a goal. Not a hope. Something that already happened. Real evidence you are moving forward.</div>
       <div class="ob-examples">Example: <span>I signed up for something that scared me · I showed up today · I built something real this week</span></div>
       <textarea class="ob-input ob-ta" id="ob-ev" rows="2" placeholder="I…"></textarea>
-      <button class="ob-btn" id="ob7-btn" disabled onclick="obFinish()">Let's begin →</button>
+      <button class="ob-btn" id="ob6-btn" disabled onclick="obFinish()">Let's begin →</button>
     </div>
   </div>
 </div>
@@ -661,6 +653,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
         <textarea class="chat-input" id="chat-input" rows="1" placeholder="What's going on right now…"></textarea>
         <button class="chat-send" id="chat-send" onclick="chatSend()">Send</button>
       </div>
+      <button class="chat-ground-btn" onclick="chatGroundMe()">I need help right now — what can I do?</button>
     </div>
   </div>
 </section>
@@ -674,19 +667,15 @@ const DB={
 };
 
 // === ONBOARDING ===
-function obProgress(n){document.getElementById('ob-bar').style.width=((n/7)*100)+'%';}
+function obProgress(n){document.getElementById('ob-bar').style.width=((n/6)*100)+'%';}
 function obNext(n){
   document.getElementById('ob'+n).classList.remove('active');
   document.getElementById('ob'+(n+1)).classList.add('active');
   obProgress(n+1);
 }
 function obFinish(){
-  var rawSignals=[
-    document.getElementById('ob-s1').value.trim(),
-    document.getElementById('ob-s2').value.trim(),
-    document.getElementById('ob-s3').value.trim(),
-    document.getElementById('ob-s4').value.trim()
-  ].filter(function(s){return s.length>0;});
+  var numbText=document.getElementById('ob-numb').value.trim();
+  var behaviors=numbText.split(/[\n,·]+/).map(function(s){return s.trim();}).filter(function(s){return s.length>2;});
   var user={
     name:document.getElementById('ob-name').value.trim(),
     anchors:[
@@ -696,8 +685,8 @@ function obFinish(){
     ],
     spiralTrigger:document.getElementById('ob-trig').value.trim(),
     spiralFeeling:document.getElementById('ob-feel').value.trim(),
-    spiralNumb:document.getElementById('ob-numb').value.trim(),
-    signals:rawSignals,
+    spiralNumb:numbText,
+    signals:behaviors,
     onboarded:true,
     createdAt:Date.now()
   };
@@ -723,9 +712,8 @@ obWire(['ob-name'],'ob1-btn');
 obWire(['ob-a1','ob-a2','ob-a3'],'ob2-btn');
 obWire(['ob-trig'],'ob3-btn');
 obWire(['ob-feel'],'ob4-btn');
-obWire(['ob-s1','ob-s2'],'ob5-btn');
-obWire(['ob-numb'],'ob6-btn');
-obWire(['ob-ev'],'ob7-btn');
+obWire(['ob-numb'],'ob5-btn');
+obWire(['ob-ev'],'ob6-btn');
 
 // === PATTERN INTERRUPT STRIP ===
 function updateInterruptStrip(user,evidence){
@@ -1147,14 +1135,25 @@ function chatInit(user){
   var evidence=(DB.get('evidence')||[]).map(function(e){return e.text;});
   var checkins=DB.get('checkins')||[];
   var recentState=checkins.length?checkins[checkins.length-1].state:'unknown';
-  var systemMsg='You are Franklyn — a warm, direct, psychologically grounded friend. Not a chatbot. Not a therapist. A person who knows this user well and speaks plainly.\n\n';
-  systemMsg+='User name: '+user.name+'\n';
+  var systemMsg='You are Franklyn — a warm, direct, psychologically grounded friend. Not a chatbot. Not a therapist. A person who knows this user deeply and speaks plainly.\n\n';
+  systemMsg+='USER PROFILE:\n';
+  systemMsg+='Name: '+user.name+'\n';
   systemMsg+='Identity anchors: '+user.anchors.join(', ')+'\n';
   systemMsg+='Spiral trigger: '+user.spiralTrigger+'\n';
-  systemMsg+='Spiral feeling: '+user.spiralFeeling+'\n';
+  systemMsg+='Body sensation when spiraling: '+user.spiralFeeling+'\n';
+  systemMsg+='What they reach for when it gets loud: '+user.spiralNumb+'\n';
   systemMsg+='Evidence of progress: '+evidence.join(' | ')+'\n';
   systemMsg+='Most recent check-in state: '+recentState+'\n\n';
-  systemMsg+='Speak as Franklyn. Short paragraphs. No bullet points. No dashes. No affirmations. No exclamation points. No "I understand how you feel." One clear thing at a time. Cite researchers by full name when referencing theory. Warm but not soft. Honest not inspirational.';
+  systemMsg+='VOICE RULES:\n';
+  systemMsg+='Short paragraphs. No bullet points. No dashes. No affirmations. No exclamation points. No "I understand how you feel." One clear thing at a time. Cite researchers by full name when referencing theory. Warm but not soft. Honest not inspirational. Never tell the user what to do — offer one option and let them choose.\n\n';
+  systemMsg+='INTERVENTION LIBRARY — use based on where the user is:\n\n';
+  systemMsg+='If ALONE WITH TIME: Offer vagal breathing (4 counts in, 6 counts out, 4 cycles), body scan, movement for 60 seconds, or guide 5-4-3-2-1 interactively.\n\n';
+  systemMsg+='If CAN STEP AWAY: Offer physiological sigh (double inhale through nose, long slow exhale — Andrew Huberman and Stephen Porges both cite this), cold water on wrists or face, say anchors quietly, or guide 5-4-3-2-1.\n\n';
+  systemMsg+='If STUCK IN PLACE: Offer invisible tools only — 5-4-3-2-1 grounding (can be done without anyone knowing), feet flat on floor noticing the pressure, slow the exhale without anyone noticing, repeat one anchor word internally.\n\n';
+  systemMsg+='5-4-3-2-1 GROUNDING PROTOCOL (Bessel van der Kolk, trauma therapy): Guide interactively ONE STEP AT A TIME. Ask for each number, wait for their response, acknowledge briefly, then move to the next. Never list all steps at once. Say why it works: deliberate sensory attention pulls the prefrontal cortex back online and interrupts the amygdala threat loop.\n';
+  systemMsg+='Step sequence: 5 things you can see · 4 things you can physically feel · 3 things you can hear · 2 things you could smell · 1 thing you can taste.\n\n';
+  systemMsg+='CONTEXT QUESTION: When the user seems distressed or asks for help, ask where they are — alone with time, able to step away, or stuck in place. Their answer determines which tools you offer. Never suggest something they cannot physically do where they are.\n\n';
+  systemMsg+='PATTERN RECOGNITION: You know their spiral signature. If they describe their trigger, body sensation, or numbing behavior, name which step of the spiral they are in. Say it plainly so they can see it too.';
   chatHistory=[{role:'system',content:systemMsg}];
   if(DB.get('chat_agreed')){
     var greeting='Hey '+user.name+'. What is going on right now?';
@@ -1229,6 +1228,77 @@ function chatSend(){
     var typing=document.getElementById('chat-typing');
     if(typing)typing.remove();
     chatAppend('franklyn','Something went wrong on my end. Try again.');
+    document.getElementById('chat-send').disabled=false;
+  });
+}
+
+// === GROUND ME ===
+function chatGroundMe(){
+  if(!DB.get('chat_agreed'))return;
+  var msgs=document.getElementById('chat-msgs');
+  var existing=document.getElementById('chat-context-sel');
+  if(existing)existing.remove();
+
+  var label=document.createElement('div');
+  label.style.cssText='font-size:13px;color:var(--ink3);font-weight:300;margin:8px 0 6px';
+  label.textContent='Where are you right now?';
+
+  var opts=document.createElement('div');
+  opts.id='chat-context-sel';
+  opts.className='chat-context-opts';
+  opts.appendChild(label);
+
+  var options=[
+    {text:'I am alone and have a few minutes',key:'alone'},
+    {text:'I am around people but can step away briefly',key:'away'},
+    {text:'I am stuck — I cannot move or react right now',key:'stuck'}
+  ];
+
+  options.forEach(function(opt){
+    var btn=document.createElement('button');
+    btn.className='chat-context-opt';
+    btn.textContent=opt.text;
+    btn.onclick=function(){
+      document.getElementById('chat-context-sel').remove();
+      chatSendContext(opt.text,opt.key);
+    };
+    opts.appendChild(btn);
+  });
+
+  msgs.appendChild(opts);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function chatSendContext(locationText,key){
+  var hint={
+    alone:'The user is alone with time. Offer a full grounding intervention. Choose the most appropriate tool — vagal breathing, body scan, or guide them through 5-4-3-2-1 interactively one step at a time. Explain why it works in one sentence.',
+    away:'The user can step away briefly. Offer a 90-second reset — physiological sigh (double inhale through nose, long exhale through mouth), cold water, or 5-4-3-2-1. One tool only. Explain why it works.',
+    stuck:'The user is stuck in place around other people. Offer invisible tools only — 5-4-3-2-1 is ideal here, guide interactively one step at a time. Or feet flat on floor, slow the exhale, one anchor word internally. Nothing that requires privacy or movement.'
+  }[key];
+
+  chatAppend('user',locationText);
+  chatHistory.push({role:'user',content:locationText+'\n\n[FRANKLYN SYSTEM: '+hint+' Do not offer more than one tool. Guide interactively — one step at a time. Never list all steps at once.]'});
+  chatTyping();
+  document.getElementById('chat-send').disabled=true;
+
+  fetch('/api/chat',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({messages:chatHistory})
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    var typing=document.getElementById('chat-typing');
+    if(typing)typing.remove();
+    var reply=data.reply||'I am here. Let\'s try something together.';
+    chatHistory.push({role:'assistant',content:reply});
+    chatAppend('franklyn',reply);
+    rotateChatColor();
+    document.getElementById('chat-send').disabled=false;
+  })
+  .catch(function(){
+    var typing=document.getElementById('chat-typing');
+    if(typing)typing.remove();
     document.getElementById('chat-send').disabled=false;
   });
 }
