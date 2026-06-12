@@ -594,6 +594,10 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       <p style="font-size:20px;font-weight:700;color:var(--ink);margin-bottom:6px">What's happening right now?</p>
       <p style="font-size:14px;color:var(--ink3);margin-bottom:1.25rem;font-weight:300">Select everything that's true.</p>
       <div class="sig-list"></div>
+      <div class="add-row" style="margin-bottom:1rem">
+        <input type="text" class="add-input" id="new-sig" placeholder="Add another signal…">
+        <button class="add-btn" onclick="addSig()">+ Add</button>
+      </div>
       <button class="ne-btn" onclick="goRes()">Name what's happening →</button>
       <button class="ne-ghost" onclick="goRes()">Skip — just show me</button>
     </div>
@@ -636,11 +640,6 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       <div class="sig-step"><div class="sig-num sn3">3</div><div><div class="sig-name">Abandonment story activates</div><div class="sig-desc">Old wound, new trigger. The dorsal vagal circuit engages. The story feels true because it is ancient.</div></div></div>
       <div class="sig-step"><div class="sig-num sn4">4</div><div><div class="sig-name">Numbing and control</div><div class="sig-desc">Wine to numb. Cleaning to control. Your nervous system seeking safety through any available action.</div></div></div>
     </div>
-    <div class="interrupt-strip">
-      <div class="is-label">Franklyn's pattern interrupt — fires at step 1</div>
-      <div class="is-txt">"You're looking at the wrong data. You got into BTG today. You completed MIT xPRO. You built something real. Influential, significant, wealthy — those are still yours. Close the tab."</div>
-      <div class="is-action">→ One action: close the comparison tab. Then come back here.</div>
-    </div>
     <p class="disclaimer">Franklyn is not a substitute for therapy or professional mental health support. It is a personal operating system grounded in published psychological research by Stephen Porges, Viktor Frankl, Richard Ryan, Edward Deci, and John Sweller.</p>
   </div>
   <div class="tab-panel" id="tab-chat">
@@ -675,7 +674,7 @@ function obNext(n){
 }
 function obFinish(){
   var numbText=document.getElementById('ob-numb').value.trim();
-  var behaviors=numbText.split(/[\n,·]+/).map(function(s){return s.trim();}).filter(function(s){return s.length>2;});
+  var behaviors=parseBehaviors(numbText);
   var user={
     name:document.getElementById('ob-name').value.trim(),
     anchors:[
@@ -715,6 +714,18 @@ obWire(['ob-feel'],'ob4-btn');
 obWire(['ob-numb'],'ob5-btn');
 obWire(['ob-ev'],'ob6-btn');
 
+// === BEHAVIOR PARSER ===
+function parseBehaviors(text){
+  var parts=text
+    .split(/[\n,·•]|\s+or\s+|\s+and\s+|\.\s*/gi)
+    .map(function(s){return s.replace(/^[\s.]+|[\s.]+$/g,'').trim();})
+    .filter(function(s){return s.length>2;});
+  return parts.map(function(s){
+    if(/^i\s/i.test(s)){return s.charAt(0).toUpperCase()+s.slice(1);}
+    return 'I '+s.toLowerCase();
+  });
+}
+
 // === PATTERN INTERRUPT STRIP ===
 function updateInterruptStrip(user,evidence){
   var a1=user.anchors[0],a2=user.anchors[1],a3=user.anchors[2];
@@ -724,6 +735,19 @@ function updateInterruptStrip(user,evidence){
   var txt='What you are feeling right now has a name. Stephen Porges calls it neuroception — your nervous system scanned your environment, read a threat, and activated a stress response before your conscious mind had any say in it. That is not weakness. That is biology doing exactly what it was designed to do.\n\nHere is what is actually true: '+evLine+' That evidence does not disappear because the feeling is loud.\n\nYour vagal brake — the part of your nervous system that returns you to calm — can be activated right now. One hand on your chest. Breathe in for four counts, out for six. The longer exhale physically signals safety to your nervous system. Do it once before you do anything else.\n\n'+a1+', '+a2+', '+a3+' — those belong to you. They were true before this moment and they are true now. Close the tab that started this.';
   document.querySelector('.is-txt').textContent=txt;
   document.querySelector('.is-action').textContent='→ One hand on your chest. Four counts in, six counts out. Once. Then close the comparison tab.';
+}
+
+function addSig(){
+  var inp=document.getElementById('new-sig');
+  var v=inp.value.trim();
+  if(!v)return;
+  var user=DB.get('user')||{};
+  var signals=user.signals||[];
+  signals.push(v);
+  user.signals=signals;
+  DB.set('user',user);
+  renderSignals(signals);
+  inp.value='';
 }
 
 // === RENDER SIGNALS ===
@@ -794,9 +818,7 @@ function initApp(user){
   if(sigDescs[2])sigDescs[2].textContent='Old wound, new trigger. The dorsal vagal circuit engages. The story feels true because it is ancient and the body remembers it.';
   if(user.spiralNumb&&sigDescs[3])sigDescs[3].textContent=user.spiralNumb;
 
-  // Pattern interrupt strip
   var evidence=DB.get('evidence')||[];
-  updateInterruptStrip(user,evidence);
 
   // Load evidence list
   renderEvidence(evidence);
@@ -1028,9 +1050,7 @@ function addEv(){
   evidence.unshift({text:v,createdAt:Date.now()});
   DB.set('evidence',evidence);
   renderEvidence(evidence);
-  // Refresh pattern interrupt strip with latest evidence
   var user=DB.get('user');
-  if(user)updateInterruptStrip(user,evidence);
   inp.value='';
 }
 document.getElementById('new-ev').addEventListener('keydown',function(e){if(e.key==='Enter')addEv();});
