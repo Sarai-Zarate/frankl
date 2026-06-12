@@ -1411,28 +1411,49 @@ function rotateChatColor(){
 var recognition=null;
 var synthesis=window.speechSynthesis;
 var franklyVoice=null;
+var silenceTimer=null;
+var voiceAutoSending=false;
 
 function voiceInit(){
   var SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SpeechRecognition){return;}
   recognition=new SpeechRecognition();
-  recognition.continuous=false;
+  recognition.continuous=true;
   recognition.interimResults=true;
   recognition.lang='en-US';
   recognition.onresult=function(e){
-    var transcript='';
-    for(var i=e.resultIndex;i<e.results.length;i++){
-      transcript+=e.results[i][0].transcript;
+    // Build full transcript: all finalized results + current interim
+    var finalText='',interimText='';
+    for(var i=0;i<e.results.length;i++){
+      if(e.results[i].isFinal){finalText+=e.results[i][0].transcript;}
+      else{interimText+=e.results[i][0].transcript;}
     }
-    document.getElementById('chat-input').value=transcript;
-    document.getElementById('chat-input').style.height='auto';
-    document.getElementById('chat-input').style.height=Math.min(document.getElementById('chat-input').scrollHeight,100)+'px';
+    var inp=document.getElementById('chat-input');
+    inp.value=finalText+interimText;
+    inp.style.height='auto';
+    inp.style.height=Math.min(inp.scrollHeight,100)+'px';
+    // Reset silence timer on every speech event
+    clearTimeout(silenceTimer);
+    silenceTimer=setTimeout(function(){
+      if(inp.value.trim()&&!voiceAutoSending){
+        voiceAutoSending=true;
+        recognition.stop();
+        // chatSend() fires after onend cleans up the mic state
+      }
+    },3000);
   };
   recognition.onend=function(){
+    clearTimeout(silenceTimer);
     document.getElementById('chat-mic').classList.remove('listening');
     document.getElementById('chat-mic').textContent='🎙';
+    if(voiceAutoSending){
+      voiceAutoSending=false;
+      chatSend();
+    }
   };
   recognition.onerror=function(){
+    clearTimeout(silenceTimer);
+    voiceAutoSending=false;
     document.getElementById('chat-mic').classList.remove('listening');
     document.getElementById('chat-mic').textContent='🎙';
   };
