@@ -226,6 +226,38 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .is-action{font-size:13px;color:rgba(245,240,228,0.6);font-weight:300}
 .disclaimer{margin-top:2.5rem;font-size:12px;color:var(--ink4);line-height:1.7;font-style:italic;max-width:600px;border-top:1px solid var(--border);padding-top:1.5rem}
 
+.ob-back{background:none;border:none;font-size:13px;color:var(--ink4);cursor:pointer;padding:0;margin-bottom:1.5rem;font-family:var(--fb);display:flex;align-items:center;gap:4px}
+.ob-back:hover{color:var(--ink)}
+
+.settings-overlay{position:fixed;inset:0;z-index:999;background:var(--cream);display:none;overflow-y:auto;padding:2rem}
+.settings-overlay.open{display:block;animation:fadeUp 0.3s ease}
+.settings-wrap{max-width:540px;margin:0 auto;padding:2rem 0}
+.settings-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:2.5rem}
+.settings-title{font-family:var(--fd);font-size:28px;font-weight:700;color:var(--ink);letter-spacing:-0.02em}
+.settings-close{background:none;border:1px solid var(--border);border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:16px;color:var(--ink3);display:flex;align-items:center;justify-content:center}
+.settings-section{margin-bottom:2rem}
+.settings-label{font-family:var(--fd);font-size:14px;font-style:italic;color:var(--burgundy);margin-bottom:6px;display:block}
+.settings-field{width:100%;font-size:14px;font-family:var(--fb);padding:10px 14px;border-radius:var(--rs);border:1px solid var(--borderS);background:var(--cream);color:var(--ink);margin-bottom:8px;display:block}
+.settings-field:focus{outline:none;border-color:var(--charcoal)}
+.settings-ta{resize:none;line-height:1.5}
+.settings-save{width:100%;padding:13px;font-size:15px;font-weight:600;font-family:var(--fb);border-radius:24px;border:none;background:var(--charcoal);color:var(--cream);cursor:pointer;margin-bottom:12px;transition:background var(--tr)}
+.settings-save:hover{background:var(--charcoal-l)}
+.settings-danger{width:100%;padding:11px;font-size:13px;font-family:var(--fb);border-radius:24px;border:1px solid #c4848a;background:transparent;color:#c4848a;cursor:pointer;transition:all var(--tr)}
+.settings-danger:hover{background:#c4848a;color:var(--cream)}
+.settings-warn{font-size:12px;color:var(--ink4);line-height:1.6;margin-top:8px;display:none;font-style:italic}
+.settings-warn.show{display:block}
+.nav-gear{background:none;border:none;font-size:18px;cursor:pointer;color:var(--ink3);padding:4px 8px;transition:color var(--tr);line-height:1}
+.nav-gear:hover{color:var(--ink)}
+
+.chat-agree{background:var(--cream-d);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;margin-bottom:4px}
+.chat-agree-txt{font-size:14px;color:var(--ink2);line-height:1.75;font-weight:300;margin-bottom:1rem}
+.chat-agree-btns{display:flex;gap:8px;flex-wrap:wrap}
+.chat-agree-yes{font-size:13px;font-weight:600;font-family:var(--fb);padding:9px 20px;border-radius:24px;border:none;background:var(--charcoal);color:var(--cream);cursor:pointer;transition:background var(--tr)}
+.chat-agree-yes:hover{background:var(--charcoal-l)}
+.chat-agree-help{font-size:13px;font-family:var(--fb);padding:9px 20px;border-radius:24px;border:1px solid var(--border);background:transparent;color:var(--ink3);cursor:pointer;text-decoration:none;display:inline-block}
+.chat-agree-help:hover{border-color:var(--ink)}
+.chat-crisis{background:#fdf5f0;border:1px solid #e8c4b0;border-radius:var(--r);padding:1rem 1.25rem;font-size:13px;color:var(--ink2);line-height:1.7;font-weight:300}
+
 .chat-wrap{display:flex;flex-direction:column;height:520px;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--cream)}
 .chat-msgs{flex:1;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:14px}
 .chat-msg{display:flex;flex-direction:column;max-width:82%}
@@ -300,6 +332,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     </div>
 
     <div class="ob-step" id="ob2">
+      <button class="ob-back" onclick="obBack(2)">← Back</button>
       <div class="ob-eyebrow">Your foundation</div>
       <div class="ob-q">What three words describe who you are becoming — stated as present truth?</div>
       <div class="ob-hint">Not goals. Not who you want to be. Who you already are when you are at your best, even if you cannot feel it right now.</div>
@@ -311,6 +344,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     </div>
 
     <div class="ob-step" id="ob3">
+      <button class="ob-back" onclick="obBack(3)">← Back</button>
       <div class="ob-eyebrow">Your spiral signature</div>
       <div class="ob-q">What most reliably pulls you out of yourself?</div>
       <div class="ob-hint">The moment things start to shift. A situation, a thought, something you see online. Describe it in your own words.</div>
@@ -320,6 +354,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     </div>
 
     <div class="ob-step" id="ob4">
+      <button class="ob-back" onclick="obBack(4)">← Back</button>
       <div class="ob-eyebrow">Your spiral signature</div>
       <div class="ob-q">When it starts, what do you notice first?</div>
       <div class="ob-hint">In your body, your thoughts, your behavior. There is no wrong answer here.</div>
@@ -329,6 +364,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     </div>
 
     <div class="ob-step" id="ob5">
+      <button class="ob-back" onclick="obBack(5)">← Back</button>
       <div class="ob-eyebrow">Your check-in signals</div>
       <div class="ob-q">When you are starting to spiral, what do you notice? Name up to four things in your own words.</div>
       <div class="ob-hint">These will become your personal check-in options. The first two are required. Use the language you actually use with yourself.</div>
@@ -341,6 +377,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     </div>
 
     <div class="ob-step" id="ob6">
+      <button class="ob-back" onclick="obBack(6)">← Back</button>
       <div class="ob-eyebrow">Your spiral signature</div>
       <div class="ob-q">When it gets loud, what do you reach for?</div>
       <div class="ob-hint">When the feeling becomes too much, your nervous system moves toward something that offers relief — even temporarily. There is no judgment here. Franklyn needs to know this so it can recognize it before it becomes the whole day.</div>
@@ -350,6 +387,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     </div>
 
     <div class="ob-step" id="ob7">
+      <button class="ob-back" onclick="obBack(7)">← Back</button>
       <div class="ob-eyebrow">Your evidence</div>
       <div class="ob-q">What is one true thing about you right now?</div>
       <div class="ob-hint">Not a goal. Not a hope. Something that already happened. Real evidence you are moving forward.</div>
@@ -366,8 +404,62 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     <a href="#anchors">Anchors</a>
     <a href="#tools">Tools</a>
   </div>
-  <a href="#tools" class="nav-cta">Open app</a>
+  <div style="display:flex;align-items:center;gap:8px">
+    <button class="nav-gear" onclick="settingsOpen()" title="Edit your profile">⚙</button>
+    <a href="#tools" class="nav-cta">Open app</a>
+  </div>
 </nav>
+
+<div class="settings-overlay" id="settings-overlay">
+  <div class="settings-wrap">
+    <div class="settings-head">
+      <div class="settings-title">Your Franklyn</div>
+      <button class="settings-close" onclick="settingsClose()">✕</button>
+    </div>
+
+    <div class="settings-section">
+      <span class="settings-label">Your name</span>
+      <input class="settings-field" id="s-name" type="text" autocomplete="off">
+    </div>
+
+    <div class="settings-section">
+      <span class="settings-label">Identity anchors</span>
+      <input class="settings-field" id="s-a1" type="text" placeholder="First anchor" autocomplete="off">
+      <input class="settings-field" id="s-a2" type="text" placeholder="Second anchor" autocomplete="off">
+      <input class="settings-field" id="s-a3" type="text" placeholder="Third anchor" autocomplete="off">
+    </div>
+
+    <div class="settings-section">
+      <span class="settings-label">What starts your spiral</span>
+      <textarea class="settings-field settings-ta" id="s-trig" rows="3"></textarea>
+    </div>
+
+    <div class="settings-section">
+      <span class="settings-label">What you notice when it starts</span>
+      <textarea class="settings-field settings-ta" id="s-feel" rows="3"></textarea>
+    </div>
+
+    <div class="settings-section">
+      <span class="settings-label">What you reach for when it gets loud</span>
+      <textarea class="settings-field settings-ta" id="s-numb" rows="2"></textarea>
+    </div>
+
+    <div class="settings-section">
+      <span class="settings-label">Your check-in signals</span>
+      <input class="settings-field" id="s-s1" type="text" placeholder="First signal" autocomplete="off">
+      <input class="settings-field" id="s-s2" type="text" placeholder="Second signal" autocomplete="off">
+      <input class="settings-field" id="s-s3" type="text" placeholder="Third signal (optional)" autocomplete="off">
+      <input class="settings-field" id="s-s4" type="text" placeholder="Fourth signal (optional)" autocomplete="off">
+    </div>
+
+    <button class="settings-save" onclick="settingsSave()">Save changes</button>
+
+    <div style="border-top:1px solid var(--border);padding-top:1.5rem;margin-top:0.5rem">
+      <button class="settings-danger" onclick="settingsStartOver()">Start fresh — clear everything</button>
+      <div class="settings-warn" id="s-warn">This will erase your anchors, evidence, check-in history, and everything Franklyn has learned about you. This cannot be undone. <br><br><button onclick="settingsConfirmReset()" style="font-size:12px;font-weight:600;font-family:var(--fb);padding:7px 16px;border-radius:20px;border:none;background:#c4848a;color:var(--cream);cursor:pointer;">Yes, start completely fresh</button></div>
+    </div>
+  </div>
+</div>
 
 <section class="hero" id="hero">
   <h1 class="hero-wordmark">Frankl<span>yn</span></h1>
@@ -955,9 +1047,100 @@ function addEv(){
 }
 document.getElementById('new-ev').addEventListener('keydown',function(e){if(e.key==='Enter')addEv();});
 
+// === ONBOARDING BACK ===
+function obBack(n){
+  document.getElementById('ob'+n).classList.remove('active');
+  document.getElementById('ob'+(n-1)).classList.add('active');
+  obProgress(n-1);
+}
+
+// === SETTINGS ===
+function settingsOpen(){
+  var user=DB.get('user')||{};
+  document.getElementById('s-name').value=user.name||'';
+  document.getElementById('s-a1').value=(user.anchors&&user.anchors[0])||'';
+  document.getElementById('s-a2').value=(user.anchors&&user.anchors[1])||'';
+  document.getElementById('s-a3').value=(user.anchors&&user.anchors[2])||'';
+  document.getElementById('s-trig').value=user.spiralTrigger||'';
+  document.getElementById('s-feel').value=user.spiralFeeling||'';
+  document.getElementById('s-numb').value=user.spiralNumb||'';
+  var sigs=user.signals||[];
+  document.getElementById('s-s1').value=sigs[0]||'';
+  document.getElementById('s-s2').value=sigs[1]||'';
+  document.getElementById('s-s3').value=sigs[2]||'';
+  document.getElementById('s-s4').value=sigs[3]||'';
+  document.getElementById('settings-overlay').classList.add('open');
+}
+function settingsClose(){
+  document.getElementById('settings-overlay').classList.remove('open');
+  document.getElementById('s-warn').classList.remove('show');
+}
+function settingsSave(){
+  var user=DB.get('user')||{};
+  user.name=document.getElementById('s-name').value.trim()||user.name;
+  user.anchors=[
+    document.getElementById('s-a1').value.trim()||user.anchors[0],
+    document.getElementById('s-a2').value.trim()||user.anchors[1],
+    document.getElementById('s-a3').value.trim()||user.anchors[2]
+  ];
+  user.spiralTrigger=document.getElementById('s-trig').value.trim()||user.spiralTrigger;
+  user.spiralFeeling=document.getElementById('s-feel').value.trim()||user.spiralFeeling;
+  user.spiralNumb=document.getElementById('s-numb').value.trim()||user.spiralNumb;
+  user.signals=[
+    document.getElementById('s-s1').value.trim(),
+    document.getElementById('s-s2').value.trim(),
+    document.getElementById('s-s3').value.trim(),
+    document.getElementById('s-s4').value.trim()
+  ].filter(function(s){return s.length>0;});
+  DB.set('user',user);
+  initApp(user);
+  settingsClose();
+}
+function settingsStartOver(){
+  document.getElementById('s-warn').classList.add('show');
+}
+function settingsConfirmReset(){
+  localStorage.clear();
+  location.reload();
+}
+
 // === CHAT ===
 var chatHistory=[];
 var chatReady=false;
+
+var crisisKeywords=['end my life','kill myself','want to die','don\'t want to be here','dont want to be here','not worth living','suicidal','hurt myself','self harm','no reason to live','can\'t do this anymore','cant do this anymore','give up on life','disappear forever','rather be dead','no point anymore'];
+
+function checkCrisis(text){
+  var lower=text.toLowerCase();
+  return crisisKeywords.some(function(k){return lower.indexOf(k)>-1;});
+}
+
+function showCrisisMessage(){
+  var msgs=document.getElementById('chat-msgs');
+  var div=document.createElement('div');
+  div.className='chat-crisis';
+  div.innerHTML='What you just shared matters. If things ever feel like more than you can hold right now, you do not have to carry it alone. The <strong>988 Suicide and Crisis Lifeline</strong> is free, confidential, and available any time — call or text <strong>988</strong>. There is no wrong reason to reach out. I am still here with you.';
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function showChatAgreement(){
+  var msgs=document.getElementById('chat-msgs');
+  var div=document.createElement('div');
+  div.className='chat-agree';
+  div.innerHTML='<div class="chat-agree-txt">Before we talk — Franklyn is a personal tool grounded in published psychological research. It is not therapy and cannot replace professional mental health support. The conversations here are private and meant to help you understand your own patterns.\n\nIf you are ever in a moment of crisis or need to speak with someone right away, the <strong>988 Suicide and Crisis Lifeline</strong> is available any time — free and confidential — by calling or texting <strong>988</strong>.\n\nDo you want to continue?</div><div class="chat-agree-btns"><button class="chat-agree-yes" onclick="chatAgree()">Yes, let\'s talk</button><a class="chat-agree-help" href="tel:988">Call 988 now</a></div>';
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function chatAgree(){
+  DB.set('chat_agreed',true);
+  var agree=document.querySelector('.chat-agree');
+  if(agree)agree.remove();
+  var user=DB.get('user')||{};
+  var greeting='Hey '+(user.name||'there')+'. What is going on right now?';
+  chatAppend('franklyn',greeting);
+}
 
 function chatInit(user){
   chatReady=true;
@@ -973,8 +1156,12 @@ function chatInit(user){
   systemMsg+='Most recent check-in state: '+recentState+'\n\n';
   systemMsg+='Speak as Franklyn. Short paragraphs. No bullet points. No dashes. No affirmations. No exclamation points. No "I understand how you feel." One clear thing at a time. Cite researchers by full name when referencing theory. Warm but not soft. Honest not inspirational.';
   chatHistory=[{role:'system',content:systemMsg}];
-  var greeting='Hey '+user.name+'. What is going on right now?';
-  chatAppend('franklyn',greeting);
+  if(DB.get('chat_agreed')){
+    var greeting='Hey '+user.name+'. What is going on right now?';
+    chatAppend('franklyn',greeting);
+  } else {
+    showChatAgreement();
+  }
 }
 
 function chatAppend(role,text){
@@ -1015,6 +1202,7 @@ function chatSend(){
   var inp=document.getElementById('chat-input');
   var text=inp.value.trim();
   if(!text||!chatReady)return;
+  if(!DB.get('chat_agreed'))return;
   inp.value='';
   inp.style.height='auto';
   document.getElementById('chat-send').disabled=true;
@@ -1034,6 +1222,7 @@ function chatSend(){
     var reply=data.reply||'I am here. Say more.';
     chatHistory.push({role:'assistant',content:reply});
     chatAppend('franklyn',reply);
+    if(checkCrisis(text))showCrisisMessage();
     document.getElementById('chat-send').disabled=false;
   })
   .catch(function(){
