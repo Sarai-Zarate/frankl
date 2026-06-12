@@ -321,9 +321,17 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .chat-send{font-size:13px;font-weight:600;font-family:var(--fb);padding:10px 18px;border-radius:24px;border:none;background:var(--charcoal);color:var(--cream);cursor:pointer;white-space:nowrap;transition:background var(--tr);align-self:flex-end}
 .chat-send:hover{background:var(--charcoal-l)}
 .chat-send:disabled{opacity:0.3;cursor:default}
-.chat-mic{width:40px;height:40px;border-radius:50%;border:1px solid var(--borderS);background:var(--cream);color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;align-self:flex-end;transition:all var(--tr)}
+.chat-mic{width:40px;height:40px;border-radius:50%;border:1px solid var(--borderS);background:var(--cream);color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;align-self:flex-end;transition:all var(--tr)}
 .chat-mic:hover{background:var(--cream-d);border-color:var(--charcoal)}
-.chat-mic.listening{background:var(--burgundy);border-color:var(--burgundy);color:var(--cream);animation:nodePulse 1.2s ease-out infinite}
+.chat-mic.active{background:var(--burgundy);border-color:var(--burgundy);color:var(--cream)}
+.chat-mic.processing{background:var(--amber);border-color:var(--amber);color:var(--cream);opacity:0.75}
+@keyframes micWave{0%,100%{transform:scaleY(0.3)}50%{transform:scaleY(1)}}
+.mic-waves{display:flex;gap:2px;align-items:center;height:14px}
+.mic-waves span{width:3px;border-radius:3px;background:currentColor;animation:micWave 0.75s ease-in-out infinite}
+.mic-waves span:nth-child(1){height:5px;animation-delay:0s}
+.mic-waves span:nth-child(2){height:12px;animation-delay:0.12s}
+.mic-waves span:nth-child(3){height:8px;animation-delay:0.24s}
+.mic-waves span:nth-child(4){height:5px;animation-delay:0.36s}
 
 #r-done{display:none;text-align:center;padding:2rem 1rem}
 #r-done .done-word{font-family:var(--fd);font-size:clamp(28px,5vw,40px);font-weight:700;color:var(--ink);margin-bottom:8px}
@@ -733,7 +741,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     <div class="chat-wrap">
       <div class="chat-msgs" id="chat-msgs"></div>
       <div class="chat-input-row">
-        <button class="chat-mic" id="chat-mic" onclick="chatMicToggle()" title="Speak to Franklyn">🎙</button>
+        <button class="chat-mic" id="chat-mic" onclick="chatMicToggle()" title="Start voice conversation"><svg width="14" height="18" viewBox="0 0 14 18" fill="none"><rect x="3" y="0" width="8" height="11" rx="4" fill="currentColor"/><path d="M1 8c0 3.314 2.686 6 6 6s6-2.686 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="14" x2="7" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="17" x2="10" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
         <textarea class="chat-input" id="chat-input" rows="1" placeholder="What's going on right now…"></textarea>
         <button class="chat-send" id="chat-send" onclick="chatSend()">Send</button>
       </div>
@@ -1493,12 +1501,19 @@ function chatSend(){
     chatAppend('franklyn',reply);
     if(checkCrisis(text))showCrisisMessage();
     document.getElementById('chat-send').disabled=false;
+    // In conversation mode, restart listening after response.
+    // franklySpeak's onend handles it when TTS is active;
+    // this fallback covers when TTS is unavailable.
+    if(conversationMode&&(!synthesis||!franklyVoice)){
+      setTimeout(startListening,800);
+    }
   })
   .catch(function(){
     var typing=document.getElementById('chat-typing');
     if(typing)typing.remove();
     chatAppend('franklyn','Something went wrong on my end. Try again.');
     document.getElementById('chat-send').disabled=false;
+    if(conversationMode)setTimeout(startListening,1000);
   });
 }
 
@@ -1591,6 +1606,34 @@ var synthesis=window.speechSynthesis;
 var franklyVoice=null;
 var silenceTimer=null;
 var voiceAutoSending=false;
+var conversationMode=false;
+var micSVG='<svg width="14" height="18" viewBox="0 0 14 18" fill="none"><rect x="3" y="0" width="8" height="11" rx="4" fill="currentColor"/><path d="M1 8c0 3.314 2.686 6 6 6s6-2.686 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="14" x2="7" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="17" x2="10" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+var micWaves='<div class="mic-waves"><span></span><span></span><span></span><span></span></div>';
+
+function setMicState(state){
+  var mic=document.getElementById('chat-mic');
+  mic.classList.remove('active','processing');
+  if(state==='listening'){
+    mic.innerHTML=micWaves;
+    mic.classList.add('active');
+    mic.title='Listening — click to stop';
+  } else if(state==='processing'){
+    mic.innerHTML=micSVG;
+    mic.classList.add('processing');
+    mic.title='Franklyn is thinking…';
+  } else {
+    mic.innerHTML=micSVG;
+    mic.title='Start voice conversation';
+  }
+}
+
+function startListening(){
+  if(!conversationMode)return;
+  var inp=document.getElementById('chat-input');
+  inp.value='';inp.style.height='auto';
+  try{recognition.start();}catch(e){setTimeout(function(){try{recognition.start();}catch(e2){}},300);}
+  setMicState('listening');
+}
 
 function voiceInit(){
   var SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -1600,7 +1643,6 @@ function voiceInit(){
   recognition.interimResults=true;
   recognition.lang='en-US';
   recognition.onresult=function(e){
-    // Build full transcript: all finalized results + current interim
     var finalText='',interimText='';
     for(var i=0;i<e.results.length;i++){
       if(e.results[i].isFinal){finalText+=e.results[i][0].transcript;}
@@ -1610,32 +1652,37 @@ function voiceInit(){
     inp.value=finalText+interimText;
     inp.style.height='auto';
     inp.style.height=Math.min(inp.scrollHeight,100)+'px';
-    // Reset silence timer on every speech event
     clearTimeout(silenceTimer);
     silenceTimer=setTimeout(function(){
       if(inp.value.trim()&&!voiceAutoSending){
         voiceAutoSending=true;
         recognition.stop();
-        // chatSend() fires after onend cleans up the mic state
       }
     },3000);
   };
   recognition.onend=function(){
     clearTimeout(silenceTimer);
-    document.getElementById('chat-mic').classList.remove('listening');
-    document.getElementById('chat-mic').textContent='🎙';
     if(voiceAutoSending){
       voiceAutoSending=false;
+      setMicState('processing');
       chatSend();
+    } else if(conversationMode){
+      // No speech detected — keep listening
+      setTimeout(startListening,200);
+    } else {
+      setMicState('off');
     }
   };
-  recognition.onerror=function(){
+  recognition.onerror=function(e){
     clearTimeout(silenceTimer);
     voiceAutoSending=false;
-    document.getElementById('chat-mic').classList.remove('listening');
-    document.getElementById('chat-mic').textContent='🎙';
+    if(conversationMode&&e.error!=='aborted'){
+      setTimeout(startListening,600);
+    } else {
+      conversationMode=false;
+      setMicState('off');
+    }
   };
-  // Pick best available voice
   function pickVoice(){
     var voices=synthesis.getVoices();
     var preferred=['Samantha','Karen','Moira','Google UK English Female','Microsoft Aria'];
@@ -1650,20 +1697,17 @@ function voiceInit(){
 }
 
 function chatMicToggle(){
-  if(!recognition){
-    alert('Voice is not supported in this browser. Try Chrome.');
-    return;
-  }
-  var mic=document.getElementById('chat-mic');
-  if(mic.classList.contains('listening')){
-    recognition.stop();
-    mic.classList.remove('listening');
-    mic.textContent='🎙';
+  if(!recognition){alert('Voice is not supported in this browser. Try Chrome.');return;}
+  if(!DB.get('chat_agreed'))return;
+  if(conversationMode){
+    conversationMode=false;
+    voiceAutoSending=false;
+    clearTimeout(silenceTimer);
+    try{recognition.stop();}catch(e){}
+    setMicState('off');
   } else {
-    document.getElementById('chat-input').value='';
-    recognition.start();
-    mic.classList.add('listening');
-    mic.textContent='⏹';
+    conversationMode=true;
+    startListening();
   }
 }
 
@@ -1671,10 +1715,9 @@ function franklySpeak(text){
   if(!synthesis)return;
   synthesis.cancel();
   var utt=new SpeechSynthesisUtterance(text);
-  utt.rate=0.92;
-  utt.pitch=0.95;
-  utt.volume=1;
+  utt.rate=0.92;utt.pitch=0.95;utt.volume=1;
   if(franklyVoice)utt.voice=franklyVoice;
+  utt.onend=function(){if(conversationMode)setTimeout(startListening,600);};
   synthesis.speak(utt);
 }
 
