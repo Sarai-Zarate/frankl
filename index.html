@@ -97,6 +97,13 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
   100%{box-shadow:0 4px 14px rgba(0,0,0,0.12)}
 }
 .tab-btn.pulse{animation:tabPulse 0.7s ease-out}
+.tab-btn.pulse-loop{animation:tabPulse 1.8s ease-in-out infinite}
+@keyframes nodePulse{
+  0%{box-shadow:0 0 0 0 rgba(46,44,42,0.4)}
+  70%{box-shadow:0 0 0 10px rgba(46,44,42,0)}
+  100%{box-shadow:0 0 0 0 rgba(46,44,42,0)}
+}
+.r-node.pulse-loop{animation:nodePulse 1.8s ease-out infinite}
 
 .tab-panel{display:none}
 .tab-panel.active{display:block;animation:fadeUp 0.3s ease}
@@ -221,6 +228,26 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 #r-done .done-word{font-family:var(--fd);font-size:clamp(28px,5vw,40px);font-weight:700;color:var(--ink);margin-bottom:8px}
 #r-done .done-sub{font-size:15px;color:var(--ink3);font-weight:300;line-height:1.7;margin-bottom:1.5rem}
 
+.ob-overlay{position:fixed;inset:0;z-index:1000;background:var(--cream);display:flex;align-items:center;justify-content:center;padding:2rem;overflow-y:auto}
+.ob-wrap{width:100%;max-width:540px;padding:2rem 0}
+.ob-logo{font-family:var(--fd);font-size:28px;color:var(--ink);letter-spacing:-0.01em;margin-bottom:2.5rem;text-align:center}
+.ob-logo span{color:var(--burgundy);font-style:italic}
+.ob-progress{height:2px;background:var(--border);border-radius:2px;margin-bottom:3rem}
+.ob-bar{height:100%;background:var(--burgundy);border-radius:2px;transition:width 0.5s ease;width:20%}
+.ob-step{display:none}
+.ob-step.active{display:block;animation:fadeUp 0.4s ease}
+.ob-eyebrow{font-family:var(--fd);font-size:14px;font-style:italic;color:var(--burgundy);margin-bottom:10px}
+.ob-q{font-family:var(--fd);font-size:clamp(22px,3.5vw,30px);font-weight:700;color:var(--ink);letter-spacing:-0.02em;line-height:1.25;margin-bottom:10px}
+.ob-hint{font-size:14px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:10px}
+.ob-examples{font-size:12px;color:var(--ink4);font-style:italic;margin-bottom:1.5rem;line-height:1.6}
+.ob-examples span{color:var(--ink3)}
+.ob-input{width:100%;font-size:15px;font-family:var(--fb);padding:12px 16px;border-radius:var(--rs);border:1px solid var(--borderS);background:var(--cream);color:var(--ink);margin-bottom:10px;display:block;line-height:1.5}
+.ob-input:focus{outline:none;border-color:var(--charcoal)}
+.ob-ta{resize:none}
+.ob-btn{width:100%;padding:14px;font-size:15px;font-weight:600;font-family:var(--fb);border-radius:24px;border:none;background:var(--charcoal);color:var(--cream);cursor:pointer;margin-top:6px;transition:background var(--tr)}
+.ob-btn:hover{background:var(--charcoal-l)}
+.ob-btn:disabled{opacity:0.3;cursor:default}
+
 @media(max-width:640px){
   .anc-grid,.tab-nav,.pulse-grid{grid-template-columns:1fr}
   .nav-links{display:none}
@@ -230,6 +257,59 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 </style>
 </head>
 <body>
+
+<div id="onboarding" class="ob-overlay">
+  <div class="ob-wrap">
+    <div class="ob-logo">Frankl<span>yn</span></div>
+    <div class="ob-progress"><div class="ob-bar" id="ob-bar"></div></div>
+
+    <div class="ob-step active" id="ob1">
+      <div class="ob-eyebrow">Let's get to know you</div>
+      <div class="ob-q">What do you want Franklyn to call you?</div>
+      <div class="ob-hint">Just your first name is enough.</div>
+      <input class="ob-input" id="ob-name" type="text" placeholder="Your name" autocomplete="off">
+      <button class="ob-btn" id="ob1-btn" disabled onclick="obNext(1)">Continue →</button>
+    </div>
+
+    <div class="ob-step" id="ob2">
+      <div class="ob-eyebrow">Your foundation</div>
+      <div class="ob-q">What three words describe who you are becoming — stated as present truth?</div>
+      <div class="ob-hint">Not goals. Not who you want to be. Who you already are when you are at your best, even if you cannot feel it right now.</div>
+      <div class="ob-examples">Examples: <span>Influential · Present · Enough · Creative · Steady · Worthy · Builder · Brave · Connected</span></div>
+      <input class="ob-input" id="ob-a1" type="text" placeholder="First anchor" autocomplete="off">
+      <input class="ob-input" id="ob-a2" type="text" placeholder="Second anchor" autocomplete="off">
+      <input class="ob-input" id="ob-a3" type="text" placeholder="Third anchor" autocomplete="off">
+      <button class="ob-btn" id="ob2-btn" disabled onclick="obNext(2)">Continue →</button>
+    </div>
+
+    <div class="ob-step" id="ob3">
+      <div class="ob-eyebrow">Your spiral signature</div>
+      <div class="ob-q">What most reliably pulls you out of yourself?</div>
+      <div class="ob-hint">The moment things start to shift. A situation, a thought, something you see online. Describe it in your own words.</div>
+      <div class="ob-examples">Example: <span>Seeing someone else's success and immediately comparing where I am to where they are</span></div>
+      <textarea class="ob-input ob-ta" id="ob-trig" rows="3" placeholder="When I…"></textarea>
+      <button class="ob-btn" id="ob3-btn" disabled onclick="obNext(3)">Continue →</button>
+    </div>
+
+    <div class="ob-step" id="ob4">
+      <div class="ob-eyebrow">Your spiral signature</div>
+      <div class="ob-q">When it starts, what do you notice first?</div>
+      <div class="ob-hint">In your body, your thoughts, your behavior. There is no wrong answer here.</div>
+      <div class="ob-examples">Example: <span>My chest tightens, I start feeling like I am not good enough, and I find something else to do instead of the thing that matters</span></div>
+      <textarea class="ob-input ob-ta" id="ob-feel" rows="3" placeholder="I notice…"></textarea>
+      <button class="ob-btn" id="ob4-btn" disabled onclick="obNext(4)">Continue →</button>
+    </div>
+
+    <div class="ob-step" id="ob5">
+      <div class="ob-eyebrow">Your evidence</div>
+      <div class="ob-q">What is one true thing about you right now?</div>
+      <div class="ob-hint">Not a goal. Not a hope. Something that already happened. Real evidence you are moving forward.</div>
+      <div class="ob-examples">Example: <span>I signed up for something that scared me · I showed up today · I built something real this week</span></div>
+      <textarea class="ob-input ob-ta" id="ob-ev" rows="2" placeholder="I…"></textarea>
+      <button class="ob-btn" id="ob5-btn" disabled onclick="obFinish()">Let's begin →</button>
+    </div>
+  </div>
+</div>
 
 <nav>
   <div class="nav-logo">Frankl<span>yn</span></div>
@@ -412,14 +492,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 
   <div class="tab-panel" id="tab-mirror">
     <span class="mirror-label">Today's evidence</span>
-    <ul class="ev-list" id="ev-list">
-      <li class="ev-item" data-age="today"><div class="ev-chk">✓</div><span>Accepted into BTG — a vetted platform for expert consultants</span><span class="ev-date">today</span></li>
-      <li class="ev-item" data-age="today"><div class="ev-chk">✓</div><span>Completed MIT xPRO: Designing and Building AI Products and Services</span><span class="ev-date">today</span></li>
-      <li class="ev-item" data-age="yesterday"><div class="ev-chk">✓</div><span>Recognized by Influential Women</span><span class="ev-date">yesterday</span></li>
-      <li class="ev-item" data-age="yesterday"><div class="ev-chk">✓</div><span>Exercised and made a 30g protein meal</span><span class="ev-date">yesterday</span></li>
-      <li class="ev-item" data-age="this week"><div class="ev-chk">✓</div><span>Built three working Franklyn prototypes from scratch</span><span class="ev-date">this week</span></li>
-      <li class="ev-item" data-age="this month"><div class="ev-chk">✓</div><span>Working on agent-to-agent AI strategy with fiancé at JPMorgan</span><span class="ev-date">this month</span></li>
-    </ul>
+    <ul class="ev-list" id="ev-list"></ul>
     <div class="add-row">
       <input type="text" class="add-input" id="new-ev" placeholder="Add another truth from today…">
       <button class="add-btn" onclick="addEv()">+ Add</button>
@@ -441,6 +514,111 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 </section>
 
 <script>
+// === DATA LAYER ===
+const _mem={};
+const DB={
+  get:function(k){try{return JSON.parse(localStorage.getItem('franklyn_'+k));}catch(e){return _mem[k]||null;}},
+  set:function(k,v){try{localStorage.setItem('franklyn_'+k,JSON.stringify(v));}catch(e){_mem[k]=v;}}
+};
+
+// === ONBOARDING ===
+function obProgress(n){document.getElementById('ob-bar').style.width=((n/5)*100)+'%';}
+function obNext(n){
+  document.getElementById('ob'+n).classList.remove('active');
+  document.getElementById('ob'+(n+1)).classList.add('active');
+  obProgress(n+1);
+}
+function obFinish(){
+  var user={
+    name:document.getElementById('ob-name').value.trim(),
+    anchors:[
+      document.getElementById('ob-a1').value.trim(),
+      document.getElementById('ob-a2').value.trim(),
+      document.getElementById('ob-a3').value.trim()
+    ],
+    spiralTrigger:document.getElementById('ob-trig').value.trim(),
+    spiralFeeling:document.getElementById('ob-feel').value.trim(),
+    onboarded:true,
+    createdAt:Date.now()
+  };
+  DB.set('user',user);
+  var evText=document.getElementById('ob-ev').value.trim();
+  DB.set('evidence',evText?[{text:evText,createdAt:Date.now()}]:[]);
+  DB.set('checkins',[]);
+  document.getElementById('onboarding').style.display='none';
+  initApp(user);
+}
+function obWire(ids,btnId){
+  var btn=document.getElementById(btnId);
+  var check=function(){btn.disabled=ids.some(function(id){return document.getElementById(id).value.trim().length<1;});};
+  ids.forEach(function(id){
+    var el=document.getElementById(id);
+    el.addEventListener('input',check);
+    el.addEventListener('keydown',function(e){
+      if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();if(!btn.disabled)btn.click();}
+    });
+  });
+}
+obWire(['ob-name'],'ob1-btn');
+obWire(['ob-a1','ob-a2','ob-a3'],'ob2-btn');
+obWire(['ob-trig'],'ob3-btn');
+obWire(['ob-feel'],'ob4-btn');
+obWire(['ob-ev'],'ob5-btn');
+
+// === RENDER EVIDENCE ===
+function renderEvidence(items){
+  var list=document.getElementById('ev-list');
+  list.innerHTML='';
+  if(!items||!items.length){return;}
+  var now=Date.now(),day=86400000;
+  items.forEach(function(item){
+    var diff=now-item.createdAt;
+    var age=diff<day?'today':diff<day*2?'yesterday':diff<day*7?'this week':'this month';
+    var li=document.createElement('li');
+    li.className='ev-item';
+    li.setAttribute('data-age',age);
+    li.innerHTML='<div class="ev-chk">✓</div><span>'+item.text+'</span><span class="ev-date">'+age+'</span>';
+    list.appendChild(li);
+  });
+}
+
+// === INIT APP WITH USER DATA ===
+function initApp(user){
+  var a1=user.anchors[0],a2=user.anchors[1],a3=user.anchors[2];
+
+  // Anchor cards
+  document.querySelector('.anc-card.a1 .anc-word').textContent=a1;
+  document.querySelector('.anc-card.a2 .anc-word').textContent=a2;
+  document.querySelector('.anc-card.a3 .anc-word').textContent=a3;
+  document.querySelector('.anc-card.a1 .anc-proof').textContent='You named this. Return to it when the spiral starts.';
+  document.querySelector('.anc-card.a2 .anc-proof').textContent='You defined this. It belongs to you.';
+  document.querySelector('.anc-card.a3 .anc-proof').textContent='This is already true, even when you cannot feel it.';
+
+  // All anchor pills across every tool
+  document.querySelectorAll('.pill.p-i').forEach(function(p){p.textContent=a1;});
+  document.querySelectorAll('.pill.p-s').forEach(function(p){p.textContent=a2;});
+  document.querySelectorAll('.pill.p-w').forEach(function(p){p.textContent=a3;});
+
+  // Done screen
+  var doneSub=document.querySelector('#r-done .done-sub');
+  if(doneSub)doneSub.innerHTML=a1+'. '+a2+'. '+a3+'.<br>Now go do your one thing.';
+
+  // Spiral signature
+  var sigDescs=document.querySelectorAll('.sig-desc');
+  if(user.spiralTrigger&&sigDescs[0])sigDescs[0].textContent=user.spiralTrigger;
+  if(user.spiralFeeling&&sigDescs[1])sigDescs[1].textContent=user.spiralFeeling;
+
+  // Pattern interrupt strip
+  var evidence=DB.get('evidence')||[];
+  if(evidence.length>0){
+    var evLine=evidence.slice(0,2).map(function(e){return e.text;}).join('. ');
+    document.querySelector('.is-txt').textContent='"You are looking at the wrong data. '+evLine+'. '+a1+', '+a2+', '+a3+' — those are still yours. Close the tab."';
+  }
+
+  // Load evidence list
+  renderEvidence(evidence);
+}
+
 const quotes=[
   {text:"Between stimulus and response there is a space. In that space is our power to choose our response.",attr:"Viktor Frankl"},
   {text:"Life is not primarily a quest for pleasure or power but a quest for meaning.",attr:"Viktor Frankl"},
@@ -502,7 +680,8 @@ function activateTab(n){
   var idx={morning:0,naming:1,mirror:2}[n];
   var btn=document.querySelectorAll('.tab-btn')[idx];
   btn.classList.add('active');
-  setTimeout(function(){btn.classList.add('pulse');},10);
+  btn.offsetWidth;
+  btn.classList.add('pulse');
   btn.addEventListener('animationend',function(){btn.classList.remove('pulse');},{once:true});
   document.getElementById('tools').scrollIntoView({behavior:'smooth'});
 }
@@ -515,6 +694,8 @@ function cRS(n){
   var s=document.getElementById('rs'+n),nd=document.getElementById('rn'+n);
   s.classList.remove('active');s.classList.add('done');nd.textContent='✓';
   if(n+1<=5)document.getElementById('rs'+(n+1)).classList.add('active');
+  document.getElementById('rn'+n).classList.remove('pulse-loop');
+  if(n+1<=5){document.getElementById('rn'+(n+1)).classList.add('pulse-loop');}
 }
 function startT(){
   var b=document.getElementById('t-btn');b.textContent='⏸ Pause';b.onclick=pauseT;
@@ -548,18 +729,30 @@ function goRes(){
   showNS('ns-result');
   document.getElementById('n-tag').innerHTML='<div class="n-tag t-sct">Franklyn is thinking…</div>';
   document.getElementById('n-title').textContent='One moment…';
-  ['n-body','n-mech','n-truth','n-ott','n-otb','n-ota'].forEach(id=>document.getElementById(id).textContent='');
-  const evidence=Array.from(document.querySelectorAll('.ev-item')).map(el=>el.textContent.replace('✓','').trim());
-  fetch('/api/name',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({state:selPulse,signals:selSigs,anchors:['Influential','Significant','Wealthy'],evidence:evidence,signature:'Starts with comparison online, moves to unworthiness, lands on abandonment story, numbs with wine and cleaning'})})
-  .then(r=>r.json())
-  .then(data=>{
+  ['n-body','n-mech','n-truth','n-ott','n-otb','n-ota'].forEach(function(id){document.getElementById(id).textContent='';});
+
+  var user=DB.get('user')||{};
+  var anchors=user.anchors||['Influential','Significant','Wealthy'];
+  var evidence=(DB.get('evidence')||[]).map(function(e){return e.text;});
+  var signature=user.spiralTrigger&&user.spiralFeeling
+    ?user.spiralTrigger+', then '+user.spiralFeeling
+    :'Starts with comparison online, moves to unworthiness, lands on abandonment story, numbs with wine and cleaning';
+
+  // Save check-in to history
+  var checkins=DB.get('checkins')||[];
+  checkins.push({state:selPulse,signals:selSigs,createdAt:Date.now()});
+  DB.set('checkins',checkins);
+
+  fetch('/api/name',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({state:selPulse,signals:selSigs,anchors:anchors,evidence:evidence,signature:signature})})
+  .then(function(r){return r.json();})
+  .then(function(data){
     document.getElementById('n-tag').innerHTML='<div class="n-tag t-sct">Franklyn</div>';
     document.getElementById('n-title').textContent=data.what||'';
     document.getElementById('n-mech').textContent=data.why||'';
     document.getElementById('n-truth').textContent=data.truth||'';
     document.getElementById('n-ott').textContent='One thing';
     document.getElementById('n-ota').textContent=data.action||'';
-  }).catch(()=>{bldRes();});
+  }).catch(function(){bldRes();});
 }
 
 function bldRes(){
@@ -586,6 +779,8 @@ function resetN(){
   document.getElementById('p-cont').disabled=true;showNS('ns-pulse');
 }
 
+document.getElementById('rn1').classList.add('pulse-loop');
+
 const monthColors=['#b03a20','#c47a5a','#c8920a','#7a9e7e','#2a5c3a','#1e5566','#2a4a7a','#3a3a7a','#6a3a7a','#c4848a','#4a2c1a','#2e2c2a'];
 function hexToRgb(hex){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return{r,g,b};}
 function blend(hex,amount){const{r,g,b}=hexToRgb(hex);return`rgb(${Math.round(r+(245-r)*amount)},${Math.round(g+(240-g)*amount)},${Math.round(b+(228-b)*amount)})`;}
@@ -603,11 +798,30 @@ d.style.setProperty('--ev-month-ink','#f5f0e4');
 
 function addEv(){
   var inp=document.getElementById('new-ev'),v=inp.value.trim();if(!v)return;
-  var li=document.createElement('li');li.className='ev-item';li.setAttribute('data-age','today');
-  li.innerHTML='<div class="ev-chk">✓</div><span>'+v+'</span><span class="ev-date">today</span>';
-  var list=document.getElementById('ev-list');list.insertBefore(li,list.firstChild);inp.value='';
+  var evidence=DB.get('evidence')||[];
+  evidence.unshift({text:v,createdAt:Date.now()});
+  DB.set('evidence',evidence);
+  renderEvidence(evidence);
+  // Refresh pattern interrupt strip with latest evidence
+  var user=DB.get('user');
+  if(user&&evidence.length>0){
+    var evLine=evidence.slice(0,2).map(function(e){return e.text;}).join('. ');
+    document.querySelector('.is-txt').textContent='"You are looking at the wrong data. '+evLine+'. '+user.anchors[0]+', '+user.anchors[1]+', '+user.anchors[2]+' — those are still yours. Close the tab."';
+  }
+  inp.value='';
 }
 document.getElementById('new-ev').addEventListener('keydown',function(e){if(e.key==='Enter')addEv();});
+
+// === FIRST RUN CHECK ===
+(function(){
+  var user=DB.get('user');
+  if(user&&user.onboarded){
+    document.getElementById('onboarding').style.display='none';
+    initApp(user);
+  } else {
+    obProgress(1);
+  }
+})();
 </script>
 </body>
 </html>
