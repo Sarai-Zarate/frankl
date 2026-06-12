@@ -222,7 +222,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 
 .interrupt-strip{background:var(--charcoal);border-radius:var(--r);padding:1.5rem}
 .is-label{font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,240,228,0.45);margin-bottom:10px}
-.is-txt{font-size:15px;color:var(--cream);line-height:1.65;font-style:italic;margin-bottom:10px}
+.is-txt{font-size:15px;color:var(--cream);line-height:1.65;font-style:italic;margin-bottom:10px;white-space:pre-line}
 .is-action{font-size:13px;color:rgba(245,240,228,0.6);font-weight:300}
 .disclaimer{margin-top:2.5rem;font-size:12px;color:var(--ink4);line-height:1.7;font-style:italic;max-width:600px;border-top:1px solid var(--border);padding-top:1.5rem}
 
@@ -607,6 +607,17 @@ obWire(['ob-trig'],'ob3-btn');
 obWire(['ob-feel'],'ob4-btn');
 obWire(['ob-ev'],'ob5-btn');
 
+// === PATTERN INTERRUPT STRIP ===
+function updateInterruptStrip(user,evidence){
+  var a1=user.anchors[0],a2=user.anchors[1],a3=user.anchors[2];
+  var evLine=evidence.length>0
+    ?evidence.slice(0,2).map(function(e){return e.text;}).join('. ')+'.'
+    :'You showed up today and that is real.';
+  var txt='What you are feeling right now has a name. Stephen Porges calls it neuroception — your nervous system scanned your environment, read a threat, and activated a stress response before your conscious mind had any say in it. That is not weakness. That is biology doing exactly what it was designed to do.\n\nHere is what is actually true: '+evLine+' That evidence does not disappear because the feeling is loud.\n\nYour vagal brake — the part of your nervous system that returns you to calm — can be activated right now. One hand on your chest. Breathe in for four counts, out for six. The longer exhale physically signals safety to your nervous system. Do it once before you do anything else.\n\n'+a1+', '+a2+', '+a3+' — those belong to you. They were true before this moment and they are true now. Close the tab that started this.';
+  document.querySelector('.is-txt').textContent=txt;
+  document.querySelector('.is-action').textContent='→ One hand on your chest. Four counts in, six counts out. Once. Then close the comparison tab.';
+}
+
 // === RENDER EVIDENCE ===
 function renderEvidence(items){
   var list=document.getElementById('ev-list');
@@ -652,10 +663,7 @@ function initApp(user){
 
   // Pattern interrupt strip
   var evidence=DB.get('evidence')||[];
-  if(evidence.length>0){
-    var evLine=evidence.slice(0,2).map(function(e){return e.text;}).join('. ');
-    document.querySelector('.is-txt').textContent='"You are looking at the wrong data. '+evLine+'. '+a1+', '+a2+', '+a3+' — those are still yours. Close the tab."';
-  }
+  updateInterruptStrip(user,evidence);
 
   // Load evidence list
   renderEvidence(evidence);
@@ -849,10 +857,7 @@ function addEv(){
   renderEvidence(evidence);
   // Refresh pattern interrupt strip with latest evidence
   var user=DB.get('user');
-  if(user&&evidence.length>0){
-    var evLine=evidence.slice(0,2).map(function(e){return e.text;}).join('. ');
-    document.querySelector('.is-txt').textContent='"You are looking at the wrong data. '+evLine+'. '+user.anchors[0]+', '+user.anchors[1]+', '+user.anchors[2]+' — those are still yours. Close the tab."';
-  }
+  if(user)updateInterruptStrip(user,evidence);
   inp.value='';
 }
 document.getElementById('new-ev').addEventListener('keydown',function(e){if(e.key==='Enter')addEv();});
