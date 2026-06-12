@@ -326,12 +326,24 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     </div>
 
     <div class="ob-step" id="ob5">
+      <div class="ob-eyebrow">Your check-in signals</div>
+      <div class="ob-q">When you are starting to spiral, what do you notice? Name up to four things in your own words.</div>
+      <div class="ob-hint">These will become your personal check-in options. The first two are required. Use the language you actually use with yourself.</div>
+      <div class="ob-examples">Examples: <span>My chest gets tight · I start scrolling instead of working · I feel behind everyone · I want to cancel plans · I feel like crying · I stop eating · I go quiet</span></div>
+      <input class="ob-input" id="ob-s1" type="text" placeholder="First signal (required)" autocomplete="off">
+      <input class="ob-input" id="ob-s2" type="text" placeholder="Second signal (required)" autocomplete="off">
+      <input class="ob-input" id="ob-s3" type="text" placeholder="Third signal (optional)" autocomplete="off">
+      <input class="ob-input" id="ob-s4" type="text" placeholder="Fourth signal (optional)" autocomplete="off">
+      <button class="ob-btn" id="ob5-btn" disabled onclick="obNext(5)">Continue →</button>
+    </div>
+
+    <div class="ob-step" id="ob6">
       <div class="ob-eyebrow">Your evidence</div>
       <div class="ob-q">What is one true thing about you right now?</div>
       <div class="ob-hint">Not a goal. Not a hope. Something that already happened. Real evidence you are moving forward.</div>
       <div class="ob-examples">Example: <span>I signed up for something that scared me · I showed up today · I built something real this week</span></div>
       <textarea class="ob-input ob-ta" id="ob-ev" rows="2" placeholder="I…"></textarea>
-      <button class="ob-btn" id="ob5-btn" disabled onclick="obFinish()">Let's begin →</button>
+      <button class="ob-btn" id="ob6-btn" disabled onclick="obFinish()">Let's begin →</button>
     </div>
   </div>
 </div>
@@ -485,14 +497,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     <div class="ns" id="ns-signals">
       <p style="font-size:20px;font-weight:700;color:var(--ink);margin-bottom:6px">What's happening right now?</p>
       <p style="font-size:14px;color:var(--ink3);margin-bottom:1.25rem;font-weight:300">Select everything that's true.</p>
-      <div class="sig-list">
-        <div class="si" onclick="togS(this,'comparison')"><div class="si-chk">✓</div><div class="si-txt">I've been looking at what others are doing online</div></div>
-        <div class="si" onclick="togS(this,'competence')"><div class="si-chk">✓</div><div class="si-txt">I feel like I don't have enough knowledge or credibility</div></div>
-        <div class="si" onclick="togS(this,'abandonment')"><div class="si-chk">✓</div><div class="si-txt">Thoughts about people not loving me or being ahead of me</div></div>
-        <div class="si" onclick="togS(this,'body')"><div class="si-chk">✓</div><div class="si-txt">I haven't eaten or I'm physically depleted</div></div>
-        <div class="si" onclick="togS(this,'avoidance')"><div class="si-chk">✓</div><div class="si-txt">I want to clean, drink, or do anything except the one thing</div></div>
-        <div class="si" onclick="togS(this,'crying')"><div class="si-chk">✓</div><div class="si-txt">I've been crying or feel like I might</div></div>
-      </div>
+      <div class="sig-list"></div>
       <button class="ne-btn" onclick="goRes()">Name what's happening →</button>
       <button class="ne-ghost" onclick="goRes()">Skip — just show me</button>
     </div>
@@ -564,13 +569,19 @@ const DB={
 };
 
 // === ONBOARDING ===
-function obProgress(n){document.getElementById('ob-bar').style.width=((n/5)*100)+'%';}
+function obProgress(n){document.getElementById('ob-bar').style.width=((n/6)*100)+'%';}
 function obNext(n){
   document.getElementById('ob'+n).classList.remove('active');
   document.getElementById('ob'+(n+1)).classList.add('active');
   obProgress(n+1);
 }
 function obFinish(){
+  var rawSignals=[
+    document.getElementById('ob-s1').value.trim(),
+    document.getElementById('ob-s2').value.trim(),
+    document.getElementById('ob-s3').value.trim(),
+    document.getElementById('ob-s4').value.trim()
+  ].filter(function(s){return s.length>0;});
   var user={
     name:document.getElementById('ob-name').value.trim(),
     anchors:[
@@ -580,6 +591,7 @@ function obFinish(){
     ],
     spiralTrigger:document.getElementById('ob-trig').value.trim(),
     spiralFeeling:document.getElementById('ob-feel').value.trim(),
+    signals:rawSignals,
     onboarded:true,
     createdAt:Date.now()
   };
@@ -605,7 +617,8 @@ obWire(['ob-name'],'ob1-btn');
 obWire(['ob-a1','ob-a2','ob-a3'],'ob2-btn');
 obWire(['ob-trig'],'ob3-btn');
 obWire(['ob-feel'],'ob4-btn');
-obWire(['ob-ev'],'ob5-btn');
+obWire(['ob-s1','ob-s2'],'ob5-btn');
+obWire(['ob-ev'],'ob6-btn');
 
 // === PATTERN INTERRUPT STRIP ===
 function updateInterruptStrip(user,evidence){
@@ -616,6 +629,29 @@ function updateInterruptStrip(user,evidence){
   var txt='What you are feeling right now has a name. Stephen Porges calls it neuroception — your nervous system scanned your environment, read a threat, and activated a stress response before your conscious mind had any say in it. That is not weakness. That is biology doing exactly what it was designed to do.\n\nHere is what is actually true: '+evLine+' That evidence does not disappear because the feeling is loud.\n\nYour vagal brake — the part of your nervous system that returns you to calm — can be activated right now. One hand on your chest. Breathe in for four counts, out for six. The longer exhale physically signals safety to your nervous system. Do it once before you do anything else.\n\n'+a1+', '+a2+', '+a3+' — those belong to you. They were true before this moment and they are true now. Close the tab that started this.';
   document.querySelector('.is-txt').textContent=txt;
   document.querySelector('.is-action').textContent='→ One hand on your chest. Four counts in, six counts out. Once. Then close the comparison tab.';
+}
+
+// === RENDER SIGNALS ===
+var defaultSignals=[
+  "I've been looking at what others are doing online",
+  "I feel like I don't have enough knowledge or credibility",
+  "My thoughts are telling me I'm behind or not enough",
+  "I haven't eaten or I'm physically depleted",
+  "I want to do anything except the thing that matters",
+  "I've been crying or feel like I might"
+];
+function renderSignals(signals){
+  var list=document.querySelector('.sig-list');
+  list.innerHTML='';
+  var src=signals&&signals.length?signals:defaultSignals;
+  src.forEach(function(sig){
+    var div=document.createElement('div');
+    div.className='si';
+    div.setAttribute('data-signal',sig);
+    div.onclick=function(){togS(this);};
+    div.innerHTML='<div class="si-chk">✓</div><div class="si-txt">'+sig+'</div>';
+    list.appendChild(div);
+  });
 }
 
 // === RENDER EVIDENCE ===
@@ -667,6 +703,9 @@ function initApp(user){
 
   // Load evidence list
   renderEvidence(evidence);
+
+  // Render user's personal signals
+  renderSignals(user.signals);
 
   // Start chat with user context
   chatInit(user);
@@ -775,7 +814,7 @@ function resetR(){
 
 var selPulse=null,selSigs=[];
 function selP(el,v){document.querySelectorAll('.pc').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');selPulse=v;document.getElementById('p-cont').disabled=false;}
-function togS(el,v){el.classList.toggle('selected');if(el.classList.contains('selected')){selSigs.push(v);}else{selSigs=selSigs.filter(s=>s!==v);}}
+function togS(el){var v=el.getAttribute('data-signal');el.classList.toggle('selected');if(el.classList.contains('selected')){selSigs.push(v);}else{selSigs=selSigs.filter(function(s){return s!==v;});}}
 function showNS(id){document.querySelectorAll('.ns').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
 function goSig(){if(selPulse==='grounded'){bldRes();showNS('ns-result');return;}showNS('ns-signals');}
 function goRes(){
@@ -809,15 +848,52 @@ function goRes(){
 }
 
 function bldRes(){
-  var hC=selSigs.indexOf('comparison')>-1,hA=selSigs.indexOf('abandonment')>-1,hB=selSigs.indexOf('body')>-1,hCr=selSigs.indexOf('crying')>-1,hAv=selSigs.indexOf('avoidance')>-1;
+  var user=DB.get('user')||{};
+  var anchors=user.anchors||['your first anchor','your second anchor','your third anchor'];
   var tag,ti,bo,me,tr,ot,ob,oa;
-  if(selPulse==='grounded'){tag='<div class="n-tag t-grd">Regulated</div>';ti='You are in a ventral vagal state.';bo='This is where your best work happens. Where you can build, connect, create, and think clearly. Stephen Porges calls this the social engagement system at full capacity.';me='When the ventral vagal circuit is active, the prefrontal cortex has full access. Working memory is available. You can hold complexity without being overwhelmed.';tr='You checked in while regulated. That builds the self-awareness that makes Franklyn smarter over time.';ot='Protect this state';ob="You're regulated right now. The one thing that protects this is not opening comparison tabs.";oa='→ Close everything except your one thing. Work for 25 minutes.';}
-  else if(selPulse==='spiral'||hCr||hA){tag='<div class="n-tag t-abd">Abandonment story active</div>';ti='The spiral has reached the old wound.';bo="This isn't about the business anymore. Your nervous system has moved from \"I might fail\" to \"the people who should love me don't.\" That's an older story triggered by a newer pain. Both feel real. Neither is the truth of this moment.";me='When the sympathetic nervous system is overwhelmed, the dorsal vagal circuit activates — Stephen Porges. It creates a story of isolation and abandonment. The story is not a lie. It is old data applied to a new situation.';tr='"Your fiancé is building AI with you. You are not alone. The abandonment story fires when you\'re depleted, not because it\'s true. Once you get going, you are going to change this industry."';ot='Body first. Everything else after.';ob="You cannot think your way out of a dorsal vagal state. The story keeps running until your nervous system gets a safety signal. That signal comes through the body first.";oa='→ One hand on your chest. Eyes closed. Four breaths. Nothing else for 90 seconds.';}
-  else if(selPulse==='anxious'||hC){tag='<div class="n-tag t-cmp">Comparison trigger active</div>';ti="You're looking at the wrong data.";bo="Your nervous system read someone else's curated highlight reel and filed it as evidence that you are behind. It isn't evidence of anything except that other people post their wins. This is step one of your spiral. It does not have to go further.";me='Neuroception — Stephen Porges — reads "others are ahead" as survival-level danger because your path to influential, significant, wealthy feels threatened. The anxiety is your nervous system doing its job with incomplete information.';tr='"You got into BTG. You completed MIT xPRO. You were recognized as an influential woman. You are building something that does not exist yet. The people on LinkedIn are not ahead of you. They are on different paths."';ot='Close the tab. Right now.';ob='Not after one more scroll. Now. The comparison data is extraneous cognitive load — John Sweller — and it is crowding out the working memory you need to build.';oa='→ Close the comparison tab. Open BTG. Read one project brief. That\'s it.';}
-  else if(selPulse==='scattered'||hAv){tag='<div class="n-tag t-sct">Scattered — catching it early</div>';ti='Your working memory is full.';bo="You're not failing to focus. Your cognitive capacity is genuinely maxed out. Too many tabs, too many open loops, too many things competing for the same limited working memory. Catching it here is catching it early.";me="John Sweller's cognitive load theory is precise: when intrinsic load combines with extraneous load, working memory capacity is exceeded. The result isn't weakness. It's a full system.";tr='"Scattered isn\'t broken. Scattered is a full nervous system asking for a smaller input. One thing. One tab. One decision. Everything else can wait."';ot='Reduce the load right now.';ob="Close every tab that isn't your one thing. Write a list so your brain stops holding them. Then start.";oa='→ Close all tabs. Write your one thing at the top of a blank document. Start there.';}
-  else if(hB){tag='<div class="n-tag t-dep">Physical depletion</div>';ti="You can't build from an empty tank.";bo="The anxiety and scattered focus are physiological right now, not just psychological. A depleted body runs a depleted nervous system. Your prefrontal cortex is the first to go offline when blood sugar drops.";me="Physical state is the foundation of cognitive performance. Nutrition, sleep, and movement are the substrate everything else runs on.";tr='"Eating is not giving up. Eating is building. The 30g protein meal this morning was the right call. Do it again."';ot='Feed the builder first.';ob="Before any screen, eat something real with protein. This is infrastructure, not a reward.";oa='→ Step away from the screen. Eat. Return in 20 minutes.';}
-  else{tag='<div class="n-tag t-sct">You checked in</div>';ti='Something is happening.';bo="You checked in. That means part of you knows something is off. That self-awareness is the most important tool you have.";me="Checking in before the spiral fully activates is the highest-leverage moment. The earlier the interrupt, the less energy it takes to return to a regulated state.";tr='"You noticed. That\'s the whole game. Influential, significant, wealthy — those are still yours."';ot='One breath. One truth.';ob="You don't need a full intervention. You need one anchor and one next step.";oa='→ Say your three anchors out loud. Then open your one thing.';}
-  document.getElementById('n-tag').innerHTML=tag;document.getElementById('n-title').textContent=ti;document.getElementById('n-body').textContent=bo;document.getElementById('n-mech').textContent=me;document.getElementById('n-truth').textContent=tr;document.getElementById('n-ott').textContent=ot;document.getElementById('n-otb').textContent=ob;document.getElementById('n-ota').textContent=oa;
+  if(selPulse==='grounded'){
+    tag='<div class="n-tag t-grd">Regulated</div>';
+    ti='You are in a ventral vagal state.';
+    bo='This is where your best work happens. Where you can build, connect, create, and think clearly. Stephen Porges calls this the social engagement system operating at full capacity.';
+    me='When the ventral vagal circuit is active, your prefrontal cortex has full access. Working memory is available. You can hold complexity without being overwhelmed by it.';
+    tr='You checked in while regulated. That is the whole practice — noticing what working feels like so you can return to it.';
+    ot='Protect this state';ob='Stay off comparison tabs. Keep the one thing visible.';oa='→ Close everything except your one thing. Work for 25 minutes.';}
+  else if(selPulse==='spiral'){
+    tag='<div class="n-tag t-abd">Deep in the spiral</div>';
+    ti='Your nervous system has moved into shutdown.';
+    bo='This is not about logic right now. When the dorsal vagal circuit activates — Stephen Porges — the body goes into a kind of collapse. Thoughts feel true and permanent. They are neither. This state has a beginning and an end.';
+    me='The dorsal vagal response is ancient. It evolved for situations of inescapable threat. Your nervous system cannot tell the difference between that and an emotional wound from today. The response is the same. The story feels real because the feeling is real.';
+    tr=anchors[0]+', '+anchors[1]+', '+anchors[2]+'. Those are still yours. They do not disappear because the feeling is loud.';
+    ot='Body before mind.';ob='You cannot think your way out of a dorsal vagal state. The exit is through the body, not through reasoning.';oa='→ One hand on your chest. Breathe out longer than you breathe in. Four counts in, six counts out. Do it three times. Nothing else yet.';}
+  else if(selPulse==='anxious'){
+    tag='<div class="n-tag t-cmp">Threat response active</div>';
+    ti='Your nervous system read something as danger.';
+    bo='What you are feeling is called neuroception — Stephen Porges discovered that your nervous system scans for threat before your conscious mind has any awareness of it. Something triggered a danger signal. The anxiety arrived before the thought did.';
+    me='This is your nervous system doing its job. The problem is it is working with incomplete information. The threat it detected is not the threat it thinks it is.';
+    tr=anchors[0]+', '+anchors[1]+', '+anchors[2]+'. Real. Present. Yours.';
+    ot='Name it to interrupt it.';ob='Naming what is happening activates the prefrontal cortex and begins to slow the threat response. You just did that by checking in.';oa='→ Say out loud: my nervous system is responding to a perceived threat. This is biology. I am safe right now.';}
+  else if(selPulse==='scattered'){
+    tag='<div class="n-tag t-sct">Cognitive overload</div>';
+    ti='Your working memory is full.';
+    bo='You are not failing to focus. Your cognitive capacity is genuinely at its limit. John Sweller\'s cognitive load theory is precise about this — when the number of things competing for working memory exceeds its capacity, clear thinking stops. That is what is happening.';
+    me='Working memory can hold roughly four chunks of information at a time. Every open tab, unfinished task, and unresolved question is occupying one of those slots. The scattered feeling is accurate information about your system load.';
+    tr=anchors[0]+', '+anchors[1]+', '+anchors[2]+'. One thing at a time. That is enough.';
+    ot='Reduce the load.';ob='You do not need to do more. You need to hold less at once.';oa='→ Close every tab that is not your one thing. Write everything else on a list so your brain stops holding it. Then start.';}
+  else{
+    tag='<div class="n-tag t-sct">You checked in</div>';
+    ti='Something shifted and you noticed.';
+    bo='That noticing is the whole practice. Most people stay in the spiral because they never stop to name it. You stopped. That matters.';
+    me='Self-awareness is the earliest possible interrupt point. The earlier you catch the pattern, the less energy it takes to return to a regulated state — Stephen Porges.';
+    tr=anchors[0]+', '+anchors[1]+', '+anchors[2]+'. Still true.';
+    ot='One anchor. One breath.';ob='You do not need a full intervention. You need one grounding point.';oa='→ Say your three anchors out loud. Then name the one thing that matters today.';}
+  document.getElementById('n-tag').innerHTML=tag;
+  document.getElementById('n-title').textContent=ti;
+  document.getElementById('n-body').textContent=bo;
+  document.getElementById('n-mech').textContent=me;
+  document.getElementById('n-truth').textContent=tr;
+  document.getElementById('n-ott').textContent=ot;
+  document.getElementById('n-otb').textContent=ob;
+  document.getElementById('n-ota').textContent=oa;
 }
 
 function goDone(){
