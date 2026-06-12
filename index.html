@@ -231,9 +231,9 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .chat-msg{display:flex;flex-direction:column;max-width:82%}
 .chat-msg.franklyn{align-self:flex-start}
 .chat-msg.user{align-self:flex-end}
-.chat-bubble{padding:11px 16px;border-radius:16px;font-size:14px;line-height:1.65;font-weight:300}
-.chat-msg.franklyn .chat-bubble{background:var(--charcoal);color:var(--cream);border-bottom-left-radius:4px}
-.chat-msg.user .chat-bubble{background:var(--cream-d);color:var(--ink);border:1px solid var(--border);border-bottom-right-radius:4px}
+.chat-bubble{padding:11px 16px;border-radius:18px;font-size:14px;line-height:1.65;font-weight:300}
+.chat-msg.franklyn .chat-bubble{background:#ede8df;color:var(--ink);border-bottom-left-radius:4px}
+.chat-msg.user .chat-bubble{background:var(--month-color);color:var(--cream);border-bottom-right-radius:4px}
 .chat-sender{font-family:var(--fm);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink4);margin-bottom:5px}
 .chat-msg.user .chat-sender{text-align:right}
 .chat-typing{display:flex;gap:4px;align-items:center;padding:11px 16px}
@@ -1018,6 +1018,7 @@ function chatSend(){
   inp.value='';
   inp.style.height='auto';
   document.getElementById('chat-send').disabled=true;
+  rotateChatColor();
   chatAppend('user',text);
   chatHistory.push({role:'user',content:text});
   chatTyping();
@@ -1041,6 +1042,18 @@ function chatSend(){
     chatAppend('franklyn','Something went wrong on my end. Try again.');
     document.getElementById('chat-send').disabled=false;
   });
+}
+
+// === CHAT BUTTON COLOR ROTATION ===
+var chatPalette=['#b03a20','#c8920a','#2a5c3a','#1e5566','#2a4a7a','#6a3a7a','#c4848a','#4a2c1a','#b07030'];
+var chatColorIdx=0;
+function rotateChatColor(){
+  chatColorIdx=(chatColorIdx+1)%chatPalette.length;
+  var c=chatPalette[chatColorIdx];
+  document.getElementById('chat-send').style.background=c;
+  document.getElementById('chat-mic').style.background=c;
+  document.getElementById('chat-mic').style.borderColor=c;
+  document.getElementById('chat-mic').style.color='#f5f0e4';
 }
 
 // === VOICE ===
