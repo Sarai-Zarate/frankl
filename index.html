@@ -225,6 +225,16 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .is-txt{font-size:15px;color:var(--cream);line-height:1.65;font-style:italic;margin-bottom:10px;white-space:pre-line}
 .is-action{font-size:13px;color:rgba(245,240,228,0.6);font-weight:300}
 .disclaimer{margin-top:2.5rem;font-size:12px;color:var(--ink4);line-height:1.7;font-style:italic;max-width:600px;border-top:1px solid var(--border);padding-top:1.5rem}
+.feedback-wrap{margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.feedback-label{font-family:var(--fd);font-size:14px;font-style:italic;color:var(--burgundy);display:block;margin-bottom:6px}
+.feedback-hint{font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6;margin-bottom:12px}
+.feedback-input{width:100%;font-size:13px;font-family:var(--fb);padding:10px 14px;border-radius:var(--rs);border:1px solid var(--borderS);background:var(--cream);color:var(--ink);resize:none;margin-bottom:8px;line-height:1.5}
+.feedback-input:focus{outline:none;border-color:var(--charcoal)}
+.feedback-btn{font-size:13px;font-weight:600;font-family:var(--fb);padding:9px 20px;border-radius:24px;border:none;background:var(--charcoal);color:var(--cream);cursor:pointer;transition:background var(--tr)}
+.feedback-btn:hover{background:var(--charcoal-l)}
+.feedback-btn:disabled{opacity:0.3;cursor:default}
+.feedback-sent{font-size:13px;color:var(--forest);font-weight:500;display:none}
+.feedback-sent.show{display:block}
 
 .ob-back{background:none;border:none;font-size:13px;color:var(--ink4);cursor:pointer;padding:0;margin-bottom:1.5rem;font-family:var(--fb);display:flex;align-items:center;gap:4px}
 .ob-back:hover{color:var(--ink)}
@@ -575,6 +585,13 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       <div class="done-sub">Influential. Significant. Wealthy.<br>Now go do your one thing.</div>
       <div class="pills-row" style="justify-content:center;margin-bottom:1.5rem"><div class="pill p-i">Influential</div><div class="pill p-s">Significant</div><div class="pill p-w">Wealthy</div></div>
       <button class="btn-ghost" onclick="resetR()">Start again</button>
+      <div class="feedback-wrap">
+        <span class="feedback-label">Help us get better for you</span>
+        <p class="feedback-hint">Franklyn improves the more you use it. If something felt off or something helped, tell us. We are building this for you.</p>
+        <textarea class="feedback-input" id="fb-morning" rows="3" placeholder="What worked, what didn't, what you wish was here…"></textarea>
+        <button class="feedback-btn" id="fb-morning-btn" onclick="sendFeedback('fb-morning','fb-morning-btn','fb-morning-sent','Morning Anchor')">Send feedback</button>
+        <div class="feedback-sent" id="fb-morning-sent">Thank you. We read every one.</div>
+      </div>
     </div>
   </div>
 
@@ -639,6 +656,13 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       <div class="sig-step"><div class="sig-num sn2">2</div><div><div class="sig-name">Unworthiness floods in</div><div class="sig-desc">"I don't have the knowledge, the credibility, I can't do this." Working memory fills with noise and the real work disappears.</div></div></div>
       <div class="sig-step"><div class="sig-num sn3">3</div><div><div class="sig-name">Abandonment story activates</div><div class="sig-desc">Old wound, new trigger. The dorsal vagal circuit engages. The story feels true because it is ancient.</div></div></div>
       <div class="sig-step"><div class="sig-num sn4">4</div><div><div class="sig-name">Numbing and control</div><div class="sig-desc">Wine to numb. Cleaning to control. Your nervous system seeking safety through any available action.</div></div></div>
+    </div>
+    <div class="feedback-wrap">
+        <span class="feedback-label">Help us get better for you</span>
+        <p class="feedback-hint">Franklyn improves the more you use it. If something felt off or something helped, tell us. We are building this for you.</p>
+        <textarea class="feedback-input" id="fb-mirror" rows="3" placeholder="What worked, what didn't, what you wish was here…"></textarea>
+        <button class="feedback-btn" id="fb-mirror-btn" onclick="sendFeedback('fb-mirror','fb-mirror-btn','fb-mirror-sent','Meaning Mirror')">Send feedback</button>
+        <div class="feedback-sent" id="fb-mirror-sent">Thank you. We read every one.</div>
     </div>
     <p class="disclaimer">Franklyn is not a substitute for therapy or professional mental health support. It is a personal operating system grounded in published psychological research by Stephen Porges, Viktor Frankl, Richard Ryan, Edward Deci, and John Sweller.</p>
   </div>
@@ -713,6 +737,23 @@ obWire(['ob-trig'],'ob3-btn');
 obWire(['ob-feel'],'ob4-btn');
 obWire(['ob-numb'],'ob5-btn');
 obWire(['ob-ev'],'ob6-btn');
+
+// === FEEDBACK ===
+function sendFeedback(inputId,btnId,sentId,source){
+  var text=document.getElementById(inputId).value.trim();
+  if(!text)return;
+  var user=DB.get('user')||{};
+  var subject='Franklyn Feedback — '+source+(user.name?' from '+user.name:'');
+  var body=text+'\n\n---\nSource: '+source+'\nUser: '+(user.name||'anonymous')+'\nDate: '+new Date().toLocaleDateString();
+  window.location.href='mailto:franklyn.feedback@gmail.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+  document.getElementById(inputId).value='';
+  document.getElementById(btnId).disabled=true;
+  document.getElementById(sentId).classList.add('show');
+  setTimeout(function(){
+    document.getElementById(btnId).disabled=false;
+    document.getElementById(sentId).classList.remove('show');
+  },4000);
+}
 
 // === BEHAVIOR PARSER ===
 function parseBehaviors(text){
