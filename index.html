@@ -195,6 +195,28 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .ne-ghost:hover{border-color:var(--borderS)}
 
 .mirror-label{font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px;display:block}
+.mirror-section{margin-top:2.5rem}
+.meaning-sentence{background:var(--cream-d);border-radius:var(--r);border:1px solid var(--border);padding:1.25rem 1.5rem;margin-bottom:2.5rem}
+.ms-label{font-family:var(--fd);font-size:15px;font-style:italic;color:var(--burgundy);margin-bottom:10px;display:block}
+.ms-input{width:100%;font-size:14px;font-family:var(--fb);padding:6px 0;border:none;border-bottom:1px solid var(--borderS);background:transparent;color:var(--ink);resize:none;line-height:1.6;font-weight:300}
+.ms-input:focus{outline:none;border-bottom-color:var(--charcoal)}
+.meaning-prompts{display:flex;flex-direction:column;gap:10px;margin-bottom:2.5rem}
+.meaning-prompt{background:var(--cream);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem}
+.mp-tag{font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink4);margin-bottom:3px;display:block}
+.mp-q{font-size:13px;color:var(--ink2);font-weight:400;margin-bottom:8px;line-height:1.5}
+.mp-input{width:100%;font-size:13px;font-family:var(--fb);padding:8px 10px;border-radius:var(--rs);border:1px solid var(--borderS);background:var(--cream-d);color:var(--ink);resize:none;line-height:1.5}
+.mp-input:focus{outline:none;border-color:var(--charcoal)}
+.habit-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
+.habit-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:var(--r);background:var(--cream);border:1px solid var(--border);transition:all 0.2s ease}
+.habit-item.done-today{background:var(--forest-l);border-color:var(--forest)}
+.habit-check{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--borderS);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all 0.2s ease;color:transparent}
+.habit-item.done-today .habit-check{background:var(--forest);border-color:var(--forest);color:#fff}
+.habit-name{flex:1;font-size:14px;font-weight:500;color:var(--ink)}
+.habit-meta{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
+.habit-streak{font-family:var(--fm);font-size:11px;font-weight:600;color:var(--forest)}
+.habit-total{font-family:var(--fm);font-size:10px;color:var(--ink4)}
+.habit-del{background:none;border:none;color:var(--ink4);cursor:pointer;font-size:13px;padding:4px;opacity:0.35;transition:opacity 0.2s ease;line-height:1;flex-shrink:0}
+.habit-del:hover{opacity:1;color:var(--rose)}
 .ev-list{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
 .ev-item{display:flex;align-items:center;gap:10px;border-radius:8px;padding:12px 16px;font-size:14px;line-height:1.5;font-weight:400;border:none}
 .ev-item[data-age="today"]{background:var(--ev-today);color:var(--ev-today-ink)}
@@ -649,27 +671,61 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
   </div>
 
   <div class="tab-panel" id="tab-mirror">
+
     <span class="mirror-label">Today's evidence</span>
     <ul class="ev-list" id="ev-list"></ul>
     <div class="add-row">
-      <input type="text" class="add-input" id="new-ev" placeholder="Add another truth from today…">
+      <input type="text" class="add-input" id="new-ev" placeholder="Add a truth from today…">
       <button class="add-btn" onclick="addEv()">+ Add</button>
     </div>
-    <span class="mirror-label">Your spiral signature</span>
-    <div class="sig-card">
-      <div class="sig-step"><div class="sig-num sn1">1</div><div><div class="sig-name" id="sig-name-1">What starts it</div><div class="sig-desc" id="sig-desc-1"></div></div></div>
-      <div class="sig-step"><div class="sig-num sn2">2</div><div><div class="sig-name" id="sig-name-2">How your body responds</div><div class="sig-desc" id="sig-desc-2"></div></div></div>
-      <div class="sig-step"><div class="sig-num sn3">3</div><div><div class="sig-name" id="sig-name-3">The story that activates</div><div class="sig-desc" id="sig-desc-3">Old wound, new trigger. The dorsal vagal circuit engages. The story feels true because it is ancient and the body remembers it.</div></div></div>
-      <div class="sig-step"><div class="sig-num sn4">4</div><div><div class="sig-name" id="sig-name-4">What you reach for</div><div class="sig-desc" id="sig-desc-4"></div></div></div>
+
+    <div class="mirror-section">
+      <div class="meaning-sentence">
+        <span class="ms-label">What I am building toward</span>
+        <textarea class="ms-input" id="ms-sentence" rows="2" placeholder="Finish this sentence — the reason this matters is…" onblur="saveMeaningField('sentence',this.value)"></textarea>
+      </div>
     </div>
+
+    <div class="mirror-section">
+      <span class="mirror-label">Today's meaning</span>
+      <p style="font-size:13px;color:var(--ink4);font-weight:300;margin-bottom:1rem;line-height:1.6">Three sources of meaning — Viktor Frankl. Fill in what is true today. Resets each morning.</p>
+      <div class="meaning-prompts">
+        <div class="meaning-prompt">
+          <span class="mp-tag">Creative values</span>
+          <div class="mp-q">What did you create, give, or contribute today?</div>
+          <textarea class="mp-input" id="mp-creative" rows="2" placeholder="Even something small counts…" onblur="saveMeaningField('creative',this.value)"></textarea>
+        </div>
+        <div class="meaning-prompt">
+          <span class="mp-tag">Experiential values</span>
+          <div class="mp-q">What did you receive or experience that mattered?</div>
+          <textarea class="mp-input" id="mp-experiential" rows="2" placeholder="A conversation, something you noticed, a moment of connection…" onblur="saveMeaningField('experiential',this.value)"></textarea>
+        </div>
+        <div class="meaning-prompt">
+          <span class="mp-tag">Attitudinal values</span>
+          <div class="mp-q">What hard thing did you face and hold today?</div>
+          <textarea class="mp-input" id="mp-attitudinal" rows="2" placeholder="Frankl called this the highest source of meaning — the attitude you take toward unavoidable suffering…" onblur="saveMeaningField('attitudinal',this.value)"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="mirror-section">
+      <span class="mirror-label">Your habits</span>
+      <p style="font-size:13px;color:var(--ink4);font-weight:300;margin-bottom:1rem;line-height:1.6">Tap to mark done today. Consistency compounds over time.</p>
+      <div class="habit-list" id="habit-list"></div>
+      <div class="add-row" id="habit-add-row">
+        <input type="text" class="add-input" id="new-habit" placeholder="Name a habit to track…">
+        <button class="add-btn" id="habit-add-btn" onclick="addHabit()">+ Add</button>
+      </div>
+    </div>
+
     <div class="feedback-wrap">
-        <span class="feedback-label">Help us get better for you</span>
-        <p class="feedback-hint">Franklyn improves the more you use it. If something felt off or something helped, tell us. We are building this for you.</p>
-        <textarea class="feedback-input" id="fb-mirror" rows="3" placeholder="What worked, what didn't, what you wish was here…"></textarea>
-        <button class="feedback-btn" id="fb-mirror-btn" onclick="sendFeedback('fb-mirror','fb-mirror-btn','fb-mirror-sent','Meaning Mirror')">Send feedback</button>
-        <div class="feedback-sent" id="fb-mirror-sent">Thank you. We read every one.</div>
+      <span class="feedback-label">Help us get better for you</span>
+      <p class="feedback-hint">Franklyn improves the more you use it. If something felt off or something helped, tell us. We are building this for you.</p>
+      <textarea class="feedback-input" id="fb-mirror" rows="3" placeholder="What worked, what didn't, what you wish was here…"></textarea>
+      <button class="feedback-btn" id="fb-mirror-btn" onclick="sendFeedback('fb-mirror','fb-mirror-btn','fb-mirror-sent','Meaning Mirror')">Send feedback</button>
+      <div class="feedback-sent" id="fb-mirror-sent">Thank you. We read every one.</div>
     </div>
-    <p class="disclaimer">Franklyn is not a substitute for therapy or professional mental health support. It is a personal operating system grounded in published psychological research by Stephen Porges, Viktor Frankl, Richard Ryan, Edward Deci, and John Sweller.</p>
+    <p class="disclaimer">Franklyn is not a substitute for therapy or professional mental health support. It is a personal operating system grounded in published psychological research by Stephen Porges, Viktor Frankl, Richard Ryan, and Edward Deci.</p>
   </div>
   <div class="tab-panel" id="tab-chat">
     <span class="sec-eyebrow">Talk to Franklyn</span>
@@ -924,8 +980,15 @@ function initApp(user){
   // Render user's personal signals
   renderSignals(user.signals);
 
+  // Meaning Mirror
+  loadMeaningFields();
+  renderHabits();
+
   // Start chat with user context
   chatInit(user);
+
+  // Personalized hero quote (async, updates after load)
+  fetchPersonalizedQuote(user);
 }
 
 const quotes=[
@@ -1197,6 +1260,106 @@ function settingsStartOver(){
 function settingsConfirmReset(){
   localStorage.clear();
   location.reload();
+}
+
+// === MEANING MIRROR — PROMPTS & SENTENCE ===
+function getToday(){return new Date().toISOString().slice(0,10);}
+
+function loadMeaningFields(){
+  var m=DB.get('meaning')||{};
+  var today=getToday();
+  if(m.date!==today){m.creative='';m.experiential='';m.attitudinal='';m.date=today;DB.set('meaning',m);}
+  var c=document.getElementById('mp-creative'),e=document.getElementById('mp-experiential'),a=document.getElementById('mp-attitudinal'),s=document.getElementById('ms-sentence');
+  if(c)c.value=m.creative||'';
+  if(e)e.value=m.experiential||'';
+  if(a)a.value=m.attitudinal||'';
+  if(s)s.value=m.sentence||'';
+}
+function saveMeaningField(key,val){
+  var m=DB.get('meaning')||{};
+  m.date=getToday();m[key]=val;DB.set('meaning',m);
+}
+
+// === HABITS ===
+function habitStreak(habit){
+  var dates=habit.dates||[];if(!dates.length)return 0;
+  var sorted=[].concat(dates).filter(function(v,i,a){return a.indexOf(v)===i;}).sort().reverse();
+  var today=getToday(),yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);
+  if(sorted[0]!==today&&sorted[0]!==yesterday)return 0;
+  var streak=0,check=new Date(sorted[0]+'T12:00:00');
+  for(var i=0;i<sorted.length;i++){
+    if(sorted[i]===check.toISOString().slice(0,10)){streak++;check.setDate(check.getDate()-1);}
+    else break;
+  }
+  return streak;
+}
+function renderHabits(){
+  var habits=DB.get('habits')||[];
+  var list=document.getElementById('habit-list');if(!list)return;
+  list.innerHTML='';
+  var today=getToday();
+  if(!habits.length){
+    var empty=document.createElement('p');
+    empty.style.cssText='font-size:13px;color:var(--ink4);font-style:italic;font-weight:300;padding:0.5rem 0 1rem';
+    empty.textContent='No habits yet. Add one below — training, no wine, morning anchor, anything that compounds.';
+    list.appendChild(empty);
+  }
+  habits.forEach(function(h,idx){
+    var doneToday=(h.dates||[]).indexOf(today)>-1;
+    var streak=habitStreak(h);
+    var div=document.createElement('div');
+    div.className='habit-item'+(doneToday?' done-today':'');
+    div.innerHTML='<button class="habit-check" onclick="toggleHabit('+idx+')" aria-label="Mark done">✓</button>'+
+      '<span class="habit-name">'+h.name+'</span>'+
+      '<div class="habit-meta">'+
+        (streak>0?'<span class="habit-streak">'+streak+' day'+(streak===1?'':'s')+'</span>':'')+
+        '<span class="habit-total">'+(h.dates||[]).length+' total</span>'+
+      '</div>'+
+      '<button class="habit-del" onclick="deleteHabit('+idx+')" title="Remove">✕</button>';
+    list.appendChild(div);
+  });
+  var addRow=document.getElementById('habit-add-row');
+  if(addRow)addRow.style.display=habits.length>=5?'none':'flex';
+}
+function toggleHabit(idx){
+  var habits=DB.get('habits')||[];var h=habits[idx];var today=getToday();
+  var done=(h.dates||[]).indexOf(today)>-1;
+  if(done){h.dates=h.dates.filter(function(d){return d!==today;});}
+  else{if(!h.dates)h.dates=[];h.dates.push(today);}
+  DB.set('habits',habits);renderHabits();
+}
+function deleteHabit(idx){
+  var habits=DB.get('habits')||[];habits.splice(idx,1);DB.set('habits',habits);renderHabits();
+}
+function addHabit(){
+  var inp=document.getElementById('new-habit'),btn=document.getElementById('habit-add-btn');
+  var v=inp.value.trim();if(!v)return;
+  var habits=DB.get('habits')||[];if(habits.length>=5)return;
+  habits.push({name:v,dates:[],createdAt:Date.now()});
+  DB.set('habits',habits);renderHabits();inp.value='';
+}
+document.getElementById('new-habit').addEventListener('keydown',function(e){if(e.key==='Enter')addHabit();});
+
+// === PERSONALIZED QUOTE ===
+function fetchPersonalizedQuote(user){
+  var checkins=DB.get('checkins')||[];
+  var recentState=checkins.length?checkins[checkins.length-1].state:'unknown';
+  var evidence=(DB.get('evidence')||[]).map(function(e){return e.text;});
+  fetch('/api/quote',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({user:{name:user.name,anchors:user.anchors,spiralTrigger:user.spiralTrigger},state:recentState,evidence:evidence})
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    if(!data.quote)return;
+    var t=document.getElementById('quoteText'),a=document.getElementById('quoteAttr');
+    t.classList.remove('show');a.classList.remove('show');
+    setTimeout(function(){
+      t.textContent=data.quote;
+      a.textContent='Franklyn';
+      t.classList.add('show');a.classList.add('show');
+    },500);
+  })
+  .catch(function(){});
 }
 
 // === CHAT ===
