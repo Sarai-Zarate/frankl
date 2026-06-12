@@ -82,7 +82,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .tab-btn:nth-child(3){border-top:4px solid var(--gold)}
 .tab-btn:nth-child(4){border-top:4px solid var(--teal-d)}
 .tab-btn:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,0.10);border-color:var(--borderS)}
-.tab-btn.active{border-width:2px;box-shadow:0 4px 14px rgba(0,0,0,0.12)}
+.tab-btn.active{border-width:2px;box-shadow:0 4px 14px rgba(0,0,0,0.12);background:var(--cream-d)}
 .tab-btn .tab-icon{font-size:20px;font-family:var(--fd)}
 .tab-btn:nth-child(1) .tab-icon{color:var(--amber)}
 .tab-btn:nth-child(2) .tab-icon{color:var(--rose)}
@@ -101,11 +101,11 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .tab-btn.pulse{animation:tabPulse 0.7s ease-out}
 .tab-btn.pulse-loop{animation:tabPulse 1.8s ease-in-out infinite}
 @keyframes nodePulse{
-  0%{box-shadow:0 0 0 0 rgba(46,44,42,0.4)}
-  70%{box-shadow:0 0 0 10px rgba(46,44,42,0)}
-  100%{box-shadow:0 0 0 0 rgba(46,44,42,0)}
+  0%{box-shadow:0 0 0 0 rgba(34,103,58,0.55)}
+  70%{box-shadow:0 0 0 12px rgba(34,103,58,0)}
+  100%{box-shadow:0 0 0 0 rgba(34,103,58,0)}
 }
-.r-node.pulse-loop{animation:nodePulse 1.8s ease-out infinite}
+.r-node.pulse-loop{animation:nodePulse 1.8s ease-out infinite;background:#22673a;color:#fff;border-color:#22673a}
 
 .tab-panel{display:none}
 .tab-panel.active{display:block;animation:fadeUp 0.3s ease}
@@ -224,6 +224,11 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .is-label{font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,240,228,0.45);margin-bottom:10px}
 .is-txt{font-size:15px;color:var(--cream);line-height:1.65;font-style:italic;margin-bottom:10px;white-space:pre-line}
 .is-action{font-size:13px;color:rgba(245,240,228,0.6);font-weight:300}
+.hero-greeting{font-family:var(--fd);font-size:clamp(15px,2vw,18px);color:var(--ink3);font-style:italic;margin-bottom:1.25rem;opacity:0;transition:opacity 0.8s ease 0.3s;min-height:1.4em}
+.hero-greeting.show{opacity:1}
+.ev-empty{font-size:14px;color:var(--ink4);font-style:italic;font-weight:300;padding:1rem 0 1.5rem;line-height:1.65}
+.settings-group-label{font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink4);margin:1.75rem 0 1rem;display:block;border-top:1px solid var(--border);padding-top:1.25rem}
+.settings-group-label:first-child{margin-top:0;border-top:none;padding-top:0}
 .disclaimer{margin-top:2.5rem;font-size:12px;color:var(--ink4);line-height:1.7;font-style:italic;max-width:600px;border-top:1px solid var(--border);padding-top:1.5rem}
 .feedback-wrap{margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
 .feedback-label{font-family:var(--fd);font-size:14px;font-style:italic;color:var(--burgundy);display:block;margin-bottom:6px}
@@ -273,7 +278,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .chat-context-opt{text-align:left;padding:11px 16px;border-radius:12px;border:1px solid var(--borderS);background:var(--cream);color:var(--ink);font-size:13px;font-family:var(--fb);cursor:pointer;transition:all 0.2s ease;font-weight:300;line-height:1.4}
 .chat-context-opt:hover{background:var(--cream-d);border-color:var(--charcoal);transform:translateX(3px)}
 
-.chat-wrap{display:flex;flex-direction:column;height:520px;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--cream)}
+.chat-wrap{display:flex;flex-direction:column;height:min(520px,calc(100svh - 280px));border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--cream)}
 .chat-msgs{flex:1;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:14px}
 .chat-msg{display:flex;flex-direction:column;max-width:82%}
 .chat-msg.franklyn{align-self:flex-start}
@@ -419,11 +424,11 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       <button class="settings-close" onclick="settingsClose()">✕</button>
     </div>
 
+    <span class="settings-group-label">Identity</span>
     <div class="settings-section">
       <span class="settings-label">Your name</span>
       <input class="settings-field" id="s-name" type="text" autocomplete="off">
     </div>
-
     <div class="settings-section">
       <span class="settings-label">Identity anchors</span>
       <input class="settings-field" id="s-a1" type="text" placeholder="First anchor" autocomplete="off">
@@ -431,23 +436,22 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       <input class="settings-field" id="s-a3" type="text" placeholder="Third anchor" autocomplete="off">
     </div>
 
+    <span class="settings-group-label">Your spiral</span>
     <div class="settings-section">
-      <span class="settings-label">What starts your spiral</span>
+      <span class="settings-label">What starts it</span>
       <textarea class="settings-field settings-ta" id="s-trig" rows="3"></textarea>
     </div>
-
     <div class="settings-section">
-      <span class="settings-label">What you notice when it starts</span>
+      <span class="settings-label">What you feel in your body when it begins</span>
       <textarea class="settings-field settings-ta" id="s-feel" rows="3"></textarea>
     </div>
-
     <div class="settings-section">
       <span class="settings-label">What you reach for when it gets loud</span>
       <textarea class="settings-field settings-ta" id="s-numb" rows="2"></textarea>
     </div>
 
+    <span class="settings-group-label">Check-in signals</span>
     <div class="settings-section">
-      <span class="settings-label">Your check-in signals</span>
       <input class="settings-field" id="s-s1" type="text" placeholder="First signal" autocomplete="off">
       <input class="settings-field" id="s-s2" type="text" placeholder="Second signal" autocomplete="off">
       <input class="settings-field" id="s-s3" type="text" placeholder="Third signal (optional)" autocomplete="off">
@@ -465,6 +469,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 
 <section class="hero" id="hero">
   <h1 class="hero-wordmark">Frankl<span>yn</span></h1>
+  <div class="hero-greeting" id="hero-greeting"></div>
   <p class="hero-desc">A psychologically grounded daily operating system that interrupts the cascade from overwhelm to anxiety by reflecting your own meaning back to you at the moment it matters most.</p>
   <div class="quote-wrap">
     <div class="quote-text" id="quoteText"></div>
@@ -652,10 +657,10 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     </div>
     <span class="mirror-label">Your spiral signature</span>
     <div class="sig-card">
-      <div class="sig-step"><div class="sig-num sn1">1</div><div><div class="sig-name">Comparison trigger</div><div class="sig-desc">Online research into someone who appears ahead. Your nervous system reads the gap as a threat before conscious awareness can intervene.</div></div></div>
-      <div class="sig-step"><div class="sig-num sn2">2</div><div><div class="sig-name">Unworthiness floods in</div><div class="sig-desc">"I don't have the knowledge, the credibility, I can't do this." Working memory fills with noise and the real work disappears.</div></div></div>
-      <div class="sig-step"><div class="sig-num sn3">3</div><div><div class="sig-name">Abandonment story activates</div><div class="sig-desc">Old wound, new trigger. The dorsal vagal circuit engages. The story feels true because it is ancient.</div></div></div>
-      <div class="sig-step"><div class="sig-num sn4">4</div><div><div class="sig-name">Numbing and control</div><div class="sig-desc">Wine to numb. Cleaning to control. Your nervous system seeking safety through any available action.</div></div></div>
+      <div class="sig-step"><div class="sig-num sn1">1</div><div><div class="sig-name" id="sig-name-1">What starts it</div><div class="sig-desc" id="sig-desc-1"></div></div></div>
+      <div class="sig-step"><div class="sig-num sn2">2</div><div><div class="sig-name" id="sig-name-2">How your body responds</div><div class="sig-desc" id="sig-desc-2"></div></div></div>
+      <div class="sig-step"><div class="sig-num sn3">3</div><div><div class="sig-name" id="sig-name-3">The story that activates</div><div class="sig-desc" id="sig-desc-3">Old wound, new trigger. The dorsal vagal circuit engages. The story feels true because it is ancient and the body remembers it.</div></div></div>
+      <div class="sig-step"><div class="sig-num sn4">4</div><div><div class="sig-name" id="sig-name-4">What you reach for</div><div class="sig-desc" id="sig-desc-4"></div></div></div>
     </div>
     <div class="feedback-wrap">
         <span class="feedback-label">Help us get better for you</span>
@@ -719,6 +724,7 @@ function obFinish(){
   DB.set('checkins',[]);
   document.getElementById('onboarding').style.display='none';
   initApp(user);
+  window.scrollTo({top:0,behavior:'instant'});
 }
 function obWire(ids,btnId){
   var btn=document.getElementById(btnId);
@@ -818,7 +824,13 @@ function renderSignals(signals){
 function renderEvidence(items){
   var list=document.getElementById('ev-list');
   list.innerHTML='';
-  if(!items||!items.length){return;}
+  if(!items||!items.length){
+    var empty=document.createElement('li');
+    empty.className='ev-empty';
+    empty.textContent='No evidence yet. Every true thing you name here becomes a counterweight to the spiral. Start with something small.';
+    list.appendChild(empty);
+    return;
+  }
   var now=Date.now(),day=86400000;
   items.forEach(function(item){
     var diff=now-item.createdAt;
@@ -831,9 +843,31 @@ function renderEvidence(items){
   });
 }
 
+// === GREETINGS ===
+var greetings=[
+  'Hello again, {name}.',
+  'Good to see you, {name}.',
+  'Welcome back, {name}.',
+  'You showed up, {name}.',
+  'Ready when you are, {name}.',
+  'Still here with you, {name}.',
+  '{name}. Good.',
+  'Here we go, {name}.',
+  'Let\'s build, {name}.',
+  'Good to have you back, {name}.'
+];
+
 // === INIT APP WITH USER DATA ===
 function initApp(user){
   var a1=user.anchors[0],a2=user.anchors[1],a3=user.anchors[2];
+
+  // Personalized greeting in hero
+  var greetEl=document.getElementById('hero-greeting');
+  if(greetEl&&user.name){
+    var g=greetings[Math.floor(Math.random()*greetings.length)].replace('{name}',user.name);
+    greetEl.textContent=g;
+    requestAnimationFrame(function(){greetEl.classList.add('show');});
+  }
 
   // Anchor cards
   document.querySelector('.anc-card.a1 .anc-word').textContent=a1;
@@ -852,12 +886,20 @@ function initApp(user){
   var doneSub=document.querySelector('#r-done .done-sub');
   if(doneSub)doneSub.innerHTML=a1+'. '+a2+'. '+a3+'.<br>Now go do your one thing.';
 
+  // Personalized Franklyn rule (step 5)
+  var ruleEl=document.querySelector('.rule-text');
+  if(ruleEl){
+    var feelShort=(user.spiralFeeling||'').replace(/^i (feel|notice|get|sense)\s+/i,'').split(/[.,]/)[0].trim().toLowerCase()||'the pull';
+    ruleEl.textContent=a1+'. '+a2+'. '+a3+'.\n\nWhen you notice '+feelShort+', that is your spiral\'s opening signal — not a verdict, just a pattern. You have named it. That means you can catch it before it runs.\n\nYour one thing comes first. Before you open anything else. Before you check what anyone is doing. Your one thing first.';
+  }
+
   // Spiral signature — all four steps from user's own words
-  var sigDescs=document.querySelectorAll('.sig-desc');
-  if(user.spiralTrigger&&sigDescs[0])sigDescs[0].textContent=user.spiralTrigger;
-  if(user.spiralFeeling&&sigDescs[1])sigDescs[1].textContent=user.spiralFeeling;
-  if(sigDescs[2])sigDescs[2].textContent='Old wound, new trigger. The dorsal vagal circuit engages. The story feels true because it is ancient and the body remembers it.';
-  if(user.spiralNumb&&sigDescs[3])sigDescs[3].textContent=user.spiralNumb;
+  var s1n=document.getElementById('sig-name-1'),s1d=document.getElementById('sig-desc-1');
+  var s2n=document.getElementById('sig-name-2'),s2d=document.getElementById('sig-desc-2');
+  var s4n=document.getElementById('sig-name-4'),s4d=document.getElementById('sig-desc-4');
+  if(s1d&&user.spiralTrigger)s1d.textContent=user.spiralTrigger;
+  if(s2d&&user.spiralFeeling)s2d.textContent=user.spiralFeeling;
+  if(s4d&&user.spiralNumb)s4d.textContent=user.spiralNumb;
 
   var evidence=DB.get('evidence')||[];
 
@@ -873,35 +915,24 @@ function initApp(user){
 
 const quotes=[
   {text:"Between stimulus and response there is a space. In that space is our power to choose our response.",attr:"Viktor Frankl"},
-  {text:"Life is not primarily a quest for pleasure or power but a quest for meaning.",attr:"Viktor Frankl"},
-  {text:"When we are no longer able to change a situation, we are challenged to change ourselves.",attr:"Viktor Frankl"},
-  {text:"Those who have a why to live can bear almost any how.",attr:"Viktor Frankl"},
-  {text:"Everything can be taken from a man but one thing — to choose one's attitude in any given set of circumstances.",attr:"Viktor Frankl"},
-  {text:"The last of human freedoms is to choose one's attitude in any given set of circumstances.",attr:"Viktor Frankl"},
-  {text:"Live as if you were living for the second time.",attr:"Viktor Frankl"},
   {text:"Meaning is not invented. It is detected.",attr:"Viktor Frankl"},
-  {text:"The nervous system does not distinguish between a real and imagined threat. Safety is a physiological state, not a thought.",attr:"Stephen Porges — Polyvagal Theory"},
-  {text:"Connection is the biological imperative of the human nervous system. We are wired to co-regulate.",attr:"Stephen Porges — Polyvagal Theory"},
-  {text:"The social engagement system evolved so we could feel safe enough to grow. Safety comes first.",attr:"Stephen Porges — Polyvagal Theory"},
-  {text:"Neuroception happens before perception. Your body knows before your mind does.",attr:"Stephen Porges — Polyvagal Theory"},
-  {text:"The vagal brake is what allows us to be present. When it releases, the spiral begins.",attr:"Stephen Porges — Polyvagal Theory"},
-  {text:"Regulation is not calm. Regulation is the capacity to return.",attr:"Stephen Porges — Polyvagal Theory"},
-  {text:"Human beings have a natural tendency toward growth. The conditions either support it or they don't.",attr:"Ryan and Deci — Self-Determination Theory"},
-  {text:"Autonomy does not mean doing whatever you want. It means acting from your own values.",attr:"Richard Ryan — Self-Determination Theory"},
-  {text:"Intrinsic motivation is not a bonus. It is the foundation of anything worth building.",attr:"Edward Deci — Self-Determination Theory"},
-  {text:"Controlled motivation produces compliance. Autonomous motivation produces commitment.",attr:"Ryan and Deci — Self-Determination Theory"},
-  {text:"Vitality comes from having three needs met: competence, relatedness, and autonomy.",attr:"Edward Deci — Self-Determination Theory"},
-  {text:"When basic psychological needs are thwarted, people don't fail to grow. They protect themselves instead.",attr:"Richard Ryan — Self-Determination Theory"},
-  {text:"Working memory is severely limited. Everything that competes for it takes something away from what matters.",attr:"John Sweller — Cognitive Load Theory"},
-  {text:"When cognitive load exceeds capacity, learning stops. So does clear thinking.",attr:"John Sweller — Cognitive Load Theory"},
-  {text:"Extraneous load is noise that crowds out the signal. Remove it first.",attr:"John Sweller — Cognitive Load Theory"},
-  {text:"The best design removes itself from the way and lets the thinking happen.",attr:"John Sweller — Cognitive Load Theory"},
-  {text:"Intrinsic load is the complexity that belongs. Extraneous load is the complexity you added by accident.",attr:"John Sweller — Cognitive Load Theory"},
-  {text:"Discipline equals freedom.",attr:"Jocko Willink"},
-  {text:"The moment you wake up is where you start winning or losing the day.",attr:"Jocko Willink"},
-  {text:"Extreme ownership means there are no excuses. Only solutions.",attr:"Jocko Willink"},
-  {text:"Don't wait for motivation. Motivation follows action, not the other way around.",attr:"Jocko Willink"},
-  {text:"Default aggressive on the things that matter. Everything else can wait.",attr:"Jocko Willink"}
+  {text:"Those who have a why to live can bear almost any how.",attr:"Viktor Frankl"},
+  {text:"When we are no longer able to change a situation, we are challenged to change ourselves.",attr:"Viktor Frankl"},
+  {text:"Life is not primarily a quest for pleasure or power but a quest for meaning.",attr:"Viktor Frankl"},
+  {text:"Everything can be taken from a man but one thing — to choose one's attitude in any given set of circumstances.",attr:"Viktor Frankl"},
+  {text:"Live as if you were living for the second time.",attr:"Viktor Frankl"},
+  {text:"Your body senses danger before your mind names it. That is not weakness — that is how you were built.",attr:"Franklyn"},
+  {text:"Regulation is not calm. It is the ability to return.",attr:"Franklyn"},
+  {text:"The spiral is not a character flaw. It is a pattern. And patterns can be interrupted.",attr:"Franklyn"},
+  {text:"You do not need to feel safe to act safely. The action can come first.",attr:"Franklyn"},
+  {text:"Other people help your nervous system settle. You are not needy for needing connection — you are human.",attr:"Franklyn"},
+  {text:"The part of you that numbs is trying to protect you. It just picked up a bad habit.",attr:"Franklyn"},
+  {text:"A slow exhale tells your body the threat has passed. Your breath is the fastest tool you have.",attr:"Franklyn"},
+  {text:"You are not behind. You are returning.",attr:"Franklyn"},
+  {text:"The story your mind tells at 2am is not the truth. It is the alarm system doing its job too well.",attr:"Franklyn"},
+  {text:"Growth does not come from pressure. It comes from feeling safe enough to try.",attr:"Franklyn"},
+  {text:"Anchors are not affirmations. They are things that are already true about you.",attr:"Franklyn"},
+  {text:"What you do when no one is watching is the only version of you that compounds.",attr:"Franklyn"}
 ];
 
 (function(){
@@ -925,7 +956,7 @@ new IntersectionObserver((entries)=>{
   });
 },{threshold:0.6}).observe(document.getElementById('hero'));
 
-function activateTab(n){
+function activateTab(n,noScroll){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active','pulse'));
   document.getElementById('tab-'+n).classList.add('active');
@@ -935,7 +966,7 @@ function activateTab(n){
   btn.offsetWidth;
   btn.classList.add('pulse');
   btn.addEventListener('animationend',function(){btn.classList.remove('pulse');},{once:true});
-  document.getElementById('tools').scrollIntoView({behavior:'smooth'});
+  if(!noScroll)document.getElementById('tools').scrollIntoView({behavior:'smooth'});
 }
 
 var tSecs=30,tInt=null;
