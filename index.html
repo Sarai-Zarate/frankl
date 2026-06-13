@@ -540,9 +540,9 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 <hr class="div">
 
 <section class="tools-sec" id="tools">
-  <span class="sec-eyebrow">Franklyn tools</span>
+  <span class="sec-eyebrow">Your daily practice</span>
   <h2 class="sec-title">What do you need right now?</h2>
-  <p class="sec-desc">Three tools. Each built around how your specific nervous system works. Tap one to begin.</p>
+  <p class="sec-desc">Four tools. Each calibrated to your specific patterns. Tap one to begin.</p>
 
   <div class="tab-nav">
     <button class="tab-btn active" onclick="activateTab('morning')">
@@ -553,19 +553,19 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     </button>
     <button class="tab-btn" onclick="activateTab('naming')">
       <span class="tab-icon">◎</span>
-      <span class="tab-label">Name the Spiral</span>
-      <span class="tab-desc">Where are you right now?</span>
+      <span class="tab-label">Check In</span>
+      <span class="tab-desc">Where's your head right now?</span>
       <span class="tab-arrow">→</span>
     </button>
     <button class="tab-btn" onclick="activateTab('mirror')">
       <span class="tab-icon">◈</span>
-      <span class="tab-label">Meaning Mirror</span>
-      <span class="tab-desc">Evidence you are moving forward.</span>
+      <span class="tab-label">Foundation</span>
+      <span class="tab-desc">Your evidence, meaning, and habits.</span>
       <span class="tab-arrow">→</span>
     </button>
     <button class="tab-btn" onclick="activateTab('chat')">
       <span class="tab-icon">⬡</span>
-      <span class="tab-label">Talk to Franklyn</span>
+      <span class="tab-label">Franklyn</span>
       <span class="tab-desc">Say what's actually happening.</span>
       <span class="tab-arrow">→</span>
     </button>
@@ -592,7 +592,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
           <div class="r-name">Name one true thing from yesterday</div>
           <div class="r-desc">Not what you did not finish. One thing that happened that is real evidence you are moving forward.</div>
           <div class="r-quote">Yesterday I…</div>
-          <textarea class="r-input" id="y-input" rows="2" placeholder="e.g. I got into BTG and built the Meaning Mirror"></textarea>
+          <textarea class="r-input" id="y-input" rows="2" placeholder="e.g. I landed a new client and shipped something I'm proud of"></textarea>
           <button class="r-btn" id="rb2" disabled onclick="cRS(2)">That's true →</button>
         </div>
       </div>
@@ -761,13 +761,13 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       <span class="feedback-label">Help us get better for you</span>
       <p class="feedback-hint">Franklyn improves the more you use it. If something felt off or something helped, tell us. We are building this for you.</p>
       <textarea class="feedback-input" id="fb-mirror" rows="3" placeholder="What worked, what didn't, what you wish was here…"></textarea>
-      <button class="feedback-btn" id="fb-mirror-btn" onclick="sendFeedback('fb-mirror','fb-mirror-btn','fb-mirror-sent','Meaning Mirror')">Send feedback</button>
+      <button class="feedback-btn" id="fb-mirror-btn" onclick="sendFeedback('fb-mirror','fb-mirror-btn','fb-mirror-sent','Foundation')">Send feedback</button>
       <div class="feedback-sent" id="fb-mirror-sent">Thank you. We read every one.</div>
     </div>
     <p class="disclaimer">Franklyn is not a substitute for therapy or professional mental health support. It is a personal operating system grounded in published psychological research by Stephen Porges, Viktor Frankl, Richard Ryan, and Edward Deci.</p>
   </div>
   <div class="tab-panel" id="tab-chat">
-    <span class="sec-eyebrow">Talk to Franklyn</span>
+    <span class="sec-eyebrow">Franklyn</span>
     <h3 style="font-family:var(--fd);font-size:clamp(20px,3vw,26px);font-weight:700;color:var(--ink);letter-spacing:-0.02em;margin-bottom:1.5rem">Say what is actually happening.</h3>
     <div class="chat-wrap">
       <div class="chat-msgs" id="chat-msgs"></div>
