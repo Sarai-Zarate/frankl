@@ -5,35 +5,44 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { state, signals, evidence } = req.body;
+  const { state, signals, anchors, evidence, signature } = req.body;
+  const anchorList = (anchors || []).join(', ') || 'their identity anchors';
+  const evidenceList = (evidence || []).join(' | ') || 'none yet';
+  const sig = signature || 'unknown pattern';
 
   const prompt = [
-    'You are Frankl, a warm psychologically grounded AI.',
+    'You are Franklyn, a warm psychologically grounded coach.',
     'Current state: ' + state,
-    'Signals: ' + (signals||[]).join(', '),
-    'Anchors: Influential, Significant, Wealthy',
-    'Evidence: ' + (evidence||[]).join(' | '),
-    'Spiral: comparison -> unworthiness -> abandonment -> numbing.',
+    'Signals selected: ' + (signals || []).join(', '),
+    'Identity anchors: ' + anchorList,
+    'Evidence of progress: ' + evidenceList,
+    'Their pattern: ' + sig,
     '',
-    'Reply with exactly these four labeled sections:',
+    'Reply with exactly these six labeled sections:',
     'WHAT IS HAPPENING:',
-    '(one sentence naming the pattern)',
+    '(one sentence naming the pattern precisely)',
     '',
     'WHY THIS MAKES SENSE:',
-    '(2-3 sentences on the mechanism, cite Porges or Sweller)',
+    '(2-3 sentences on the mechanism — cite Porges, Sweller, or relevant science)',
     '',
     'WHAT IS ACTUALLY TRUE:',
-    '(1-2 sentences from their real evidence)',
+    '(1-2 sentences grounding them in their real evidence and anchors)',
     '',
     'ONE THING RIGHT NOW:',
-    '(one action starting with arrow, 30 seconds max)',
+    '(one specific action starting with →, completable in 30 seconds or less)',
     '',
-    'Warm, direct, specific, no bullets in answers, never use journey.'
+    'DONE TITLE:',
+    '(3-5 words — a landing statement after they complete the one thing, specific to their state)',
+    '',
+    'DONE BODY:',
+    '(one sentence — what just happened and what it means, specific to their anchors and pattern)',
+    '',
+    'Warm, direct, specific to this person. No bullets in answers. Never use the word journey.'
   ].join('\n');
 
   const body = JSON.stringify({
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 400,
+    model: 'claude-sonnet-4-6',
+    max_tokens: 500,
     messages: [{ role: 'user', content: prompt }]
   });
 
@@ -64,8 +73,6 @@ module.exports = async function handler(req, res) {
       r.end();
     });
 
-    console.log('RAW:', text);
-
     function extract(t, label, nexts) {
       const i = t.indexOf(label);
       if (i === -1) return '';
@@ -77,12 +84,14 @@ module.exports = async function handler(req, res) {
       return s.trim();
     }
 
-    const all = ['WHAT IS HAPPENING:', 'WHY THIS MAKES SENSE:', 'WHAT IS ACTUALLY TRUE:', 'ONE THING RIGHT NOW:'];
+    const all = ['WHAT IS HAPPENING:', 'WHY THIS MAKES SENSE:', 'WHAT IS ACTUALLY TRUE:', 'ONE THING RIGHT NOW:', 'DONE TITLE:', 'DONE BODY:'];
     res.status(200).json({
-      what:   extract(text, all[0], all.slice(1)),
-      why:    extract(text, all[1], all.slice(2)),
-      truth:  extract(text, all[2], all.slice(3)),
-      action: extract(text, all[3], [])
+      what:       extract(text, all[0], all.slice(1)),
+      why:        extract(text, all[1], all.slice(2)),
+      truth:      extract(text, all[2], all.slice(3)),
+      action:     extract(text, all[3], all.slice(4)),
+      done_title: extract(text, all[4], all.slice(5)),
+      done_body:  extract(text, all[5], [])
     });
 
   } catch(error) {

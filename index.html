@@ -379,6 +379,36 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
   .hero{padding:100px 1.25rem 70px}
   .anc-sec,.tools-sec{padding-left:1.25rem;padding-right:1.25rem}
 }
+/* === PRE-PERFORMANCE PRIMING === */
+.hero-prep{margin-top:1.25rem;text-align:center}
+.prep-btn{background:none;border:none;font-family:var(--fb);font-size:13px;color:var(--ink3);cursor:pointer;letter-spacing:0.02em;text-decoration:underline;text-underline-offset:3px;padding:4px 0;transition:color 0.2s}
+.prep-btn:hover{color:var(--ink)}
+.prime-overlay{position:fixed;inset:0;background:rgba(20,18,14,0.88);z-index:2000;display:none;align-items:center;justify-content:center;padding:1.5rem}
+.prime-overlay.open{display:flex}
+.prime-wrap{background:var(--cream);border-radius:16px;padding:2rem;max-width:420px;width:100%;max-height:90vh;overflow-y:auto}
+.prime-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem}
+.prime-title{font-family:var(--fd);font-size:20px;font-weight:700;color:var(--ink);line-height:1.2}
+.prime-subtitle{font-size:12px;color:var(--ink4);font-weight:300;margin-top:3px}
+.prime-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--ink3);padding:2px 0 2px 12px;flex-shrink:0}
+.prime-q{font-size:14px;color:var(--ink2);font-weight:300;margin-bottom:1.25rem;line-height:1.6}
+.prime-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem}
+.prime-card{padding:14px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all 0.15s ease;background:var(--cream);text-align:left}
+.prime-card:hover{border-color:var(--borderS);transform:translateY(-1px)}
+.prime-card.selected{border-color:var(--forest);background:var(--forest-l)}
+.prime-card-icon{font-size:18px;margin-bottom:5px}
+.prime-card-label{font-size:13px;font-weight:600;color:var(--ink)}
+.prime-card-sub{font-size:11px;color:var(--ink3);margin-top:2px;font-weight:300}
+.prime-loading{text-align:center;padding:2.5rem 1rem;font-size:14px;color:var(--ink3);font-style:italic;font-weight:300}
+.prime-brief-section{margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+.prime-brief-section:last-of-type{border-bottom:none;margin-bottom:0.5rem}
+.prime-brief-label{font-family:var(--fm);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink4);margin-bottom:8px;display:block}
+.prime-brief-text{font-size:15px;color:var(--ink);line-height:1.7;font-weight:300}
+.prime-ready-btn{width:100%;margin-top:1.5rem;padding:14px;font-size:14px;font-weight:700;font-family:var(--fb);border:none;border-radius:30px;background:var(--forest);color:var(--cream);cursor:pointer;transition:opacity 0.2s}
+.prime-ready-btn:disabled{opacity:0.5;cursor:not-allowed}
+/* === PROFILE CARD === */
+.profile-card{background:var(--forest-l);border:1px solid var(--forest);border-radius:10px;padding:1.25rem;margin-bottom:1.75rem}
+.profile-card-label{font-family:var(--fm);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--forest);margin-bottom:8px;display:block}
+.profile-card-text{font-size:13px;color:var(--ink2);line-height:1.75;font-weight:300;font-style:italic}
 </style>
 </head>
 <body>
@@ -469,6 +499,10 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       <button class="settings-close" onclick="settingsClose()">✕</button>
     </div>
 
+    <div class="profile-card" id="profile-card" style="display:none">
+      <span class="profile-card-label">What Franklyn knows about you</span>
+      <div class="profile-card-text" id="profile-card-text">Building your profile…</div>
+    </div>
     <span class="settings-group-label">Identity</span>
     <div class="settings-section">
       <span class="settings-label">Your name</span>
@@ -481,17 +515,17 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       <input class="settings-field" id="s-a3" type="text" placeholder="Third anchor" autocomplete="off">
     </div>
 
-    <span class="settings-group-label">Your spiral</span>
+    <span class="settings-group-label">Your pattern</span>
     <div class="settings-section">
-      <span class="settings-label">What starts it</span>
+      <span class="settings-label">What knocks you off center</span>
       <textarea class="settings-field settings-ta" id="s-trig" rows="3"></textarea>
     </div>
     <div class="settings-section">
-      <span class="settings-label">What you feel in your body when it begins</span>
+      <span class="settings-label">Where you first notice it</span>
       <textarea class="settings-field settings-ta" id="s-feel" rows="3"></textarea>
     </div>
     <div class="settings-section">
-      <span class="settings-label">What you reach for when it gets loud</span>
+      <span class="settings-label">What you default to</span>
       <textarea class="settings-field settings-ta" id="s-numb" rows="2"></textarea>
     </div>
 
@@ -524,7 +558,64 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     <button onclick="activateTab('morning')" class="btn-primary">Start your morning anchor</button>
     <button onclick="activateTab('naming')" class="btn-ghost">I need help right now</button>
   </div>
+  <div class="hero-prep" id="hero-prep" style="display:none">
+    <button class="prep-btn" onclick="primeOpen()">Prepare for what's next →</button>
+  </div>
 </section>
+
+<div class="prime-overlay" id="prime-overlay">
+  <div class="prime-wrap">
+    <div class="prime-head">
+      <div>
+        <div class="prime-title">60-second prep</div>
+        <div class="prime-subtitle">Built around your specific patterns</div>
+      </div>
+      <button class="prime-close" onclick="primeClose()">✕</button>
+    </div>
+    <div id="prime-select-view">
+      <p class="prime-q">What are you about to walk into?</p>
+      <div class="prime-grid">
+        <div class="prime-card" onclick="primeSelect(this,'meeting')">
+          <div class="prime-card-icon">◎</div>
+          <div class="prime-card-label">Meeting</div>
+          <div class="prime-card-sub">Group or 1:1</div>
+        </div>
+        <div class="prime-card" onclick="primeSelect(this,'presentation')">
+          <div class="prime-card-icon">▲</div>
+          <div class="prime-card-label">High stakes</div>
+          <div class="prime-card-sub">Presentation or pitch</div>
+        </div>
+        <div class="prime-card" onclick="primeSelect(this,'conversation')">
+          <div class="prime-card-icon">◈</div>
+          <div class="prime-card-label">Hard conversation</div>
+          <div class="prime-card-sub">Conflict or feedback</div>
+        </div>
+        <div class="prime-card" onclick="primeSelect(this,'deep')">
+          <div class="prime-card-icon">✦</div>
+          <div class="prime-card-label">Deep work</div>
+          <div class="prime-card-sub">Focus or creative</div>
+        </div>
+      </div>
+      <button class="prime-ready-btn" id="prime-go" disabled onclick="primeGenerate()">Generate my brief →</button>
+    </div>
+    <div class="prime-loading" id="prime-loading" style="display:none">Building your brief…</div>
+    <div id="prime-brief-view" style="display:none">
+      <div class="prime-brief-section">
+        <span class="prime-brief-label">Breathe</span>
+        <div class="prime-brief-text" id="prime-breath"></div>
+      </div>
+      <div class="prime-brief-section">
+        <span class="prime-brief-label">Remember</span>
+        <div class="prime-brief-text" id="prime-anchor-txt"></div>
+      </div>
+      <div class="prime-brief-section">
+        <span class="prime-brief-label">Your intention</span>
+        <div class="prime-brief-text" id="prime-intention"></div>
+      </div>
+      <button class="prime-ready-btn" onclick="primeClose()">I'm ready →</button>
+    </div>
+  </div>
+</div>
 
 <section class="anc-sec" id="anchors">
   <span class="sec-eyebrow">Your foundation</span>
@@ -1026,6 +1117,9 @@ function initApp(user){
   // Start chat with user context
   chatInit(user);
 
+  // Show prep button for onboarded users
+  document.getElementById('hero-prep').style.display='block';
+
   // Personalized hero quote (async, updates after load)
   fetchPersonalizedQuote(user);
 }
@@ -1143,6 +1237,7 @@ function goRes(){
   checkins.push({state:selPulse,signals:selSigs,createdAt:Date.now()});
   DB.set('checkins',checkins);
 
+  pendingDone=null;
   fetch('/api/name',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({state:selPulse,signals:selSigs,anchors:anchors,evidence:evidence,signature:signature})})
   .then(function(r){return r.json();})
   .then(function(data){
@@ -1152,6 +1247,7 @@ function goRes(){
     document.getElementById('n-truth').textContent=data.truth||'';
     document.getElementById('n-ott').textContent='One thing';
     document.getElementById('n-ota').textContent=data.action||'';
+    if(data.done_title&&data.done_body)pendingDone={title:data.done_title,body:data.done_body};
   }).catch(function(){bldRes();});
 }
 
@@ -1204,10 +1300,20 @@ function bldRes(){
   document.getElementById('n-ota').textContent=oa;
 }
 
+var pendingDone=null;
 function goDone(){
-  var dm={grounded:['State protected.','You checked in while regulated. That builds self-awareness over time.'],scattered:['Load reduced.','Working memory has room again. Go do your one thing.'],anxious:['Pattern interrupted at step one.','The comparison data was not evidence. Go build.'],spiral:['You named it. The story has less power now.','The abandonment story quiets when your nervous system feels safe again. You showed up.']};
-  var d=dm[selPulse]||['Pattern interrupted.','You showed up. That matters.'];
-  document.getElementById('nd-title').textContent=d[0];document.getElementById('nd-sub').textContent=d[1];showNS('ns-done');
+  var user=DB.get('user')||{};
+  var anchors=user.anchors||[];
+  if(pendingDone){
+    document.getElementById('nd-title').textContent=pendingDone.title;
+    document.getElementById('nd-sub').textContent=pendingDone.body;
+  } else {
+    var fallbacks={grounded:['State protected.','You checked in while regulated. '+(anchors[0]||'Your anchor')+', '+(anchors[1]||'')+', '+(anchors[2]||'')+'. Still yours.'],scattered:['Load reduced.','Working memory has room again. Go do your one thing.'],anxious:['Pattern interrupted.','You named it before it named you. That is the whole practice.'],spiral:['You showed up.','The story has less power now. '+(anchors[0]||'Your anchor')+' is still true.']};
+    var d=fallbacks[selPulse]||['Pattern interrupted.','You showed up. That matters.'];
+    document.getElementById('nd-title').textContent=d[0];
+    document.getElementById('nd-sub').textContent=d[1];
+  }
+  showNS('ns-done');
 }
 function resetN(){
   selPulse=null;selSigs=[];
@@ -1252,6 +1358,71 @@ function obBack(n){
 }
 
 // === SETTINGS ===
+// === PRE-PERFORMANCE PRIMING ===
+var primeContext=null;
+function primeOpen(){
+  primeContext=null;
+  document.getElementById('prime-select-view').style.display='block';
+  document.getElementById('prime-loading').style.display='none';
+  document.getElementById('prime-brief-view').style.display='none';
+  document.querySelectorAll('.prime-card').forEach(function(c){c.classList.remove('selected');});
+  document.getElementById('prime-go').disabled=true;
+  document.getElementById('prime-overlay').classList.add('open');
+}
+function primeClose(){document.getElementById('prime-overlay').classList.remove('open');}
+function primeSelect(el,ctx){
+  document.querySelectorAll('.prime-card').forEach(function(c){c.classList.remove('selected');});
+  el.classList.add('selected');
+  primeContext=ctx;
+  document.getElementById('prime-go').disabled=false;
+}
+function primeGenerate(){
+  var user=DB.get('user')||{};
+  document.getElementById('prime-select-view').style.display='none';
+  document.getElementById('prime-loading').style.display='block';
+  fetch('/api/prime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    context:primeContext,
+    name:user.name||'',
+    anchors:user.anchors||[],
+    trigger:user.spiralTrigger||'',
+    spiralFeeling:user.spiralFeeling||''
+  })})
+  .then(function(r){return r.json();})
+  .then(function(data){
+    document.getElementById('prime-loading').style.display='none';
+    document.getElementById('prime-breath').textContent=data.breath||'';
+    document.getElementById('prime-anchor-txt').textContent=data.anchor||'';
+    document.getElementById('prime-intention').textContent=data.intention||'';
+    document.getElementById('prime-brief-view').style.display='block';
+  })
+  .catch(function(){
+    document.getElementById('prime-loading').textContent='Something went wrong. Take one slow breath and go.';
+  });
+}
+
+// === PROFILE CARD ===
+var profileCache=null;
+function loadProfileCard(){
+  var user=DB.get('user');
+  if(!user){return;}
+  var card=document.getElementById('profile-card');
+  card.style.display='block';
+  if(profileCache){document.getElementById('profile-card-text').textContent=profileCache;return;}
+  fetch('/api/profile',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    name:user.name||'',
+    anchors:user.anchors||[],
+    trigger:user.spiralTrigger||'',
+    spiralFeeling:user.spiralFeeling||'',
+    numbing:user.spiralNumb||''
+  })})
+  .then(function(r){return r.json();})
+  .then(function(data){
+    profileCache=data.summary||'';
+    document.getElementById('profile-card-text').textContent=profileCache;
+  })
+  .catch(function(){card.style.display='none';});
+}
+
 function settingsOpen(){
   var user=DB.get('user')||{};
   document.getElementById('s-name').value=user.name||'';
@@ -1267,6 +1438,7 @@ function settingsOpen(){
   document.getElementById('s-s3').value=sigs[2]||'';
   document.getElementById('s-s4').value=sigs[3]||'';
   document.getElementById('settings-overlay').classList.add('open');
+  loadProfileCard();
 }
 function settingsClose(){
   document.getElementById('settings-overlay').classList.remove('open');
