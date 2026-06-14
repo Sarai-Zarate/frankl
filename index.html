@@ -407,6 +407,23 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .prime-ready-btn:disabled{opacity:0.5;cursor:not-allowed}
 /* === TEMPORAL HINT === */
 .temporal-hint{font-size:13px;color:var(--ink4);font-weight:300;margin-bottom:1rem;font-style:italic;min-height:1.4em}
+/* === BIG THREE === */
+.big-three{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.big-three-item{display:flex;align-items:flex-start;gap:10px}
+.big-three-num{font-family:var(--fd);font-size:18px;font-weight:700;color:var(--ink4);line-height:1;padding-top:11px;min-width:14px;transition:color 0.2s}
+.big-three-item:first-child .big-three-num{color:var(--ink)}
+.big-three-input{flex:1;font-size:14px;font-family:var(--fb);padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--cream);color:var(--ink);resize:none;line-height:1.5;width:100%}
+.big-three-input:focus{outline:none;border-color:var(--charcoal)}
+.big-three-input::placeholder{color:var(--ink4)}
+.done-three{text-align:left;margin:0.5rem 0 1rem}
+.done-three-item{font-size:14px;color:var(--ink2);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.5}
+.done-three-item:last-child{border-bottom:none}
+.done-three-item span{font-size:11px;font-family:var(--fm);font-weight:500;color:var(--ink4);margin-right:8px;letter-spacing:0.06em}
+/* === CALENDAR REMINDER === */
+.cal-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.cal-time{font-family:var(--fb);font-size:14px;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;background:var(--cream);color:var(--ink);cursor:pointer}
+.cal-dl-btn{font-family:var(--fb);font-size:13px;font-weight:600;padding:9px 18px;border-radius:20px;border:1.5px solid var(--borderS);background:var(--cream);color:var(--ink);cursor:pointer;transition:all 0.15s}
+.cal-dl-btn:hover{border-color:var(--ink);background:var(--cream-d)}
 /* === MORNING DONE HANDOFF === */
 .done-handoff{margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border);display:none}
 .done-focus{font-size:14px;color:var(--ink2);font-weight:400;margin-bottom:1rem;line-height:1.6}
@@ -541,6 +558,16 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       <input class="settings-field" id="s-s2" type="text" placeholder="Second signal" autocomplete="off">
       <input class="settings-field" id="s-s3" type="text" placeholder="Third signal (optional)" autocomplete="off">
       <input class="settings-field" id="s-s4" type="text" placeholder="Fourth signal (optional)" autocomplete="off">
+    </div>
+
+    <span class="settings-group-label">Daily reminder</span>
+    <div class="settings-section">
+      <span class="settings-label">Pair your morning anchor with a habit</span>
+      <p style="font-size:12px;color:var(--ink4);font-weight:300;margin-bottom:10px;line-height:1.6">Pick a time that attaches to something you already do — making coffee, sitting in the car, your first five minutes at your desk.</p>
+      <div class="cal-row">
+        <input class="cal-time" type="time" id="cal-time" value="07:00">
+        <button class="cal-dl-btn" onclick="downloadCalendar()">Add to my calendar →</button>
+      </div>
     </div>
 
     <button class="settings-save" onclick="settingsSave()">Save changes</button>
@@ -698,11 +725,24 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
         <div class="r-spine"><div class="r-node" id="rn3">3</div><div class="r-line"></div></div>
         <div class="r-body">
           <div class="r-timing">30 seconds</div>
-          <div class="r-name">Name the one thing that matters today</div>
-          <div class="r-desc">Your mind can only truly hold one thing at a time. When you name one clear intention before anything else, you protect yourself from the scattered feeling that opens the door to the spiral.</div>
-          <div class="r-quote">Today the one thing that matters is…</div>
-          <textarea class="r-input" id="t-input" rows="2" placeholder="e.g. Open BTG and read three project briefs"></textarea>
-          <button class="r-btn" id="rb3" disabled onclick="cRS(3)">That's my one thing →</button>
+          <div class="r-name">Name your three priorities for today</div>
+          <div class="r-desc">Small consistent actions compound. Name three specific things, ranked by importance. The first one is protected — it happens before anything else.</div>
+          <div class="r-quote">Today, in order of importance…</div>
+          <div class="big-three">
+            <div class="big-three-item">
+              <span class="big-three-num">1</span>
+              <textarea class="big-three-input" id="t-input-1" rows="2" placeholder="Most important — this one is protected"></textarea>
+            </div>
+            <div class="big-three-item">
+              <span class="big-three-num">2</span>
+              <textarea class="big-three-input" id="t-input-2" rows="2" placeholder="Second priority (optional)"></textarea>
+            </div>
+            <div class="big-three-item">
+              <span class="big-three-num">3</span>
+              <textarea class="big-three-input" id="t-input-3" rows="2" placeholder="Third priority (optional)"></textarea>
+            </div>
+          </div>
+          <button class="r-btn" id="rb3" disabled onclick="cRS(3)">These are my three →</button>
         </div>
       </div>
       <div class="rstep" id="rs4">
@@ -733,7 +773,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       <div class="done-sub">Influential. Significant. Wealthy.<br>Now go do your one thing.</div>
       <div class="pills-row" style="justify-content:center;margin-bottom:1.5rem"><div class="pill p-i">Influential</div><div class="pill p-s">Significant</div><div class="pill p-w">Wealthy</div></div>
       <div class="done-handoff" id="done-handoff">
-        <div class="done-focus" id="done-focus"></div>
+        <div class="done-three" id="done-three"></div>
         <button class="btn-ghost" onclick="activateTab('naming',true)">Check in when things shift →</button>
       </div>
       <button class="btn-ghost" onclick="resetR()" style="margin-top:1rem">Start again</button>
@@ -1202,7 +1242,7 @@ function activateTab(n,noScroll){
 
 var tSecs=30,tInt=null;
 document.getElementById('y-input').addEventListener('input',function(){document.getElementById('rb2').disabled=this.value.trim().length<3;});
-document.getElementById('t-input').addEventListener('input',function(){document.getElementById('rb3').disabled=this.value.trim().length<3;});
+document.getElementById('t-input-1').addEventListener('input',function(){document.getElementById('rb3').disabled=this.value.trim().length<3;});
 
 function cRS(n){
   var s=document.getElementById('rs'+n),nd=document.getElementById('rn'+n);
@@ -1211,13 +1251,13 @@ function cRS(n){
   document.getElementById('rn'+n).classList.remove('pulse-loop');
   if(n+1<=5){document.getElementById('rn'+(n+1)).classList.add('pulse-loop');}
   if(n===4){
-    var focus=document.getElementById('t-input').value.trim();
-    var focusRef=focus?'“'+focus+'”':'the work I just named';
+    var focus=document.getElementById('t-input-1').value.trim();
+    var focusRef=focus?'”'+focus+'”':'the work I just named';
     var ruleEl=document.querySelector('.rule-text');
     if(ruleEl){
       var current=ruleEl.textContent;
       ruleEl.textContent=current
-        .replace(/My one thing comes first\./,'That — '+focusRef+' — comes first.')
+        .replace(/My one thing comes first\./,'That, '+focusRef+', comes first.')
         .replace(/My one thing first\./,focusRef+' first.');
     }
   }
@@ -1266,15 +1306,19 @@ function startT(){
 function pauseT(){clearInterval(tInt);var b=document.getElementById('t-btn');b.textContent='▶ Resume';b.onclick=startT;}
 function cRitual(){
   cRS(5);
-  var focus=document.getElementById('t-input').value.trim();
+  var p1=document.getElementById('t-input-1').value.trim();
+  var p2=document.getElementById('t-input-2').value.trim();
+  var p3=document.getElementById('t-input-3').value.trim();
+  var priorities=[p1,p2,p3].filter(Boolean);
   var win=document.getElementById('y-input').value.trim();
-  DB.set('morning_today',{focus:focus,win:win,date:getToday()});
+  DB.set('morning_today',{focus:p1,priorities:priorities,win:win,date:getToday()});
   var user=DB.get('user')||{};
   var anchors=user.anchors||[];
   document.querySelector('#r-done .done-word').textContent="You're anchored.";
-  document.querySelector('#r-done .done-sub').innerHTML=(anchors[0]||'')+(anchors[1]?'. '+(anchors[1]):'')+(anchors[2]?'. '+(anchors[2]):'')+'.<br>Now go do your one thing.';
-  if(focus){
-    document.getElementById('done-focus').innerHTML='Your focus today: <strong>'+focus+'</strong>';
+  document.querySelector('#r-done .done-sub').innerHTML=(anchors[0]||'')+(anchors[1]?'. '+anchors[1]:'')+(anchors[2]?'. '+anchors[2]:'')+'.<br>Now go build.';
+  if(priorities.length){
+    var html=priorities.map(function(p,i){return'<div class="done-three-item"><span>'+(i+1)+'</span>'+p+'</div>';}).join('');
+    document.getElementById('done-three').innerHTML=html;
     document.getElementById('done-handoff').style.display='block';
   }
   setTimeout(function(){document.getElementById('rsteps').style.display='none';document.getElementById('r-done').style.display='block';},300);
@@ -1284,7 +1328,9 @@ function resetR(){
   tSecs=30;clearInterval(tInt);document.getElementById('t-disp').textContent='0:30';
   var tb=document.getElementById('t-btn');tb.style.display='';tb.textContent='▶ Start';tb.onclick=startT;
   document.getElementById('rb4').disabled=true;document.getElementById('y-input').value='';
-  document.getElementById('t-input').value='';document.getElementById('rb2').disabled=true;document.getElementById('rb3').disabled=true;
+  ['t-input-1','t-input-2','t-input-3'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('rb2').disabled=true;document.getElementById('rb3').disabled=true;
+  document.getElementById('done-handoff').style.display='none';
   for(var i=1;i<=5;i++){var s=document.getElementById('rs'+i),nd=document.getElementById('rn'+i);s.classList.remove('active','done');nd.textContent=i===1?'○':String(i);}
   document.getElementById('rs1').classList.add('active');
 }
@@ -1307,7 +1353,8 @@ function goRes(){
     ?user.spiralTrigger+', then '+user.spiralFeeling
     :'unknown pattern';
   var morningData=DB.get('morning_today');
-  var todayFocus=(morningData&&morningData.date===getToday())?morningData.focus:'';
+  var todayPriorities=(morningData&&morningData.date===getToday())?(morningData.priorities||[morningData.focus].filter(Boolean)):[];
+  var todayFocus=todayPriorities[0]||'';
   var numbing=user.spiralNumb||'';
 
   var checkins=DB.get('checkins')||[];
@@ -1315,7 +1362,7 @@ function goRes(){
   DB.set('checkins',checkins);
 
   pendingDone=null;
-  fetch('/api/name',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({state:selPulse,signals:selSigs,anchors:anchors,evidence:evidence,signature:signature,todayFocus:todayFocus,numbing:numbing})})
+  fetch('/api/name',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({state:selPulse,signals:selSigs,anchors:anchors,evidence:evidence,signature:signature,todayFocus:todayFocus,todayPriorities:todayPriorities,numbing:numbing})})
   .then(function(r){return r.json();})
   .then(function(data){
     document.getElementById('n-tag').innerHTML='<div class="n-tag t-sct">Franklyn</div>';
@@ -1509,6 +1556,33 @@ function loadProfileCard(){
     document.getElementById('profile-card-text').textContent=profileCache;
   })
   .catch(function(){card.style.display='none';});
+}
+
+function downloadCalendar(){
+  var time=document.getElementById('cal-time').value||'07:00';
+  var parts=time.split(':');
+  var h=parts[0].padStart(2,'0'),m=(parts[1]||'00').padStart(2,'0');
+  var d=new Date();
+  var dateStr=d.getFullYear().toString()+(d.getMonth()+1).toString().padStart(2,'0')+d.getDate().toString().padStart(2,'0');
+  var ics=[
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Franklyn//Morning Anchor//EN',
+    'BEGIN:VEVENT',
+    'UID:franklyn-morning-anchor@frankl',
+    'SUMMARY:Morning Anchor',
+    'DESCRIPTION:Open Franklyn. Read your anchors. Name your three priorities. Breathe.',
+    'DTSTART:'+dateStr+'T'+h+m+'00',
+    'DURATION:PT5M',
+    'RRULE:FREQ=DAILY',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+  var blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='franklyn-morning-anchor.ics';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
 }
 
 function settingsOpen(){

@@ -5,17 +5,21 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { state, signals, anchors, evidence, signature, todayFocus, numbing } = req.body;
+  const { state, signals, anchors, evidence, signature, todayFocus, todayPriorities, numbing } = req.body;
   const anchorList = (anchors || []).filter(Boolean).join(', ') || 'their identity anchors';
   const evidenceList = (evidence || []).join(' | ') || 'none yet';
   const sig = signature || 'unknown pattern';
-  const focusLine = todayFocus ? 'Their focus for today (from Morning Anchor): ' + todayFocus : '';
+  const priorities = todayPriorities && todayPriorities.length ? todayPriorities : (todayFocus ? [todayFocus] : []);
+  const topFocus = priorities[0] || '';
+  const priorityLine = priorities.length
+    ? 'Their Big Three for today: ' + priorities.map(function(p,i){return (i+1)+'. '+p;}).join(' | ')
+    : '';
   const numbingLine = numbing ? 'What they default to when overwhelmed: ' + numbing : '';
 
-  const oneThing = todayFocus
+  const oneThing = topFocus
     ? (state === 'anxious' || state === 'spiral'
-        ? 'ONE THING RIGHT NOW:\n(A 90-second competing action toward their morning focus — "' + todayFocus + '" — that directly replaces their default behavior of "' + (numbing || 'numbing') + '". Make it specific and tiny. Start with →)'
-        : 'ONE THING RIGHT NOW:\n(One small step toward their morning focus: "' + todayFocus + '". Specific and completable in under 2 minutes. Start with →)')
+        ? 'ONE THING RIGHT NOW:\n(A 90-second competing action toward their top priority — "' + topFocus + '" — that directly replaces their default behavior of "' + (numbing || 'numbing') + '". Specific and tiny. Start with →)'
+        : 'ONE THING RIGHT NOW:\n(One small step toward their top priority: "' + topFocus + '". Specific, completable in under 2 minutes. Start with →)')
     : 'ONE THING RIGHT NOW:\n(one specific action starting with →, completable in 30 seconds or less)';
 
   const prompt = [
@@ -25,7 +29,7 @@ module.exports = async function handler(req, res) {
     'Identity anchors: ' + anchorList,
     'Evidence of progress: ' + evidenceList,
     'Their pattern: ' + sig,
-    focusLine,
+    priorityLine,
     numbingLine,
     '',
     'Reply with exactly these six labeled sections:',
