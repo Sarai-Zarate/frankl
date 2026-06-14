@@ -1202,12 +1202,45 @@ function cRS(n){
   document.getElementById('rn'+n).classList.remove('pulse-loop');
   if(n+1<=5){document.getElementById('rn'+(n+1)).classList.add('pulse-loop');}
 }
+var _actx=null;
+function getACtx(){if(!_actx)_actx=new(window.AudioContext||window.webkitAudioContext)();return _actx;}
+function playBell(type){
+  try{
+    var ctx=getACtx();
+    if(type==='start'){
+      // Two ascending notes — signals "begin"
+      [[523,0],[659,0.18]].forEach(function(p){
+        var o=ctx.createOscillator(),g=ctx.createGain();
+        o.connect(g);g.connect(ctx.destination);
+        o.type='sine';o.frequency.value=p[0];
+        var t=ctx.currentTime+p[1];
+        g.gain.setValueAtTime(0,t);
+        g.gain.linearRampToValueAtTime(0.22,t+0.01);
+        g.gain.exponentialRampToValueAtTime(0.001,t+1.2);
+        o.start(t);o.stop(t+1.2);
+      });
+    } else {
+      // Single warm resonant bell — signals "done"
+      [[392,0,0.28],[784,0,0.09],[1176,0,0.04]].forEach(function(p){
+        var o=ctx.createOscillator(),g=ctx.createGain();
+        o.connect(g);g.connect(ctx.destination);
+        o.type='sine';o.frequency.value=p[0];
+        var t=ctx.currentTime+p[1];
+        g.gain.setValueAtTime(0,t);
+        g.gain.linearRampToValueAtTime(p[2],t+0.005);
+        g.gain.exponentialRampToValueAtTime(0.001,t+2.5);
+        o.start(t);o.stop(t+2.5);
+      });
+    }
+  }catch(e){}
+}
 function startT(){
+  playBell('start');
   var b=document.getElementById('t-btn');b.textContent='⏸ Pause';b.onclick=pauseT;
   tInt=setInterval(function(){
     tSecs--;var m=Math.floor(tSecs/60),s=tSecs%60;
     document.getElementById('t-disp').textContent=m+':'+(s<10?'0':'')+s;
-    if(tSecs<=0){clearInterval(tInt);document.getElementById('t-disp').textContent='done';document.getElementById('rb4').disabled=false;b.style.display='none';}
+    if(tSecs<=0){clearInterval(tInt);document.getElementById('t-disp').textContent='done';document.getElementById('rb4').disabled=false;b.style.display='none';playBell('end');}
   },1000);
 }
 function pauseT(){clearInterval(tInt);var b=document.getElementById('t-btn');b.textContent='▶ Resume';b.onclick=startT;}
