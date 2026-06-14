@@ -50,10 +50,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--cream);bord
 .quote-attr.show{opacity:1}
 
 .hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.btn-primary{font-family:var(--fb);font-size:14px;font-weight:600;background:var(--burgundy);color:var(--cream);border:none;border-radius:24px;padding:13px 30px;cursor:pointer;text-decoration:none;display:inline-block;transition:background var(--tr),transform var(--tr)}
-.btn-primary:hover{background:#321a0a;transform:translateY(-1px)}
-.btn-ghost{font-family:var(--fb);font-size:14px;font-weight:500;background:transparent;color:var(--ink2);border:1px solid var(--borderS);border-radius:24px;padding:13px 30px;cursor:pointer;text-decoration:none;display:inline-block;transition:border-color var(--tr),transform var(--tr)}
-.btn-ghost:hover{border-color:var(--ink);transform:translateY(-1px)}
+.btn-primary{font-family:var(--fb);font-size:14px;font-weight:600;background:var(--burgundy);color:var(--cream);border:none;border-radius:24px;padding:13px 30px;cursor:pointer;text-decoration:none;display:inline-block;transition:background 0.2s,transform 0.2s,box-shadow 0.2s}
+.btn-primary:hover{background:#321a0a;transform:translateY(-3px);box-shadow:0 8px 20px rgba(74,44,26,0.28)}
+.btn-ghost{font-family:var(--fb);font-size:14px;font-weight:500;background:transparent;color:var(--ink2);border:1px solid var(--borderS);border-radius:24px;padding:13px 30px;cursor:pointer;text-decoration:none;display:inline-block;transition:border-color 0.2s,transform 0.2s,box-shadow 0.2s}
+.btn-ghost:hover{border-color:var(--ink);transform:translateY(-3px);box-shadow:0 6px 16px rgba(0,0,0,0.09)}
 
 .anc-sec{padding:64px 2rem;max-width:900px;margin:0 auto}
 .sec-eyebrow{font-family:var(--fd);font-size:19px;font-weight:400;font-style:italic;letter-spacing:0;text-transform:none;color:var(--burgundy);margin-bottom:6px;display:block}
@@ -381,8 +381,10 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 }
 /* === PRE-PERFORMANCE PRIMING === */
 .hero-prep{margin-top:1.25rem;text-align:center}
-.prep-btn{background:none;border:none;font-family:var(--fb);font-size:13px;color:var(--ink3);cursor:pointer;letter-spacing:0.02em;text-decoration:underline;text-underline-offset:3px;padding:4px 0;transition:color 0.2s}
-.prep-btn:hover{color:var(--ink)}
+.prep-btn{background:transparent;border:1px solid var(--border);border-radius:24px;font-family:var(--fb);font-size:13px;font-weight:500;color:var(--ink3);cursor:pointer;padding:9px 20px;transition:border-color 0.2s,color 0.2s,transform 0.2s;display:inline-flex;align-items:center;gap:6px}
+.prep-btn:hover{border-color:var(--borderS);color:var(--ink);transform:translateY(-1px)}
+.prep-btn .prep-arrow{display:inline-block;transition:transform 0.2s}
+.prep-btn:hover .prep-arrow{transform:translateX(4px)}
 .prime-overlay{position:fixed;inset:0;background:rgba(20,18,14,0.88);z-index:2000;display:none;align-items:center;justify-content:center;padding:1.5rem}
 .prime-overlay.open{display:flex}
 .prime-wrap{background:var(--cream);border-radius:16px;padding:2rem;max-width:420px;width:100%;max-height:90vh;overflow-y:auto}
@@ -592,7 +594,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     <button onclick="activateTab('naming')" class="btn-ghost">I need help right now</button>
   </div>
   <div class="hero-prep" id="hero-prep" style="display:none">
-    <button class="prep-btn" onclick="primeOpen()">Prepare for what's next →</button>
+    <button class="prep-btn" onclick="primeOpen()">60-second prep <span class="prep-arrow">→</span></button>
   </div>
 </section>
 
