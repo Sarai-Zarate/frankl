@@ -1780,7 +1780,19 @@ function chatInit(user){
   systemMsg+='5-4-3-2-1 GROUNDING PROTOCOL (Bessel van der Kolk, trauma therapy): Guide interactively ONE STEP AT A TIME. Ask for each number, wait for their response, acknowledge briefly, then move to the next. Never list all steps at once. Say why it works: deliberate sensory attention pulls the prefrontal cortex back online and interrupts the amygdala threat loop.\n';
   systemMsg+='Step sequence: 5 things you can see · 4 things you can physically feel · 3 things you can hear · 2 things you could smell · 1 thing you can taste.\n\n';
   systemMsg+='CONTEXT QUESTION: When the user seems distressed or asks for help, ask where they are — alone with time, able to step away, or stuck in place. Their answer determines which tools you offer. Never suggest something they cannot physically do where they are.\n\n';
-  systemMsg+='PATTERN RECOGNITION: You know their spiral signature. If they describe their trigger, body sensation, or numbing behavior, name which step of the spiral they are in. Say it plainly so they can see it too.';
+  systemMsg+='PATTERN RECOGNITION: You know their spiral signature. If they describe their trigger, body sensation, or numbing behavior, name which step of the spiral they are in. Say it plainly so they can see it too.\n\n';
+  var _now=new Date(),_h=_now.getHours();
+  var _tod=_h<12?'morning':_h<17?'afternoon':_h<21?'evening':'night';
+  var _day=_now.toLocaleDateString([],{weekday:'long'});
+  var _time=_now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  var _mdata=DB.get('morning_today');
+  var _anchored=_mdata&&_mdata.date===getToday();
+  systemMsg+='TIME CONTEXT:\n';
+  systemMsg+='It is '+_day+' '+_tod+', '+_time+'.\n';
+  systemMsg+=_anchored
+    ?'They completed their Morning Anchor today. Their focus: '+(_mdata.focus||'not recorded')+'.\n'
+    :'They have not done their Morning Anchor today.\n';
+  systemMsg+='Use this to calibrate advice — morning suggestions differ from evening ones. At night, do not suggest starting new work. In the morning, a missed anchor is worth noting if relevant.';
   chatHistory=[{role:'system',content:systemMsg}];
   if(DB.get('chat_agreed')){
     var greeting='Hey '+user.name+'. What is going on right now?';
