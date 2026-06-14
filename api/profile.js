@@ -23,7 +23,8 @@ Rules:
 - Second sentence: name their pattern honestly — what triggers it and what it costs them
 - Warm and specific, not clinical or generic
 - No jargon, no labels, no diagnosis
-- Write as if you know them well and respect them`;
+- Write as if you know them well and respect them
+- No em dashes or en dashes. Use commas and periods only.`;
 
   const body = JSON.stringify({
     model: 'claude-haiku-4-5-20251001',

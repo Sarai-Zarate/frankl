@@ -21,7 +21,8 @@ Rules:
 - Warm and honest, not motivational or fluffy
 - Not an affirmation ("You are...") — a reframe, an observation, or a grounding truth
 - No quotation marks in your response
-- No sign-off, no attribution`;
+- No sign-off, no attribution
+- No em dashes or en dashes. Use commas and periods only.`;
 
   const body = JSON.stringify({
     model: 'claude-haiku-4-5-20251001',

@@ -46,7 +46,7 @@ module.exports = async function handler(req, res) {
     'DONE BODY:',
     '(one sentence — what just happened and what it means, referencing their morning focus if set)',
     '',
-    'Warm, direct, specific to this person. No bullets in answers. Never use the word journey.'
+    'Warm, direct, specific to this person. No bullets. No em dashes or en dashes. Use commas and periods instead. Never use the word journey.'
   ].filter(Boolean).join('\n');
 
   const body = JSON.stringify({

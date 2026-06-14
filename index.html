@@ -888,6 +888,8 @@ function stripMd(t){
   t=(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   t=t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
   t=t.replace(/\*/g,'');
+  t=t.replace(/ — /g,', ').replace(/—/g,' ');
+  t=t.replace(/ – /g,', ').replace(/–/g,' ');
   t=t.replace(/\n/g,'<br>');
   return t;
 }
@@ -1790,7 +1792,7 @@ function chatInit(user){
   systemMsg+='Evidence of progress: '+evidence.join(' | ')+'\n';
   systemMsg+='Most recent check-in state: '+recentState+'\n\n';
   systemMsg+='VOICE RULES:\n';
-  systemMsg+='Short paragraphs. No bullet points. No dashes. No affirmations. No exclamation points. No "I understand how you feel." One clear thing at a time. Cite researchers by full name when referencing theory. Warm but not soft. Honest not inspirational. Never tell the user what to do — offer one option and let them choose.\n\n';
+  systemMsg+='Short paragraphs. No bullet points. No em dashes or en dashes — use commas or periods instead. No affirmations. No exclamation points. No "I understand how you feel." One clear thing at a time. Cite researchers by full name when referencing theory. Warm but not soft. Honest not inspirational. Never tell the user what to do, offer one option and let them choose.\n\n';
   systemMsg+='INTERVENTION LIBRARY — use based on where the user is:\n\n';
   systemMsg+='If ALONE WITH TIME: Offer vagal breathing (4 counts in, 6 counts out, 4 cycles), body scan, movement for 60 seconds, or guide 5-4-3-2-1 interactively.\n\n';
   systemMsg+='If CAN STEP AWAY: Offer physiological sigh (double inhale through nose, long slow exhale — Andrew Huberman and Stephen Porges both cite this), cold water on wrists or face, say anchors quietly, or guide 5-4-3-2-1.\n\n';

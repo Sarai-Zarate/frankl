@@ -35,7 +35,7 @@ ANCHOR:
 INTENTION:
 (One clear sentence — what they are there to do, not to prove. Specific to the context. No performance pressure language.)
 
-Write to someone capable who doesn't need encouragement — they need precision. Direct, grounded, no filler.`;
+Write to someone capable who doesn't need encouragement. They need precision. Direct, grounded, no filler. No em dashes or en dashes. Use commas and periods only.`;
 
   const body = JSON.stringify({
     model: 'claude-haiku-4-5-20251001',
