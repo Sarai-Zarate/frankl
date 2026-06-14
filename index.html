@@ -1201,6 +1201,17 @@ function cRS(n){
   if(n+1<=5)document.getElementById('rs'+(n+1)).classList.add('active');
   document.getElementById('rn'+n).classList.remove('pulse-loop');
   if(n+1<=5){document.getElementById('rn'+(n+1)).classList.add('pulse-loop');}
+  if(n===4){
+    var focus=document.getElementById('t-input').value.trim();
+    var focusRef=focus?'“'+focus+'”':'the work I just named';
+    var ruleEl=document.querySelector('.rule-text');
+    if(ruleEl){
+      var current=ruleEl.textContent;
+      ruleEl.textContent=current
+        .replace(/My one thing comes first\./,'That — '+focusRef+' — comes first.')
+        .replace(/My one thing first\./,focusRef+' first.');
+    }
+  }
 }
 var _actx=null;
 function getACtx(){if(!_actx)_actx=new(window.AudioContext||window.webkitAudioContext)();return _actx;}
