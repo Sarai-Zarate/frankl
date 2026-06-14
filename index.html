@@ -10,10 +10,10 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --charcoal:#2e2c2a;--charcoal-l:#3e3c3a;
+  --charcoal:#0f1f4b;--charcoal-l:#1a306b;
   --cream:#f5f0e4;--cream-d:#ede6d4;
   --gold:#c8920a;--amber:#b07030;
-  --burgundy:#4a2c1a;--burg-l:#ede5df;
+  --burgundy:#1a3a7a;--burg-l:#e8ecf5;
   --terracot:#b03a20;--terr-l:#faeee9;
   --forest:#2a5c3a;--forest-l:#e5f2ea;
   --teal-d:#1e5566;--teal-l:#e3eff2;
@@ -35,7 +35,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--cream);bord
 .nav-links a{font-size:13px;color:var(--ink3);text-decoration:none;transition:color var(--tr);letter-spacing:0.02em}
 .nav-links a:hover{color:var(--ink)}
 .nav-cta{font-size:13px;font-weight:600;background:var(--burgundy);color:var(--cream);border:none;border-radius:20px;padding:7px 18px;cursor:pointer;text-decoration:none;display:inline-block;transition:background var(--tr)}
-.nav-cta:hover{background:#321a0a}
+.nav-cta:hover{background:#1a306b}
 
 .hero{background:var(--cream);padding:130px 2rem 90px;text-align:center;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(110,31,78,0.05) 0%,transparent 60%);pointer-events:none}
@@ -604,7 +604,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     </div>
     <div id="prime-select-view">
       <p class="prime-q">What are you about to walk into?</p>
-      <textarea id="prime-context-input" class="prime-context-input" rows="3" placeholder="Describe the situation..." oninput="primeCxInput()"></textarea>
+      <textarea id="prime-context-input" class="prime-context-input" rows="5" placeholder="Describe the situation..." oninput="primeCxInput()"></textarea>
       <button class="prime-ready-btn" id="prime-go" disabled onclick="primeGenerate()">Get my brief →</button>
     </div>
     <div class="prime-loading" id="prime-loading" style="display:none">Building your brief…</div>
@@ -1479,7 +1479,9 @@ function primeOpen(){
   var inp=document.getElementById('prime-context-input');
   var user=DB.get('user')||{};
   inp.value='';
-  inp.placeholder=user.spiralTrigger?'e.g. '+user.spiralTrigger:'e.g. a hard conversation with my manager, presenting my work, a tough workout...';
+  inp.placeholder=user.spiralTrigger
+    ?'e.g. '+user.spiralTrigger+'\n\nOr describe anything: a hard conversation, a job interview, a workout you keep avoiding, asking for what you need...'
+    :'e.g. walking into a review with my boss\ne.g. a hard conversation I keep avoiding\ne.g. asking for a raise\ne.g. a workout I do not feel like doing\ne.g. a job interview in an hour';
   document.getElementById('prime-go').disabled=true;
   document.getElementById('prime-overlay').classList.add('open');
 }
