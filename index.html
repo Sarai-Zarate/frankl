@@ -1480,8 +1480,8 @@ function primeOpen(){
   var user=DB.get('user')||{};
   inp.value='';
   inp.placeholder=user.spiralTrigger
-    ?'e.g. '+user.spiralTrigger+'\n\nOr describe anything: a hard conversation, a job interview, a workout you keep avoiding, asking for what you need...'
-    :'e.g. walking into a review with my boss\ne.g. a hard conversation I keep avoiding\ne.g. asking for a raise\ne.g. a workout I do not feel like doing\ne.g. a job interview in an hour';
+    ?'e.g. a job interview in an hour\ne.g. a hard conversation I keep avoiding\ne.g. asking for a raise\ne.g. a workout I do not feel like doing\n\nOr if you cannot name it: '+user.spiralTrigger
+    :'e.g. a job interview in an hour\ne.g. a hard conversation I keep avoiding\ne.g. asking for a raise\ne.g. a workout I do not feel like doing\ne.g. walking into a review with my boss';
   document.getElementById('prime-go').disabled=true;
   document.getElementById('prime-overlay').classList.add('open');
 }
