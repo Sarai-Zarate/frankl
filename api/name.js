@@ -5,10 +5,18 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { state, signals, anchors, evidence, signature } = req.body;
-  const anchorList = (anchors || []).join(', ') || 'their identity anchors';
+  const { state, signals, anchors, evidence, signature, todayFocus, numbing } = req.body;
+  const anchorList = (anchors || []).filter(Boolean).join(', ') || 'their identity anchors';
   const evidenceList = (evidence || []).join(' | ') || 'none yet';
   const sig = signature || 'unknown pattern';
+  const focusLine = todayFocus ? 'Their focus for today (from Morning Anchor): ' + todayFocus : '';
+  const numbingLine = numbing ? 'What they default to when overwhelmed: ' + numbing : '';
+
+  const oneThing = todayFocus
+    ? (state === 'anxious' || state === 'spiral'
+        ? 'ONE THING RIGHT NOW:\n(A 90-second competing action toward their morning focus — "' + todayFocus + '" — that directly replaces their default behavior of "' + (numbing || 'numbing') + '". Make it specific and tiny. Start with →)'
+        : 'ONE THING RIGHT NOW:\n(One small step toward their morning focus: "' + todayFocus + '". Specific and completable in under 2 minutes. Start with →)')
+    : 'ONE THING RIGHT NOW:\n(one specific action starting with →, completable in 30 seconds or less)';
 
   const prompt = [
     'You are Franklyn, a warm psychologically grounded coach.',
@@ -17,6 +25,8 @@ module.exports = async function handler(req, res) {
     'Identity anchors: ' + anchorList,
     'Evidence of progress: ' + evidenceList,
     'Their pattern: ' + sig,
+    focusLine,
+    numbingLine,
     '',
     'Reply with exactly these six labeled sections:',
     'WHAT IS HAPPENING:',
@@ -28,17 +38,16 @@ module.exports = async function handler(req, res) {
     'WHAT IS ACTUALLY TRUE:',
     '(1-2 sentences grounding them in their real evidence and anchors)',
     '',
-    'ONE THING RIGHT NOW:',
-    '(one specific action starting with →, completable in 30 seconds or less)',
+    oneThing,
     '',
     'DONE TITLE:',
     '(3-5 words — a landing statement after they complete the one thing, specific to their state)',
     '',
     'DONE BODY:',
-    '(one sentence — what just happened and what it means, specific to their anchors and pattern)',
+    '(one sentence — what just happened and what it means, referencing their morning focus if set)',
     '',
     'Warm, direct, specific to this person. No bullets in answers. Never use the word journey.'
-  ].join('\n');
+  ].filter(Boolean).join('\n');
 
   const body = JSON.stringify({
     model: 'claude-sonnet-4-6',

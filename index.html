@@ -405,6 +405,12 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .prime-brief-text{font-size:15px;color:var(--ink);line-height:1.7;font-weight:300}
 .prime-ready-btn{width:100%;margin-top:1.5rem;padding:14px;font-size:14px;font-weight:700;font-family:var(--fb);border:none;border-radius:30px;background:var(--forest);color:var(--cream);cursor:pointer;transition:opacity 0.2s}
 .prime-ready-btn:disabled{opacity:0.5;cursor:not-allowed}
+/* === TEMPORAL HINT === */
+.temporal-hint{font-size:13px;color:var(--ink4);font-weight:300;margin-bottom:1rem;font-style:italic;min-height:1.4em}
+/* === MORNING DONE HANDOFF === */
+.done-handoff{margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border);display:none}
+.done-focus{font-size:14px;color:var(--ink2);font-weight:400;margin-bottom:1rem;line-height:1.6}
+.done-focus strong{font-weight:700;color:var(--ink)}
 /* === PROFILE CARD === */
 .profile-card{background:var(--forest-l);border:1px solid var(--forest);border-radius:10px;padding:1.25rem;margin-bottom:1.75rem}
 .profile-card-label{font-family:var(--fm);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--forest);margin-bottom:8px;display:block}
@@ -635,6 +641,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
   <h2 class="sec-title">What do you need right now?</h2>
   <p class="sec-desc">Four tools. Each calibrated to your specific patterns. Tap one to begin.</p>
 
+  <p class="temporal-hint" id="temporal-hint"></p>
   <div class="tab-nav">
     <button class="tab-btn active" onclick="activateTab('morning')">
       <span class="tab-icon">✦</span>
@@ -725,7 +732,11 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       <div class="done-word">You're anchored.</div>
       <div class="done-sub">Influential. Significant. Wealthy.<br>Now go do your one thing.</div>
       <div class="pills-row" style="justify-content:center;margin-bottom:1.5rem"><div class="pill p-i">Influential</div><div class="pill p-s">Significant</div><div class="pill p-w">Wealthy</div></div>
-      <button class="btn-ghost" onclick="resetR()">Start again</button>
+      <div class="done-handoff" id="done-handoff">
+        <div class="done-focus" id="done-focus"></div>
+        <button class="btn-ghost" onclick="activateTab('naming',true)">Check in when things shift →</button>
+      </div>
+      <button class="btn-ghost" onclick="resetR()" style="margin-top:1rem">Start again</button>
       <div class="feedback-wrap">
         <span class="feedback-label">Help us get better for you</span>
         <p class="feedback-hint">Franklyn improves the more you use it. If something felt off or something helped, tell us. We are building this for you.</p>
@@ -1117,8 +1128,8 @@ function initApp(user){
   // Start chat with user context
   chatInit(user);
 
-  // Show prep button for onboarded users
   document.getElementById('hero-prep').style.display='block';
+  setTemporalHint();
 
   // Personalized hero quote (async, updates after load)
   fetchPersonalizedQuote(user);
@@ -1202,6 +1213,17 @@ function startT(){
 function pauseT(){clearInterval(tInt);var b=document.getElementById('t-btn');b.textContent='▶ Resume';b.onclick=startT;}
 function cRitual(){
   cRS(5);
+  var focus=document.getElementById('t-input').value.trim();
+  var win=document.getElementById('y-input').value.trim();
+  DB.set('morning_today',{focus:focus,win:win,date:getToday()});
+  var user=DB.get('user')||{};
+  var anchors=user.anchors||[];
+  document.querySelector('#r-done .done-word').textContent="You're anchored.";
+  document.querySelector('#r-done .done-sub').innerHTML=(anchors[0]||'')+(anchors[1]?'. '+(anchors[1]):'')+(anchors[2]?'. '+(anchors[2]):'')+'.<br>Now go do your one thing.';
+  if(focus){
+    document.getElementById('done-focus').innerHTML='Your focus today: <strong>'+focus+'</strong>';
+    document.getElementById('done-handoff').style.display='block';
+  }
   setTimeout(function(){document.getElementById('rsteps').style.display='none';document.getElementById('r-done').style.display='block';},300);
 }
 function resetR(){
@@ -1226,19 +1248,21 @@ function goRes(){
   ['n-body','n-mech','n-truth','n-ott','n-otb','n-ota'].forEach(function(id){document.getElementById(id).textContent='';});
 
   var user=DB.get('user')||{};
-  var anchors=user.anchors||['Influential','Significant','Wealthy'];
+  var anchors=user.anchors||[];
   var evidence=(DB.get('evidence')||[]).map(function(e){return e.text;});
   var signature=user.spiralTrigger&&user.spiralFeeling
     ?user.spiralTrigger+', then '+user.spiralFeeling
-    :'Starts with comparison online, moves to unworthiness, lands on abandonment story, numbs with wine and cleaning';
+    :'unknown pattern';
+  var morningData=DB.get('morning_today');
+  var todayFocus=(morningData&&morningData.date===getToday())?morningData.focus:'';
+  var numbing=user.spiralNumb||'';
 
-  // Save check-in to history
   var checkins=DB.get('checkins')||[];
   checkins.push({state:selPulse,signals:selSigs,createdAt:Date.now()});
   DB.set('checkins',checkins);
 
   pendingDone=null;
-  fetch('/api/name',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({state:selPulse,signals:selSigs,anchors:anchors,evidence:evidence,signature:signature})})
+  fetch('/api/name',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({state:selPulse,signals:selSigs,anchors:anchors,evidence:evidence,signature:signature,todayFocus:todayFocus,numbing:numbing})})
   .then(function(r){return r.json();})
   .then(function(data){
     document.getElementById('n-tag').innerHTML='<div class="n-tag t-sct">Franklyn</div>';
@@ -1358,6 +1382,17 @@ function obBack(n){
 }
 
 // === SETTINGS ===
+// === TEMPORAL HINT ===
+function setTemporalHint(){
+  var h=new Date().getHours();
+  var hint='';
+  if(h<12) hint='Morning. Start with your anchor, then go build.';
+  else if(h<17) hint='Midday. Check in if things have shifted.';
+  else hint='Evening. Foundation is ready when you are.';
+  var el=document.getElementById('temporal-hint');
+  if(el) el.textContent=hint;
+}
+
 // === PRE-PERFORMANCE PRIMING ===
 var primeContext=null;
 function primeOpen(){
