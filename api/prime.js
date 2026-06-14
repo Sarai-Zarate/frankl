@@ -1,12 +1,5 @@
 const https = require('https');
 
-const contextLabels = {
-  meeting: 'a meeting (group or 1:1)',
-  presentation: 'a high-stakes presentation or pitch',
-  conversation: 'a difficult conversation involving conflict or feedback',
-  deep: 'a deep work or creative focus session'
-};
-
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -14,7 +7,7 @@ module.exports = async function handler(req, res) {
   if (!context) return res.status(400).json({ error: 'No context provided' });
 
   const anchorList = (anchors || []).filter(Boolean).join(', ') || 'their core identity';
-  const contextLabel = contextLabels[context] || context;
+  const contextLabel = context;
 
   const prompt = `You are Franklyn. Generate a 60-second pre-performance brief for this specific person.
 
