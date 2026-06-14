@@ -884,6 +884,13 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 </section>
 
 <script>
+function stripMd(t){
+  t=(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  t=t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+  t=t.replace(/\*/g,'');
+  t=t.replace(/\n/g,'<br>');
+  return t;
+}
 // === DATA LAYER ===
 const _mem={};
 const DB={
@@ -1469,9 +1476,9 @@ function primeGenerate(){
   .then(function(r){return r.json();})
   .then(function(data){
     document.getElementById('prime-loading').style.display='none';
-    document.getElementById('prime-breath').textContent=data.breath||'';
-    document.getElementById('prime-anchor-txt').textContent=data.anchor||'';
-    document.getElementById('prime-intention').textContent=data.intention||'';
+    document.getElementById('prime-breath').innerHTML=stripMd(data.breath||'');
+    document.getElementById('prime-anchor-txt').innerHTML=stripMd(data.anchor||'');
+    document.getElementById('prime-intention').innerHTML=stripMd(data.intention||'');
     document.getElementById('prime-brief-view').style.display='block';
   })
   .catch(function(){
@@ -1822,13 +1829,7 @@ function chatAppend(role,text){
   sender.textContent=role==='franklyn'?'Franklyn':'You';
   var bubble=document.createElement('div');
   bubble.className='chat-bubble';
-  bubble.innerHTML=(function(t){
-    t=t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    t=t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
-    t=t.replace(/\*/g,'');
-    t=t.replace(/\n/g,'<br>');
-    return t;
-  })(text);
+  bubble.innerHTML=stripMd(text);
   wrap.appendChild(sender);
   wrap.appendChild(bubble);
   msgs.appendChild(wrap);
