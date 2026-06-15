@@ -14,11 +14,11 @@ module.exports = async function handler(req, res) {
   const priorityLine = priorities.length
     ? 'Their Big Three for today: ' + priorities.map(function(p,i){return (i+1)+'. '+p;}).join(' | ')
     : '';
-  const numbingLine = numbing ? 'What they default to when overwhelmed: ' + numbing : '';
+  const numbingLine = numbing ? 'Their usual escape pattern when overwhelmed is: ' + numbing + '. IMPORTANT: they are already interrupting that pattern right now by being here — do NOT imply they are currently doing it. Acknowledge they chose differently.' : '';
 
   const oneThing = topFocus
     ? (state === 'anxious' || state === 'spiral'
-        ? 'ONE THING RIGHT NOW:\n(A 90-second competing action toward their top priority — "' + topFocus + '" — that directly replaces their default behavior of "' + (numbing || 'numbing') + '". Specific and tiny. Start with →)'
+        ? 'ONE THING RIGHT NOW:\n(A specific action toward their top priority — "' + topFocus + '". They already chose Franklyn over "' + (numbing || 'avoidance') + '" — this next step builds on that. Under 2 minutes. Start with →)'
         : 'ONE THING RIGHT NOW:\n(One small step toward their top priority: "' + topFocus + '". Specific, completable in under 2 minutes. Start with →)')
     : 'ONE THING RIGHT NOW:\n(one specific action starting with →, completable in 30 seconds or less)';
 

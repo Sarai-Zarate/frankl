@@ -18,8 +18,8 @@
   --forest:#2a5c3a;--forest-l:#e5f2ea;
   --teal-d:#1e5566;--teal-l:#e3eff2;
   --nearblk:#1a1814;--rose:#c4848a;
-  --state-grounded:#7a9e7e;--state-scattered:#c4a052;
-  --state-anxious:#c47a5a;--state-spiral:#3a1e0e;
+  --state-grounded:#6e8c78;--state-scattered:#8a7a62;
+  --state-anxious:#8a6868;--state-spiral:#4a3858;
   --ink:#1a1814;--ink2:#3a3632;--ink3:#6a6560;--ink4:#9e9990;
   --border:rgba(26,24,20,0.10);--borderS:rgba(26,24,20,0.18);
   --fd:'DM Serif Display',Georgia,serif;--fb:'Inter',system-ui,sans-serif;--fm:'JetBrains Mono',monospace;
@@ -153,10 +153,10 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .pc[data-state="anxious"]{border-left-color:var(--state-anxious)}
 .pc[data-state="spiral"]{border-left-color:var(--state-spiral)}
 .pc:hover{background:var(--cream-d);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.06)}
-.pc.selected[data-state="grounded"]{background:#f0f5f0;border-color:var(--state-grounded)}
-.pc.selected[data-state="scattered"]{background:#faf5e8;border-color:var(--state-scattered)}
-.pc.selected[data-state="anxious"]{background:#faf2ee;border-color:var(--state-anxious)}
-.pc.selected[data-state="spiral"]{background:#f5eef2;border-color:var(--state-spiral)}
+.pc.selected[data-state="grounded"]{background:#e4eae6;border-color:var(--state-grounded)}
+.pc.selected[data-state="scattered"]{background:#e6e2da;border-color:var(--state-scattered)}
+.pc.selected[data-state="anxious"]{background:#e8e0e0;border-color:var(--state-anxious)}
+.pc.selected[data-state="spiral"]{background:#e4e0ea;border-color:var(--state-spiral)}
 .pc-icon{font-size:18px;margin-bottom:8px;color:var(--ink3)}
 .pc-name{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px}
 .pc-desc{font-size:12px;color:var(--ink4);line-height:1.5}
@@ -1272,7 +1272,7 @@ function playBell(type){
 }
 function startT(){
   playBell('start');
-  var b=document.getElementById('t-btn');b.textContent='⏸ Pause';b.onclick=pauseT;
+  var b=document.getElementById('t-btn');b.innerHTML='<svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" style="vertical-align:-1px;margin-right:5px"><rect x="0" y="0" width="3.5" height="12" rx="1"/><rect x="6.5" y="0" width="3.5" height="12" rx="1"/></svg>Pause';b.onclick=pauseT;
   tInt=setInterval(function(){
     tSecs--;var m=Math.floor(tSecs/60),s=tSecs%60;
     document.getElementById('t-disp').textContent=m+':'+(s<10?'0':'')+s;
