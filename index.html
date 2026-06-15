@@ -245,8 +245,10 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .habit-dot-label{position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);font-size:8px;color:var(--ink4);white-space:nowrap}
 .hcolor-btn{width:16px;height:16px;border-radius:50%;border:2px solid rgba(0,0,0,0.12);cursor:pointer;flex-shrink:0;transition:transform 0.15s;position:relative}
 .hcolor-btn:hover{transform:scale(1.2)}
-.hcolor-picker{position:absolute;top:22px;left:0;z-index:100;background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:10px;display:none;grid-template-columns:repeat(6,1fr);gap:6px;box-shadow:0 4px 16px rgba(0,0,0,0.12);width:160px}
+.hcolor-picker{position:absolute;top:22px;left:0;z-index:100;background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:10px;display:none;grid-template-columns:repeat(6,1fr);gap:6px;box-shadow:0 4px 16px rgba(0,0,0,0.12);width:180px}
 .hcolor-picker.open{display:grid}
+.hcolor-picker.flip-up{top:auto;bottom:26px}
+.hcolor-picker.align-right{left:auto;right:0}
 .hcolor-swatch{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform 0.1s,border-color 0.1s}
 .hcolor-swatch:hover{transform:scale(1.15)}
 .hcolor-swatch.active{border-color:var(--ink)}
@@ -276,6 +278,8 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .cal-detail-date{font-family:var(--fm);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink4);margin-bottom:8px}
 .cal-detail-item{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;color:var(--ink2);border-bottom:1px solid var(--border)}
 .cal-detail-item:last-child{border-bottom:none}
+.cal-detail-toggle{width:100%;user-select:none}
+.cal-detail-toggle input[type=checkbox]{width:16px;height:16px;cursor:pointer;flex-shrink:0}
 .cal-detail-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .cal-empty{font-size:13px;color:var(--ink4);font-style:italic;font-weight:300}
 
@@ -971,7 +975,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
         <span class="cal-month-label" id="cal-month-label"></span>
         <button class="cal-nav" onclick="calNav(1)">›</button>
       </div>
-      <p class="cal-intro">Every filled dot is a day you showed up. The month view lets you see the shape of your consistency — not just today, but the pattern you are building. Tap any day to see exactly what you did.</p>
+      <p class="cal-intro">Every filled dot is a day you showed up. The month view lets you see the shape of your consistency, not just today, but the pattern you are building. Tap any day to see what you did. Forgot to log something? Tap a past day and check it off there.</p>
       <div class="cal-legend" id="cal-legend"></div>
       <div class="cal-grid" id="cal-grid"></div>
       <div class="cal-detail" id="cal-detail">
@@ -2002,8 +2006,13 @@ function toggleColorPicker(idx,e){
   var all=document.querySelectorAll('.hcolor-picker');
   var target=document.getElementById('hcp-'+idx);
   var wasOpen=target&&target.classList.contains('open');
-  all.forEach(function(p){p.classList.remove('open');});
-  if(!wasOpen&&target)target.classList.add('open');
+  all.forEach(function(p){p.classList.remove('open','flip-up','align-right');});
+  if(!wasOpen&&target){
+    target.classList.add('open');
+    var rect=target.getBoundingClientRect();
+    if(rect.bottom>window.innerHeight-20)target.classList.add('flip-up');
+    if(rect.right>window.innerWidth-10)target.classList.add('align-right');
+  }
 }
 
 document.addEventListener('click',function(){
@@ -2023,6 +2032,21 @@ function calNav(dir){
   renderCalendar();
 }
 
+function calToggleHabitDate(habitIdx,dateStr){
+  var habits=DB.get('habits')||[];
+  var h=habits[habitIdx];if(!h)return;
+  if(!h.dates)h.dates=[];
+  var pos=h.dates.indexOf(dateStr);
+  if(pos>-1)h.dates.splice(pos,1);
+  else h.dates.push(dateStr);
+  DB.set('habits',habits);
+  renderCalendar();
+  renderHabits();
+  // re-render the detail panel for the same date
+  var cell=document.querySelector('.cal-cell[data-date="'+dateStr+'"]');
+  if(cell){calSelectedDate=null;calDayClick(dateStr,cell);}
+}
+
 function calDayClick(dateStr,cell){
   document.querySelectorAll('.cal-cell').forEach(function(c){c.classList.remove('selected');});
   var detail=document.getElementById('cal-detail');
@@ -2034,17 +2058,26 @@ function calDayClick(dateStr,cell){
   calSelectedDate=dateStr;
   cell.classList.add('selected');
   var habits=DB.get('habits')||[];
-  var done=habits.filter(function(h){return (h.dates||[]).indexOf(dateStr)>-1;});
+  var today=getToday();
+  var isFuture=dateStr>today;
   var dateObj=new Date(dateStr+'T12:00:00');
   var label=dateObj.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   document.getElementById('cal-detail-date').textContent=label;
   var itemsEl=document.getElementById('cal-detail-items');
-  if(!done.length){
-    itemsEl.innerHTML='<p class="cal-empty">No habits logged this day.</p>';
+  if(isFuture){
+    itemsEl.innerHTML='<p class="cal-empty">No habits yet.</p>';
+  } else if(!habits.length){
+    itemsEl.innerHTML='<p class="cal-empty">No habits added yet.</p>';
   } else {
-    itemsEl.innerHTML=done.map(function(h,i){
-      var color=habitColor(h,habits.indexOf(h));
-      return '<div class="cal-detail-item"><div class="cal-detail-dot" style="background:'+color+'"></div><span>'+h.name+'</span></div>';
+    itemsEl.innerHTML=habits.map(function(h,i){
+      var color=habitColor(h,i);
+      var checked=(h.dates||[]).indexOf(dateStr)>-1;
+      return '<label class="cal-detail-item cal-detail-toggle" style="cursor:pointer">'
+        +'<div class="cal-detail-dot" style="background:'+color+';opacity:'+(checked?1:0.3)+'"></div>'
+        +'<span style="'+(checked?'':'color:var(--ink4)')+'">'+h.name+'</span>'
+        +'<input type="checkbox" '+(checked?'checked':'')
+        +' onchange="calToggleHabitDate('+i+',\''+dateStr+'\')" style="margin-left:auto;accent-color:'+color+'">'
+        +'</label>';
     }).join('');
   }
   detail.classList.add('open');
