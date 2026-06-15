@@ -777,13 +777,9 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     </div>
     <div class="ns" id="ns-signals">
       <p style="font-size:20px;font-weight:700;color:var(--ink);margin-bottom:6px">What's happening right now?</p>
-      <p style="font-size:14px;color:var(--ink3);margin-bottom:1.25rem;font-weight:300">Select everything that's true.</p>
-      <div class="sig-list"></div>
-      <div class="add-row" style="margin-bottom:1rem">
-        <input type="text" class="add-input" id="new-sig" placeholder="Add another signal…">
-        <button class="add-btn" onclick="addSig()">+ Add</button>
-      </div>
-      <button class="ne-btn" onclick="goRes()">Name what's happening →</button>
+      <p style="font-size:14px;color:var(--ink3);margin-bottom:1.25rem;font-weight:300">Describe it in your own words. The more specific, the better Franklyn can respond.</p>
+      <textarea id="sig-text" class="prime-context-input" rows="4" placeholder="e.g. I saw something that triggered my comparison spiral and now I can't focus on my work..."></textarea>
+      <button class="ne-btn" id="sig-go" onclick="goRes()">Name what's happening →</button>
       <button class="ne-ghost" onclick="goRes()">Skip — just show me</button>
     </div>
     <div class="ns" id="ns-result">
@@ -1333,12 +1329,16 @@ function goRes(){
   var todayFocus=todayPriorities[0]||'';
   var numbing=user.spiralNumb||'';
 
+  var sigTextEl=document.getElementById('sig-text');
+  var sigText=sigTextEl?sigTextEl.value.trim():'';
+  var signals=sigText?[sigText]:[];
+
   var checkins=DB.get('checkins')||[];
-  checkins.push({state:selPulse,signals:selSigs,createdAt:Date.now()});
+  checkins.push({state:selPulse,signals:signals,createdAt:Date.now()});
   DB.set('checkins',checkins);
 
   pendingDone=null;
-  fetch('/api/name',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({state:selPulse,signals:selSigs,anchors:anchors,evidence:evidence,signature:signature,todayFocus:todayFocus,todayPriorities:todayPriorities,numbing:numbing})})
+  fetch('/api/name',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({state:selPulse,signals:signals,anchors:anchors,evidence:evidence,signature:signature,todayFocus:todayFocus,todayPriorities:todayPriorities,numbing:numbing})})
   .then(function(r){return r.json();})
   .then(function(data){
     document.getElementById('n-tag').innerHTML='<div class="n-tag t-sct">Franklyn</div>';
@@ -1416,9 +1416,9 @@ function goDone(){
   showNS('ns-done');
 }
 function resetN(){
-  selPulse=null;selSigs=[];
+  selPulse=null;
   document.querySelectorAll('.pc').forEach(c=>c.classList.remove('selected'));
-  document.querySelectorAll('.si').forEach(s=>s.classList.remove('selected'));
+  var sigText=document.getElementById('sig-text');if(sigText)sigText.value='';
   document.getElementById('p-cont').disabled=true;showNS('ns-pulse');
 }
 
