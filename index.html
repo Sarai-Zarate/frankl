@@ -955,7 +955,11 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
         </div>
       </div>
       <textarea id="mci-text" class="prime-context-input" rows="2" placeholder="e.g. I keep skipping this one, or motivation is low today..." oninput="mciTextInput()"></textarea>
-      <button class="ne-btn" id="mci-go" disabled onclick="mciSubmit()" style="margin-bottom:0">Find something for where I am →</button>
+      <p style="font-size:12px;color:var(--ink4);font-weight:300;margin:0.5rem 0 0.75rem;line-height:1.5;text-align:center">Franklyn will find you a YouTube talk matched to exactly where you are.</p>
+      <button class="ne-btn" id="mci-go" disabled onclick="mciSubmit()" style="margin-bottom:4px;position:relative;overflow:hidden">
+        <span id="mci-go-label">Find something for where I am →</span>
+        <div id="mci-progress-bar" style="display:none;position:absolute;bottom:0;left:0;height:3px;background:rgba(255,255,255,0.6);width:0%;transition:width 0.3s ease"></div>
+      </button>
       <div id="mci-result" style="display:none"></div>
     </div>
 
@@ -1904,9 +1908,18 @@ function mciSubmit(){
 
   var resultEl=document.getElementById('mci-result');
   var goBtn=document.getElementById('mci-go');
-  resultEl.innerHTML='<p style="font-size:13px;color:var(--ink4);margin-top:1rem;font-style:italic">Finding something for where you are...</p>';
-  resultEl.style.display='block';
+  var bar=document.getElementById('mci-progress-bar');
+  var label=document.getElementById('mci-go-label');
+
   goBtn.disabled=true;
+  label.textContent='Searching YouTube...';
+  bar.style.display='block';
+  bar.style.transition='none';
+  bar.style.width='0%';
+  // fast fill to 70% quickly, then slow crawl
+  setTimeout(function(){bar.style.transition='width 0.6s ease';bar.style.width='70%';},30);
+  setTimeout(function(){bar.style.transition='width 3s ease';bar.style.width='88%';},700);
+  resultEl.style.display='none';
 
   var favorites=[
     'True Beast Mentality — Motivational Speeches Compilation',
@@ -1922,6 +1935,10 @@ function mciSubmit(){
   })})
   .then(function(r){return r.json();})
   .then(function(data){
+    bar.style.transition='width 0.2s ease';
+    bar.style.width='100%';
+    setTimeout(function(){bar.style.display='none';bar.style.width='0%';},250);
+
     var mciHistory=DB.get('mci_history')||[];
     mciHistory.push({state:mciState,text:text,createdAt:Date.now(),title:data.title,speaker:data.speaker});
     DB.set('mci_history',mciHistory);
@@ -1938,10 +1955,14 @@ function mciSubmit(){
         '<p class="speech-title">'+stripMd(data.speaker+' — '+data.title)+'</p>'+
         '<a class="speech-link" href="'+watchUrl+'" target="_blank" rel="noopener">'+watchLabel+'</a>'+
       '</div>';
+    resultEl.style.display='block';
     goBtn.style.display='none';
   })
   .catch(function(){
+    bar.style.display='none';bar.style.width='0%';
+    label.textContent='Find something for where I am →';
     resultEl.innerHTML='<p style="font-size:13px;color:var(--ink4);margin-top:1rem">Could not load a recommendation right now.</p>';
+    resultEl.style.display='block';
     goBtn.disabled=false;
   });
 }
@@ -2013,9 +2034,11 @@ function toggleColorPicker(idx,e){
   all.forEach(function(p){p.classList.remove('open','flip-up','align-right');});
   if(!wasOpen&&target){
     target.classList.add('open');
-    var rect=target.getBoundingClientRect();
-    if(rect.bottom>window.innerHeight-20)target.classList.add('flip-up');
-    if(rect.right>window.innerWidth-10)target.classList.add('align-right');
+    requestAnimationFrame(function(){
+      var rect=target.getBoundingClientRect();
+      if(rect.bottom>window.innerHeight-20)target.classList.add('flip-up');
+      if(rect.right>window.innerWidth-10)target.classList.add('align-right');
+    });
   }
 }
 
