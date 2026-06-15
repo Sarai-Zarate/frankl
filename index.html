@@ -1245,6 +1245,7 @@ new IntersectionObserver((entries)=>{
   });
 },{threshold:0.6}).observe(document.getElementById('hero'));
 
+var chatGreeted=false;
 function activateTab(n,noScroll){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active','pulse'));
@@ -1256,6 +1257,12 @@ function activateTab(n,noScroll){
   btn.classList.add('pulse');
   btn.addEventListener('animationend',function(){btn.classList.remove('pulse');},{once:true});
   if(!noScroll)document.getElementById('tools').scrollIntoView({behavior:'smooth'});
+  if(n==='chat'&&chatReady&&!chatGreeted){
+    chatGreeted=true;
+    var user=DB.get('user')||{};
+    var greeting='Hey '+(user.name||'there')+'. What is going on right now?';
+    chatAppend('franklyn',greeting);
+  }
 }
 
 var tSecs=30,tInt=null;
@@ -2011,10 +2018,7 @@ function chatInit(user){
     :'They have not done their Morning Anchor today.\n';
   systemMsg+='Use this to calibrate advice — morning suggestions differ from evening ones. At night, do not suggest starting new work. In the morning, a missed anchor is worth noting if relevant.';
   chatHistory=[{role:'system',content:systemMsg}];
-  if(DB.get('chat_agreed')){
-    var greeting='Hey '+user.name+'. What is going on right now?';
-    chatAppend('franklyn',greeting);
-  } else {
+  if(!DB.get('chat_agreed')){
     showChatAgreement();
   }
 }
