@@ -2032,12 +2032,16 @@ function mciSkip(encodedSkipped){
   var user=DB.get('user')||{};
   var text=document.getElementById('mci-text').value.trim();
   var resultEl=document.getElementById('mci-result');
-  var bar=document.getElementById('mci-progress-bar');
-  var label=document.getElementById('mci-go-label');
-  label.textContent='Searching YouTube...';
-  bar.style.display='block';bar.style.transition='none';bar.style.width='0%';
-  setTimeout(function(){bar.style.transition='width 0.6s ease';bar.style.width='70%';},30);
-  setTimeout(function(){bar.style.transition='width 3s ease';bar.style.width='88%';},700);
+
+  // Show inline loading state immediately so user knows it's working
+  resultEl.innerHTML='<div class="speech-card" style="display:flex;align-items:center;gap:12px;padding:1.25rem 1.5rem">'
+    +'<div id="mci-skip-bar-wrap" style="flex:1">'
+    +'<p style="font-size:13px;color:var(--ink4);margin:0 0 8px;font-style:italic">Finding a different talk for you...</p>'
+    +'<div style="height:3px;background:var(--border);border-radius:2px;overflow:hidden">'
+    +'<div id="mci-skip-bar" style="height:100%;background:var(--charcoal);width:0%;transition:width 0.5s ease;border-radius:2px"></div>'
+    +'</div></div></div>';
+  setTimeout(function(){var b=document.getElementById('mci-skip-bar');if(b){b.style.transition='width 0.6s ease';b.style.width='65%';}},30);
+  setTimeout(function(){var b=document.getElementById('mci-skip-bar');if(b){b.style.transition='width 4s ease';b.style.width='85%';}},700);
   var favorites=['True Beast Mentality — Motivational Speeches Compilation','How Your Thoughts Are Connected To Your Future — Dr. Joe Dispenza'];
   fetch('/api/speech',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
     mindset_state:mciState,
