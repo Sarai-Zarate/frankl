@@ -232,6 +232,26 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .habit-total{font-family:var(--fm);font-size:10px;color:var(--ink4)}
 .habit-del{background:none;border:none;color:var(--ink4);cursor:pointer;font-size:13px;padding:4px;opacity:0.35;transition:opacity 0.2s ease;line-height:1;flex-shrink:0}
 .habit-del:hover{opacity:1;color:var(--rose)}
+
+/* Mindset check-in */
+.mci-states{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
+.mci-card{background:var(--cream);border:1.5px solid var(--border);border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:all 0.18s ease;border-left:4px solid transparent;position:relative}
+.mci-card:hover{border-color:var(--borderS);transform:translateX(2px)}
+.mci-card.selected[data-mstate="ready"]{background:#dce4e8;border-color:#ABB9C4}
+.mci-card.selected[data-mstate="resistant"]{background:#ecdcd6;border-color:#B08878}
+.mci-card.selected[data-mstate="low"]{background:#e2dcd8;border-color:#6A5A50}
+.mci-card.selected[data-mstate="avoiding"]{background:#ece4cc;border-color:#B8A460}
+.mci-card[data-mstate="ready"]{border-left-color:#ABB9C4}
+.mci-card[data-mstate="resistant"]{border-left-color:#B08878}
+.mci-card[data-mstate="low"]{border-left-color:#6A5A50}
+.mci-card[data-mstate="avoiding"]{border-left-color:#B8A460}
+.mci-name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.mci-desc{font-size:12px;color:var(--ink3);font-weight:300}
+.speech-card{border:1.5px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;margin-top:1.25rem;background:var(--cream)}
+.speech-framing{font-size:14px;color:var(--ink2);font-weight:300;line-height:1.65;margin-bottom:1rem;font-style:italic}
+.speech-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px}
+.speech-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#0f1f4b;text-decoration:none;border-bottom:1px solid rgba(15,31,75,0.25);padding-bottom:1px;transition:border-color 0.15s}
+.speech-link:hover{border-color:#0f1f4b}
 .ev-list{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
 .ev-item{display:flex;align-items:center;gap:10px;border-radius:8px;padding:12px 16px;font-size:14px;line-height:1.5;font-weight:400;border:none}
 .ev-item[data-age="today"]{background:var(--ev-today);color:var(--ev-today-ink)}
@@ -859,6 +879,32 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="mirror-section" id="mci-section">
+      <span class="mirror-label">Mindset check-in</span>
+      <p style="font-size:13px;color:var(--ink4);font-weight:300;margin-bottom:1rem;line-height:1.6">Where are you going into today's habits?</p>
+      <div class="mci-states" id="mci-states">
+        <div class="mci-card" data-mstate="ready" onclick="mciSelect(this,'ready')">
+          <div class="mci-name">Ready</div>
+          <div class="mci-desc">Clear, willing, this is the plan</div>
+        </div>
+        <div class="mci-card" data-mstate="resistant" onclick="mciSelect(this,'resistant')">
+          <div class="mci-name">Resistant</div>
+          <div class="mci-desc">I know I should. Something is in the way.</div>
+        </div>
+        <div class="mci-card" data-mstate="low" onclick="mciSelect(this,'low')">
+          <div class="mci-name">Low</div>
+          <div class="mci-desc">Energy is down. Not sure I have it today.</div>
+        </div>
+        <div class="mci-card" data-mstate="avoiding" onclick="mciSelect(this,'avoiding')">
+          <div class="mci-name">Avoiding</div>
+          <div class="mci-desc">I have been putting this off and I know it.</div>
+        </div>
+      </div>
+      <textarea id="mci-text" class="prime-context-input" rows="2" placeholder="What's going on? (optional)"></textarea>
+      <button class="ne-btn" id="mci-go" disabled onclick="mciSubmit()" style="margin-bottom:0">Find something for where I am →</button>
+      <div id="mci-result" style="display:none"></div>
     </div>
 
     <div class="mirror-section">
@@ -1724,6 +1770,106 @@ function habitStreak(habit){
   }
   return streak;
 }
+// ── Mindset check-in ──────────────────────────────────────────
+var mciState=null;
+var SPEECH_LIBRARY=null;
+
+function mciSelect(el,state){
+  document.querySelectorAll('.mci-card').forEach(function(c){c.classList.remove('selected');});
+  el.classList.add('selected');
+  mciState=state;
+  document.getElementById('mci-go').disabled=false;
+}
+
+// selectSpeech: pure function, swappable for embedding-based retrieval later
+// Input: {mindset_state, mindset_text, identity_anchors, pattern_trigger}
+// Output: speech object from library, or null
+function selectSpeech(input, library){
+  if(!library||!library.length)return null;
+  var keywords=(
+    (input.mindset_state||'') + ' ' +
+    (input.mindset_text||'') + ' ' +
+    (input.identity_anchors||[]).join(' ') + ' ' +
+    (input.pattern_trigger||'')
+  ).toLowerCase().split(/\s+/).filter(Boolean);
+
+  var anchorWords=(input.identity_anchors||[]).join(' ').toLowerCase().split(/\s+/);
+  var triggerWords=(input.pattern_trigger||'').toLowerCase().split(/\s+/);
+
+  var scored=library.map(function(speech){
+    var themes=(speech.themes||[]).map(function(t){return t.toLowerCase();});
+    var overlap=themes.filter(function(t){
+      return keywords.some(function(k){return t.includes(k)||k.includes(t);});
+    }).length;
+    var boost=themes.filter(function(t){
+      return anchorWords.some(function(w){return t.includes(w);}) ||
+             triggerWords.some(function(w){return t.includes(w);});
+    }).length;
+    return {speech:speech, score:overlap + boost*0.5};
+  });
+
+  scored.sort(function(a,b){return b.score-a.score;});
+  return scored[0]&&scored[0].score>0 ? scored[0].speech : library[0];
+}
+
+function mciSubmit(){
+  if(!mciState)return;
+  var user=DB.get('user')||{};
+  var text=document.getElementById('mci-text').value.trim();
+  var input={
+    mindset_state:mciState,
+    mindset_text:text,
+    identity_anchors:user.anchors||[],
+    pattern_trigger:user.spiralTrigger||''
+  };
+
+  // persist
+  var mciHistory=DB.get('mci_history')||[];
+  var entry={state:mciState,text:text,createdAt:Date.now(),video_id:null};
+
+  function render(speech){
+    entry.video_id=speech?speech.video_id:null;
+    mciHistory.push(entry);
+    DB.set('mci_history',mciHistory);
+
+    var resultEl=document.getElementById('mci-result');
+    if(!speech){
+      resultEl.innerHTML='<p style="font-size:13px;color:var(--ink4);margin-top:1rem">No recommendation available yet. Replace the placeholder entries in data/speeches.json to activate this.</p>';
+    } else {
+      var ytUrl='https://www.youtube.com/watch?v='+speech.video_id;
+      resultEl.innerHTML=
+        '<div class="speech-card">'+
+          '<p class="speech-framing">'+speech.framing+'</p>'+
+          '<p class="speech-title">'+speech.title+'</p>'+
+          '<a class="speech-link" href="'+ytUrl+'" target="_blank" rel="noopener">Watch on YouTube →</a>'+
+        '</div>';
+    }
+    resultEl.style.display='block';
+    document.getElementById('mci-go').style.display='none';
+  }
+
+  if(SPEECH_LIBRARY){
+    render(selectSpeech(input,SPEECH_LIBRARY));
+  } else {
+    fetch('/data/speeches.json')
+      .then(function(r){return r.json();})
+      .then(function(lib){SPEECH_LIBRARY=lib;render(selectSpeech(input,lib));})
+      .catch(function(){render(null);});
+  }
+}
+
+// reset mindset check-in when tab re-activates
+function resetMci(){
+  mciState=null;
+  document.querySelectorAll('.mci-card').forEach(function(c){c.classList.remove('selected');});
+  document.getElementById('mci-text').value='';
+  document.getElementById('mci-go').disabled=true;
+  document.getElementById('mci-go').style.display='';
+  document.getElementById('mci-result').style.display='none';
+  document.getElementById('mci-result').innerHTML='';
+}
+// ── End mindset check-in ──────────────────────────────────────
+
 function renderHabits(){
   var habits=DB.get('habits')||[];
   var list=document.getElementById('habit-list');if(!list)return;
