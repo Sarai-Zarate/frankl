@@ -980,6 +980,11 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       </div>
     </div>
 
+    <div class="mirror-section" style="text-align:center;padding:1.5rem 0 0.5rem">
+      <p style="font-size:13px;color:var(--ink4);font-weight:300;margin-bottom:1rem;line-height:1.6">Something come up while you were here? Franklyn is one tap away.</p>
+      <button class="prep-btn" onclick="openChatFromFoundations()" style="margin:0 auto">Talk to Franklyn <span class="prep-arrow">→</span></button>
+    </div>
+
     <div class="feedback-wrap">
       <span class="feedback-label">Help us get better for you</span>
       <p class="feedback-hint">Franklyn improves the more you use it. If something felt off or something helped, tell us. We are building this for you.</p>
@@ -1935,6 +1940,26 @@ function mciSubmit(){
     resultEl.innerHTML='<p style="font-size:13px;color:var(--ink4);margin-top:1rem">Could not load a recommendation right now.</p>';
     goBtn.disabled=false;
   });
+}
+
+function openChatFromFoundations(){
+  var user=DB.get('user')||{};
+  var habits=DB.get('habits')||[];
+  var today=getToday();
+  var doneToday=habits.filter(function(h){return (h.dates||[]).indexOf(today)>-1;}).map(function(h){return h.name;});
+  var mciTextVal=document.getElementById('mci-text')?document.getElementById('mci-text').value.trim():'';
+  activateTab('chat');
+  if(chatReady&&chatGreeted){
+    var ctx='';
+    if(doneToday.length)ctx+='I just marked off '+doneToday.join(', ')+' today. ';
+    if(mciTextVal)ctx+=mciTextVal+' ';
+    if(ctx.trim()){
+      setTimeout(function(){
+        var inp=document.getElementById('chat-input');
+        if(inp){inp.value=ctx.trim();inp.focus();}
+      },300);
+    }
+  }
 }
 
 // reset mindset check-in when tab re-activates
