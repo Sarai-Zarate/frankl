@@ -2441,7 +2441,7 @@ function renderCalendar(){
 // === PARTNER SUGGESTIONS (placeholder — ready for real partners) ===
 var PARTNERS = [
   {category:'fitness', name:'Hotworx', icon:'🔥', desc:'Infrared fitness studios near you. 24/7 access, no class schedule needed.', url:'#', reason_template:'Your {habit} habit has been inconsistent. This might make it easier to show up.'},
-  {category:'meditation', name:'Calm', icon:'🧘', desc:'Guided meditations, sleep stories, and breathing programs.', url:'https://calm.com', reason_template:'You've been working on {habit}. Calm goes deeper when you're ready.'},
+  {category:'meditation', name:'Calm', icon:'🧘', desc:'Guided meditations, sleep stories, and breathing programs.', url:'https://calm.com', reason_template:'You\'ve been working on {habit}. Calm goes deeper when you\'re ready.'},
   {category:'nutrition', name:'Legion Athletics', icon:'💊', desc:'Science-backed supplements with no proprietary blends.', url:'https://legionathletics.com', reason_template:'Your {habit} habit is building. Fuel matters more as you go longer.'},
   {category:'recovery', name:'Whoop', icon:'⌚', desc:'Track your strain, recovery, and sleep to know when to push and when to rest.', url:'https://whoop.com', reason_template:'Your {habit} data is telling a story. Whoop makes it visible.'}
 ];
@@ -2545,7 +2545,7 @@ function renderGoals() {
                + '<div class="goal-meta">'+done+' of '+total+' milestones complete</div>' : '')
       + '<div class="goal-milestones">'+mHTML+'</div>'
       + '<div style="display:flex;align-items:center;gap:8px;margin-top:8px">'
-      +   '<input type="text" class="add-input" id="ms-inp-'+gi+'" placeholder="Add a milestone…" style="flex:1;font-size:12px" onkeydown="if(event.key==='Enter')addMilestone('+gi+')">'
+      +   '<input type="text" class="add-input" id="ms-inp-'+gi+'" placeholder="Add a milestone…" style="flex:1;font-size:12px" onkeydown="if(event.key===\'Enter\')addMilestone('+gi+')">'
       +   '<button class="add-btn" onclick="addMilestone('+gi+')" style="padding:6px 12px;font-size:12px">+ Add</button>'
       + '</div>'
       + '</div>';
