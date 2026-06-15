@@ -35,15 +35,16 @@ module.exports = async function handler(req, res) {
     '- The framing line must be written in Franklyn\'s voice: grounded, specific to this person, no clichés, no em dashes',
     '- Never say "journey", never use bullet points',
     '',
-    'Reply with exactly these three labeled lines:',
+    'Reply with exactly these four labeled lines:',
     'SPEAKER: (the speaker or creator\'s name)',
     'TITLE: (the exact title of the talk or video)',
-    'FRAMING: (one sentence in Franklyn\'s voice — why this fits this person right now, specific to their anchors or pattern)'
+    'FRAMING: (one sentence in Franklyn\'s voice — why this fits this person right now, specific to their anchors or pattern)',
+    'VIDEO_ID: (the YouTube video ID if you are confident you know the exact URL — the 11-character ID from youtube.com/watch?v=XXXXXXXXXXX — or leave blank if unsure)'
   ].filter(Boolean).join('\n');
 
   const body = JSON.stringify({
     model: 'claude-haiku-4-5-20251001',
-    max_tokens: 200,
+    max_tokens: 250,
     messages: [{ role: 'user', content: prompt }]
   });
 
@@ -81,13 +82,16 @@ module.exports = async function handler(req, res) {
       return line.trim();
     }
 
-    const speaker = extractLine(text, 'SPEAKER:');
-    const title   = extractLine(text, 'TITLE:');
-    const framing = extractLine(text, 'FRAMING:');
+    const speaker  = extractLine(text, 'SPEAKER:');
+    const title    = extractLine(text, 'TITLE:');
+    const framing  = extractLine(text, 'FRAMING:');
+    const rawId    = extractLine(text, 'VIDEO_ID:');
+    const video_id = /^[A-Za-z0-9_-]{11}$/.test(rawId) ? rawId : null;
     const searchQuery = encodeURIComponent((speaker + ' ' + title).trim());
     const youtubeSearchUrl = 'https://www.youtube.com/results?search_query=' + searchQuery;
+    const youtubeWatchUrl  = video_id ? 'https://www.youtube.com/watch?v=' + video_id : null;
 
-    res.status(200).json({ speaker, title, framing, youtube_search_url: youtubeSearchUrl });
+    res.status(200).json({ speaker, title, framing, video_id, youtube_search_url: youtubeSearchUrl, youtube_watch_url: youtubeWatchUrl });
   } catch(error) {
     res.status(500).json({ error: error.message });
   }
