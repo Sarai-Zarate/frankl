@@ -1816,46 +1816,43 @@ function mciSubmit(){
   if(!mciState)return;
   var user=DB.get('user')||{};
   var text=document.getElementById('mci-text').value.trim();
-  var input={
+
+  var resultEl=document.getElementById('mci-result');
+  var goBtn=document.getElementById('mci-go');
+  resultEl.innerHTML='<p style="font-size:13px;color:var(--ink4);margin-top:1rem;font-style:italic">Finding something for where you are...</p>';
+  resultEl.style.display='block';
+  goBtn.disabled=true;
+
+  var favorites=[
+    'True Beast Mentality — Motivational Speeches Compilation',
+    'How Your Thoughts Are Connected To Your Future — Dr. Joe Dispenza'
+  ];
+
+  fetch('/api/speech',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
     mindset_state:mciState,
     mindset_text:text,
     identity_anchors:user.anchors||[],
-    pattern_trigger:user.spiralTrigger||''
-  };
-
-  // persist
-  var mciHistory=DB.get('mci_history')||[];
-  var entry={state:mciState,text:text,createdAt:Date.now(),video_id:null};
-
-  function render(speech){
-    entry.video_id=speech?speech.video_id:null;
-    mciHistory.push(entry);
+    pattern_trigger:user.spiralTrigger||'',
+    favorites:favorites
+  })})
+  .then(function(r){return r.json();})
+  .then(function(data){
+    var mciHistory=DB.get('mci_history')||[];
+    mciHistory.push({state:mciState,text:text,createdAt:Date.now(),title:data.title,speaker:data.speaker});
     DB.set('mci_history',mciHistory);
 
-    var resultEl=document.getElementById('mci-result');
-    if(!speech){
-      resultEl.innerHTML='<p style="font-size:13px;color:var(--ink4);margin-top:1rem">No recommendation available yet. Replace the placeholder entries in data/speeches.json to activate this.</p>';
-    } else {
-      var ytUrl='https://www.youtube.com/watch?v='+speech.video_id;
-      resultEl.innerHTML=
-        '<div class="speech-card">'+
-          '<p class="speech-framing">'+speech.framing+'</p>'+
-          '<p class="speech-title">'+speech.title+'</p>'+
-          '<a class="speech-link" href="'+ytUrl+'" target="_blank" rel="noopener">Watch on YouTube →</a>'+
-        '</div>';
-    }
-    resultEl.style.display='block';
-    document.getElementById('mci-go').style.display='none';
-  }
-
-  if(SPEECH_LIBRARY){
-    render(selectSpeech(input,SPEECH_LIBRARY));
-  } else {
-    fetch('/data/speeches.json')
-      .then(function(r){return r.json();})
-      .then(function(lib){SPEECH_LIBRARY=lib;render(selectSpeech(input,lib));})
-      .catch(function(){render(null);});
-  }
+    resultEl.innerHTML=
+      '<div class="speech-card">'+
+        '<p class="speech-framing">'+stripMd(data.framing)+'</p>'+
+        '<p class="speech-title">'+stripMd(data.speaker+' — '+data.title)+'</p>'+
+        '<a class="speech-link" href="'+data.youtube_search_url+'" target="_blank" rel="noopener">Find on YouTube →</a>'+
+      '</div>';
+    goBtn.style.display='none';
+  })
+  .catch(function(){
+    resultEl.innerHTML='<p style="font-size:13px;color:var(--ink4);margin-top:1rem">Could not load a recommendation right now.</p>';
+    goBtn.disabled=false;
+  });
 }
 
 // reset mindset check-in when tab re-activates
