@@ -1087,6 +1087,7 @@ var defaultSignals=[
 ];
 function renderSignals(signals){
   var list=document.querySelector('.sig-list');
+  if(!list)return;
   list.innerHTML='';
   var src=signals&&signals.length?signals:defaultSignals;
   src.forEach(function(sig){
