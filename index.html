@@ -424,10 +424,17 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .chat-send{font-size:13px;font-weight:600;font-family:var(--fb);padding:10px 18px;border-radius:24px;border:none;background:var(--charcoal);color:var(--cream);cursor:pointer;white-space:nowrap;transition:background var(--tr);align-self:flex-end}
 .chat-send:hover{background:var(--charcoal-l)}
 .chat-send:disabled{opacity:0.3;cursor:default}
-.chat-mic{width:40px;height:40px;border-radius:50%;border:1px solid var(--borderS);background:var(--cream);color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;align-self:flex-end;transition:all var(--tr)}
+.chat-mic{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--borderS);background:var(--cream);color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all var(--tr)}
 .chat-mic:hover{background:var(--cream-d);border-color:var(--charcoal)}
-.chat-mic.active{background:var(--burgundy);border-color:var(--burgundy);color:var(--cream)}
-.chat-mic.processing{background:var(--amber);border-color:var(--amber);color:var(--cream);opacity:0.75}
+.chat-mic.active{background:#1a3a7a;border-color:#1a3a7a;color:#fff}
+.chat-mic.processing{background:var(--amber);border-color:var(--amber);color:#fff;opacity:0.85}
+.chat-mic-label{font-size:10px;font-family:var(--fm);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink4);margin-left:2px}
+.chat-mic.active~.chat-mic-label{color:#1a3a7a;font-weight:700}
+.chat-img-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--borderS);background:transparent;color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;align-self:flex-end;transition:all var(--tr)}
+.chat-img-btn:hover{background:var(--cream-d);border-color:var(--charcoal);color:var(--ink)}
+.chat-img-thumb{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1.5px solid var(--border);display:block}
+.chat-img-preview-wrap{position:relative;display:inline-block}
+.chat-img-remove{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--ink);color:var(--cream);border:none;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;line-height:1}
 @keyframes micWave{0%,100%{transform:scaleY(0.3)}50%{transform:scaleY(1)}}
 .mic-waves{display:flex;gap:2px;align-items:center;height:14px}
 .mic-waves span{width:3px;border-radius:3px;background:currentColor;animation:micWave 0.75s ease-in-out infinite}
@@ -1029,19 +1036,25 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       Back
     </button>
     <span class="chat-screen-title">Franklyn</span>
-    <button class="chat-mic" id="chat-mic" onclick="chatMicToggle()" title="Voice conversation" style="margin-left:auto;width:34px;height:34px"><svg width="12" height="16" viewBox="0 0 14 18" fill="none"><rect x="3" y="0" width="8" height="11" rx="4" fill="currentColor"/><path d="M1 8c0 3.314 2.686 6 6 6s6-2.686 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="14" x2="7" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="17" x2="10" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+    <button class="chat-mic" id="chat-mic" onclick="chatMicToggle()" title="Voice conversation — Franklyn speaks back" style="margin-left:auto;width:34px;height:34px;flex-shrink:0"><svg width="12" height="16" viewBox="0 0 14 18" fill="none"><rect x="3" y="0" width="8" height="11" rx="4" fill="currentColor"/><path d="M1 8c0 3.314 2.686 6 6 6s6-2.686 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="14" x2="7" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="17" x2="10" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+    <span class="chat-mic-label" id="chat-mic-label">Live</span>
   </div>
   <div class="chat-wrap">
     <div class="chat-msgs" id="chat-msgs"></div>
     <div class="chat-voice-bar">
-      <button class="chat-voice-btn" id="chat-voice-btn" onclick="chatMicToggle()">
+      <button class="chat-voice-btn" id="chat-voice-btn" onclick="chatDictateToggle()">
         <span class="vbtn-icon" id="vbtn-icon">🎙</span>
-        <span id="vbtn-label">Voice conversation</span>
+        <span id="vbtn-label">Dictate</span>
       </button>
-      <span class="chat-voice-status" id="chat-voice-status">Tap to talk — Franklyn will speak back</span>
+      <span class="chat-voice-status" id="chat-voice-status">Speak — review it, then hit Send</span>
     </div>
+    <div id="chat-img-preview" style="display:none;padding:8px 12px 0"></div>
     <div class="chat-input-row">
-      <textarea class="chat-input" id="chat-input" rows="1" placeholder="Or type here…" oninput="chatInputGrow(this)"></textarea>
+      <button class="chat-img-btn" onclick="document.getElementById('chat-img-input').click()" title="Attach image">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      </button>
+      <input type="file" id="chat-img-input" accept="image/*" style="display:none" onchange="chatImgSelected(this)">
+      <textarea class="chat-input" id="chat-input" rows="1" placeholder="Type or dictate…" oninput="chatInputGrow(this)"></textarea>
       <button class="chat-send" id="chat-send" onclick="chatSend()">Send</button>
     </div>
     <button class="chat-ground-btn" onclick="chatGroundMe()">I need help right now — what can I do?</button>
@@ -2399,7 +2412,7 @@ function chatInit(user){
   }
 }
 
-function chatAppend(role,text){
+function chatAppend(role,text,extraHtml){
   var msgs=document.getElementById('chat-msgs');
   var wrap=document.createElement('div');
   wrap.className='chat-msg '+role;
@@ -2408,7 +2421,8 @@ function chatAppend(role,text){
   sender.textContent=role==='franklyn'?'Franklyn':'You';
   var bubble=document.createElement('div');
   bubble.className='chat-bubble';
-  bubble.innerHTML=stripMd(text);
+  if(text)bubble.innerHTML=stripMd(text);
+  if(extraHtml)bubble.innerHTML+=(text?'':'')+extraHtml;
   wrap.appendChild(sender);
   wrap.appendChild(bubble);
   msgs.appendChild(wrap);
@@ -2436,14 +2450,32 @@ function chatTyping(){
 function chatSend(){
   var inp=document.getElementById('chat-input');
   var text=inp.value.trim();
-  if(!text||!chatReady)return;
+  if((!text&&!pendingImage)||!chatReady)return;
   if(!DB.get('chat_agreed'))return;
   inp.value='';
   inp.style.height='auto';
   document.getElementById('chat-send').disabled=true;
   rotateChatColor();
-  chatAppend('user',text);
-  chatHistory.push({role:'user',content:text});
+
+  // Build content — text only or text+image
+  var img=pendingImage;
+  pendingImage=null;
+  var previewEl=document.getElementById('chat-img-preview');
+  if(previewEl){previewEl.innerHTML='';previewEl.style.display='none';}
+
+  if(img){
+    var contentArr=[];
+    if(text)contentArr.push({type:'text',text:text});
+    contentArr.push({type:'image',source:{type:'base64',media_type:img.media_type,data:img.data}});
+    // Show image in user bubble
+    var bubbleExtra='<img src="data:'+img.media_type+';base64,'+img.data+'" style="max-width:200px;border-radius:10px;margin-top:6px;display:block">';
+    chatAppend('user',text||'',bubbleExtra);
+    chatHistory.push({role:'user',content:contentArr});
+  } else {
+    chatAppend('user',text);
+    chatHistory.push({role:'user',content:text});
+  }
+
   chatTyping();
   fetch('/api/chat',{
     method:'POST',
@@ -2565,6 +2597,8 @@ var franklyVoice=null;
 var silenceTimer=null;
 var voiceAutoSending=false;
 var conversationMode=false;
+var dictateMode=false;
+var pendingImage=null;
 var micSVG='<svg width="14" height="18" viewBox="0 0 14 18" fill="none"><rect x="3" y="0" width="8" height="11" rx="4" fill="currentColor"/><path d="M1 8c0 3.314 2.686 6 6 6s6-2.686 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="14" x2="7" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="17" x2="10" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
 var micWaves='<div class="mic-waves"><span></span><span></span><span></span><span></span></div>';
 
@@ -2643,13 +2677,20 @@ function voiceInit(){
     clearTimeout(silenceTimer);
     if(voiceAutoSending){
       voiceAutoSending=false;
-      setMicState('processing');
-      chatSend();
+      if(dictateMode){
+        // Dictate: leave text in box, let user review and hit Send
+        dictateMode=false;
+        setDictateState('off');
+      } else {
+        setMicState('processing');
+        chatSend();
+      }
     } else if(conversationMode){
-      // No speech detected — keep listening
       setTimeout(startListening,200);
     } else {
+      dictateMode=false;
       setMicState('off');
+      setDictateState('off');
     }
   };
   recognition.onerror=function(e){
@@ -2659,7 +2700,9 @@ function voiceInit(){
       setTimeout(startListening,600);
     } else {
       conversationMode=false;
+      dictateMode=false;
       setMicState('off');
+      setDictateState('off');
     }
   };
   function pickVoice(){
@@ -2678,16 +2721,91 @@ function voiceInit(){
 function chatMicToggle(){
   if(!recognition){alert('Voice is not supported in this browser. Try Chrome.');return;}
   if(!DB.get('chat_agreed'))return;
+  // Stop dictate mode if running
+  if(dictateMode){dictateMode=false;voiceAutoSending=false;clearTimeout(silenceTimer);try{recognition.stop();}catch(e){}setDictateState('off');}
   if(conversationMode){
     conversationMode=false;
     voiceAutoSending=false;
     clearTimeout(silenceTimer);
+    synthesis.cancel();
     try{recognition.stop();}catch(e){}
     setMicState('off');
   } else {
     conversationMode=true;
     startListening();
   }
+}
+
+function chatDictateToggle(){
+  if(!recognition){alert('Voice is not supported in this browser. Try Chrome.');return;}
+  if(!DB.get('chat_agreed'))return;
+  // Stop voice-to-voice if running
+  if(conversationMode){conversationMode=false;voiceAutoSending=false;clearTimeout(silenceTimer);synthesis.cancel();try{recognition.stop();}catch(e){}setMicState('off');}
+  if(dictateMode){
+    dictateMode=false;
+    voiceAutoSending=false;
+    clearTimeout(silenceTimer);
+    try{recognition.stop();}catch(e){}
+    setDictateState('off');
+  } else {
+    dictateMode=true;
+    var inp=document.getElementById('chat-input');
+    inp.value='';inp.style.height='auto';
+    try{recognition.start();}catch(e){setTimeout(function(){try{recognition.start();}catch(e2){}},300);}
+    setDictateState('listening');
+  }
+}
+
+function setDictateState(state){
+  var vbtn=document.getElementById('chat-voice-btn');
+  var vicon=document.getElementById('vbtn-icon');
+  var vlabel=document.getElementById('vbtn-label');
+  var vstatus=document.getElementById('chat-voice-status');
+  if(vbtn)vbtn.classList.remove('listening','speaking');
+  if(state==='listening'){
+    if(vbtn)vbtn.classList.add('listening');
+    if(vicon)vicon.textContent='🎙';
+    if(vlabel)vlabel.textContent='Listening…';
+    if(vstatus)vstatus.textContent='Speak now — tap again to stop, then hit Send';
+  } else {
+    if(vicon)vicon.textContent='🎙';
+    if(vlabel)vlabel.textContent='Dictate';
+    if(vstatus)vstatus.textContent='Speak — review it, then hit Send';
+  }
+}
+
+function chatImgSelected(input){
+  var file=input.files&&input.files[0];
+  if(!file)return;
+  input.value='';
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var img=new Image();
+    img.onload=function(){
+      var MAX=900;
+      var w=img.width,h=img.height;
+      if(w>MAX||h>MAX){var s=Math.min(MAX/w,MAX/h);w=Math.round(w*s);h=Math.round(h*s);}
+      var canvas=document.createElement('canvas');
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      var data=canvas.toDataURL('image/jpeg',0.82).split(',')[1];
+      pendingImage={data:data,media_type:'image/jpeg'};
+      var preview=document.getElementById('chat-img-preview');
+      preview.style.display='block';
+      preview.innerHTML='<div class="chat-img-preview-wrap">'
+        +'<img class="chat-img-thumb" src="data:image/jpeg;base64,'+data+'">'
+        +'<button class="chat-img-remove" onclick="chatImgClear()" title="Remove">✕</button>'
+        +'</div>';
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function chatImgClear(){
+  pendingImage=null;
+  var p=document.getElementById('chat-img-preview');
+  if(p){p.innerHTML='';p.style.display='none';}
 }
 
 function franklySpeak(text){
@@ -2708,7 +2826,7 @@ voiceInit();
 
 document.getElementById('chat-input').addEventListener('input',function(){
   this.style.height='auto';
-  this.style.height=Math.min(this.scrollHeight,100)+'px';
+  this.style.height=Math.min(this.scrollHeight,200)+'px';
 });
 document.getElementById('chat-input').addEventListener('keydown',function(e){
   if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();chatSend();}
