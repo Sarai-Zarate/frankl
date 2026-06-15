@@ -300,6 +300,31 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .speech-card{border:1.5px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;margin-top:1.25rem;background:var(--cream)}
 .speech-embed-wrap{position:relative;width:100%;padding-bottom:56.25%;margin-bottom:0.5rem;border-radius:8px;overflow:hidden;background:#000}
 .speech-embed{position:absolute;inset:0;width:100%;height:100%;border:none}
+
+.video-type-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.video-type-btn{font-family:var(--fb);font-size:12px;font-weight:500;padding:9px 6px;border-radius:10px;border:1.5px solid var(--border);background:var(--cream);color:var(--ink3);cursor:pointer;text-align:center;transition:all 0.15s}
+.video-type-btn.active{border-color:var(--blue);background:rgba(100,130,180,0.08);color:var(--ink)}
+.goals-section{margin-top:2rem}
+.goal-card{border-radius:var(--r);background:var(--cream);border:1px solid var(--border);padding:1rem;margin-bottom:10px}
+.goal-title-row{display:flex;align-items:center;gap:10px}
+.goal-name{font-size:15px;font-weight:600;color:var(--ink);flex:1}
+.goal-remove{background:none;border:none;cursor:pointer;color:var(--ink4);font-size:18px;line-height:1;padding:0 2px}
+.goal-progress{height:4px;background:var(--border);border-radius:2px;margin:10px 0 6px}
+.goal-progress-fill{height:100%;border-radius:2px;background:var(--blue);transition:width 0.3s}
+.goal-meta{font-size:11px;color:var(--ink4);font-weight:300}
+.goal-milestones{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.goal-milestone{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink3)}
+.goal-milestone input[type=checkbox]{width:15px;height:15px;cursor:pointer;accent-color:var(--blue);flex-shrink:0}
+.goal-milestone.done span{text-decoration:line-through;color:var(--ink4)}
+.goal-add-milestone{font-size:12px;color:var(--blue);background:none;border:none;cursor:pointer;font-family:var(--fb);padding:4px 0;text-align:left}
+.partner-suggestion{margin-top:1rem;border:1px solid var(--border);border-radius:12px;padding:12px 14px;background:var(--cream-d)}
+.partner-suggestion-label{font-size:9px;font-family:var(--fm);letter-spacing:0.12em;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;display:block}
+.partner-suggestion-body{display:flex;align-items:center;gap:12px}
+.partner-suggestion-icon{width:36px;height:36px;border-radius:8px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.partner-suggestion-text{flex:1}
+.partner-suggestion-name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.partner-suggestion-reason{font-size:11px;color:var(--ink4);font-weight:300;line-height:1.5}
+.partner-suggestion-link{font-size:12px;font-weight:600;color:var(--blue);background:none;border:none;cursor:pointer;font-family:var(--fb);padding:0;text-decoration:none;display:inline-block;margin-top:6px}
 .speech-pip-hint{font-size:11px;color:var(--ink4);font-weight:300;margin-bottom:0.75rem;line-height:1.5}
 .speech-framing{font-size:14px;color:var(--ink2);font-weight:300;line-height:1.65;margin-bottom:1rem;font-style:italic}
 .speech-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px}
@@ -665,6 +690,17 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       <input class="settings-field" id="s-s4" type="text" placeholder="Fourth signal (optional)" autocomplete="off">
     </div>
 
+    <span class="settings-group-label">Video recommendations</span>
+    <div class="settings-section">
+      <span class="settings-label">When I need a push, show me</span>
+      <div class="video-type-row" id="video-type-row">
+        <button class="video-type-btn" data-type="speech" onclick="setVideoType('speech')">Motivational speech</button>
+        <button class="video-type-btn" data-type="meditation" onclick="setVideoType('meditation')">Guided meditation</button>
+        <button class="video-type-btn" data-type="workout" onclick="setVideoType('workout')">Workout / movement</button>
+        <button class="video-type-btn" data-type="auto" onclick="setVideoType('auto')">Let Franklyn decide</button>
+      </div>
+    </div>
+
     <span class="settings-group-label">Daily reminder</span>
     <div class="settings-section">
       <span class="settings-label">Pair your morning anchor with a habit</span>
@@ -1004,6 +1040,16 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       <div id="saved-talks-list"></div>
     </div>
 
+    <div class="mirror-section goals-section">
+      <span class="mirror-label">Your goals</span>
+      <p style="font-size:13px;color:var(--ink4);font-weight:300;margin-bottom:1rem;line-height:1.6">Goals live above habits. Break each one into milestones — Franklyn will help you see what daily habits actually move it forward.</p>
+      <div id="goal-list"></div>
+      <div class="add-row" id="goal-add-row">
+        <input type="text" class="add-input" id="new-goal" placeholder="What are you building toward…" onkeydown="if(event.key==='Enter')addGoal()">
+        <button class="add-btn" onclick="addGoal()">+ Add</button>
+      </div>
+    </div>
+
     <div class="mirror-section">
       <span class="mirror-label">Your habits</span>
       <p style="font-size:13px;color:var(--ink4);font-weight:300;margin-bottom:1rem;line-height:1.6">Tap to mark done today. Each habit has its own color — tap the dot next to the name to change it. Consistency is invisible until you can see it stacking up.</p>
@@ -1329,6 +1375,7 @@ function initApp(user){
 
   // Meaning Mirror
   loadMeaningFields();
+  renderGoals();
   renderHabits();
   renderCalendar();
   renderSavedTalks();
@@ -1786,6 +1833,10 @@ function settingsOpen(){
   document.getElementById('s-s4').value=sigs[3]||'';
   document.getElementById('settings-overlay').classList.add('open');
   loadProfileCard();
+  var vt=(user.videoType)||'auto';
+  document.querySelectorAll('.video-type-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.type===vt);
+  });
 }
 function settingsClose(){
   document.getElementById('settings-overlay').classList.remove('open');
@@ -1808,6 +1859,8 @@ function settingsSave(){
     document.getElementById('s-s3').value.trim(),
     document.getElementById('s-s4').value.trim()
   ].filter(function(s){return s.length>0;});
+  var activeVT=document.querySelector('.video-type-btn.active');
+  user.videoType=activeVT?activeVT.dataset.type:'auto';
   DB.set('user',user);
   initApp(user);
   settingsClose();
@@ -2005,7 +2058,8 @@ function mciSubmit(){
     mindset_text:text,
     identity_anchors:user.anchors||[],
     pattern_trigger:user.spiralTrigger||'',
-    favorites:favorites
+    favorites:favorites,
+    video_type:user.videoType||'auto'
   })})
   .then(function(r){return r.json();})
   .then(function(data){
@@ -2044,6 +2098,7 @@ function mciSubmit(){
           '</button>'+
         '</div>'+
       '</div>';
+    resultEl.innerHTML += partnerSuggestionHtml();
     resultEl.style.display='block';
     goBtn.style.display='none';
   })
@@ -2079,7 +2134,8 @@ function mciSkip(encodedSkipped){
     identity_anchors:user.anchors||[],
     pattern_trigger:user.spiralTrigger||'',
     favorites:favorites,
-    exclude_titles:skippedTitles
+    exclude_titles:skippedTitles,
+    video_type:(DB.get('user')||{}).videoType||'auto'
   })})
   .then(function(r){return r.json();})
   .then(function(data){
@@ -2379,6 +2435,166 @@ function renderCalendar(){
     cell.appendChild(dotsEl);
     grid.appendChild(cell);
   }
+}
+
+
+// === PARTNER SUGGESTIONS (placeholder — ready for real partners) ===
+var PARTNERS = [
+  {category:'fitness', name:'Hotworx', icon:'🔥', desc:'Infrared fitness studios near you. 24/7 access, no class schedule needed.', url:'#', reason_template:'Your {habit} habit has been inconsistent. This might make it easier to show up.'},
+  {category:'meditation', name:'Calm', icon:'🧘', desc:'Guided meditations, sleep stories, and breathing programs.', url:'https://calm.com', reason_template:'You've been working on {habit}. Calm goes deeper when you're ready.'},
+  {category:'nutrition', name:'Legion Athletics', icon:'💊', desc:'Science-backed supplements with no proprietary blends.', url:'https://legionathletics.com', reason_template:'Your {habit} habit is building. Fuel matters more as you go longer.'},
+  {category:'recovery', name:'Whoop', icon:'⌚', desc:'Track your strain, recovery, and sleep to know when to push and when to rest.', url:'https://whoop.com', reason_template:'Your {habit} data is telling a story. Whoop makes it visible.'}
+];
+
+var HABIT_PARTNER_MAP = {
+  'meditat': 'meditation',
+  'breathe': 'meditation',
+  'breath': 'meditation',
+  'mindful': 'meditation',
+  'cardio': 'fitness',
+  'run': 'fitness',
+  'gym': 'fitness',
+  'workout': 'fitness',
+  'lift': 'fitness',
+  'weight': 'fitness',
+  'strength': 'fitness',
+  'eat': 'nutrition',
+  'diet': 'nutrition',
+  'protein': 'nutrition',
+  'sleep': 'recovery',
+  'recover': 'recovery'
+};
+
+function getPartnerForHabit(habitName) {
+  var lower = habitName.toLowerCase();
+  var category = null;
+  var keys = Object.keys(HABIT_PARTNER_MAP);
+  for (var i = 0; i < keys.length; i++) {
+    if (lower.indexOf(keys[i]) > -1) { category = HABIT_PARTNER_MAP[keys[i]]; break; }
+  }
+  if (!category) return null;
+  for (var j = 0; j < PARTNERS.length; j++) {
+    if (PARTNERS[j].category === category) return PARTNERS[j];
+  }
+  return null;
+}
+
+function checkHabitPatterns() {
+  // Returns {habit, partner} if a habit has been missed 3+ of last 7 days
+  var habits = DB.get('habits') || [];
+  var today = getToday();
+  var todayD = new Date(today);
+  for (var i = 0; i < habits.length; i++) {
+    var h = habits[i];
+    var dates = h.dates || [];
+    var missed = 0;
+    for (var d = 1; d <= 7; d++) {
+      var dd = new Date(todayD); dd.setDate(dd.getDate() - d);
+      var ds = dd.toISOString().slice(0,10);
+      if (dates.indexOf(ds) === -1) missed++;
+    }
+    if (missed >= 3) {
+      var partner = getPartnerForHabit(h.name);
+      if (partner) return {habit: h.name, partner: partner};
+    }
+  }
+  return null;
+}
+
+function partnerSuggestionHtml() {
+  var match = checkHabitPatterns();
+  if (!match) return '';
+  var p = match.partner;
+  var reason = p.reason_template.replace('{habit}', match.habit.toLowerCase());
+  return '<div class="partner-suggestion">'
+    + '<span class="partner-suggestion-label">Partner suggestion &nbsp;·&nbsp; Franklyn thinks this might help</span>'
+    + '<div class="partner-suggestion-body">'
+    +   '<div class="partner-suggestion-icon">'+p.icon+'</div>'
+    +   '<div class="partner-suggestion-text">'
+    +     '<div class="partner-suggestion-name">'+p.name+'</div>'
+    +     '<div class="partner-suggestion-reason">'+reason+'</div>'
+    +     '<a class="partner-suggestion-link" href="'+p.url+'" target="_blank" rel="noopener">Learn more →</a>'
+    +   '</div>'
+    + '</div>'
+    + '</div>';
+}
+
+
+// === GOALS ===
+function renderGoals() {
+  var list = document.getElementById('goal-list');
+  if (!list) return;
+  var goals = DB.get('goals') || [];
+  if (!goals.length) { list.innerHTML = ''; return; }
+  list.innerHTML = goals.map(function(g, gi) {
+    var total = (g.milestones || []).length;
+    var done = (g.milestones || []).filter(function(m){return m.done;}).length;
+    var pct = total ? Math.round(done/total*100) : 0;
+    var mHTML = (g.milestones || []).map(function(m, mi) {
+      return '<label class="goal-milestone'+(m.done?' done':'')+'">'
+        + '<input type="checkbox"'+(m.done?' checked':'')+' onchange="toggleMilestone('+gi+','+mi+')">'
+        + '<span>'+m.text+'</span>'
+        + '</label>';
+    }).join('');
+    return '<div class="goal-card">'
+      + '<div class="goal-title-row">'
+      +   '<span class="goal-name">'+g.name+'</span>'
+      +   '<button class="goal-remove" onclick="removeGoal('+gi+')" title="Remove">×</button>'
+      + '</div>'
+      + (total ? '<div class="goal-progress"><div class="goal-progress-fill" style="width:'+pct+'%"></div></div>'
+               + '<div class="goal-meta">'+done+' of '+total+' milestones complete</div>' : '')
+      + '<div class="goal-milestones">'+mHTML+'</div>'
+      + '<div style="display:flex;align-items:center;gap:8px;margin-top:8px">'
+      +   '<input type="text" class="add-input" id="ms-inp-'+gi+'" placeholder="Add a milestone…" style="flex:1;font-size:12px" onkeydown="if(event.key==='Enter')addMilestone('+gi+')">'
+      +   '<button class="add-btn" onclick="addMilestone('+gi+')" style="padding:6px 12px;font-size:12px">+ Add</button>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function addGoal() {
+  var inp = document.getElementById('new-goal');
+  var name = inp.value.trim();
+  if (!name) return;
+  var goals = DB.get('goals') || [];
+  goals.push({name: name, milestones: [], createdAt: Date.now()});
+  DB.set('goals', goals);
+  inp.value = '';
+  renderGoals();
+}
+
+function removeGoal(idx) {
+  var goals = DB.get('goals') || [];
+  goals.splice(idx, 1);
+  DB.set('goals', goals);
+  renderGoals();
+}
+
+function addMilestone(gi) {
+  var inp = document.getElementById('ms-inp-'+gi);
+  if (!inp) return;
+  var text = inp.value.trim();
+  if (!text) return;
+  var goals = DB.get('goals') || [];
+  if (!goals[gi].milestones) goals[gi].milestones = [];
+  goals[gi].milestones.push({text: text, done: false});
+  DB.set('goals', goals);
+  renderGoals();
+}
+
+function toggleMilestone(gi, mi) {
+  var goals = DB.get('goals') || [];
+  goals[gi].milestones[mi].done = !goals[gi].milestones[mi].done;
+  DB.set('goals', goals);
+  renderGoals();
+}
+
+
+// === VIDEO TYPE PREFERENCE ===
+function setVideoType(type) {
+  document.querySelectorAll('.video-type-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.type===type);
+  });
 }
 
 function renderHabits(){

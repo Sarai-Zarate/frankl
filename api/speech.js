@@ -36,7 +36,7 @@ function extractLine(t, label) {
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { mindset_state, mindset_text, identity_anchors, pattern_trigger, favorites, exclude_titles } = req.body;
+  const { mindset_state, mindset_text, identity_anchors, pattern_trigger, favorites, exclude_titles, video_type } = req.body;
 
   const anchorList = (identity_anchors || []).filter(Boolean).join(', ') || 'not set';
 
@@ -52,15 +52,49 @@ module.exports = async function handler(req, res) {
     ? 'ALREADY SHOWN — do not repeat any of these: ' + exclude_titles
     : '';
 
+  const videoTypeInstructions = {
+    speech: [
+      'CRITICAL — FORMAT REQUIRED:',
+      'The video MUST be a cinematic motivational speech compilation — dramatic background music, scenes cutting between nature/sports/film footage, voice clips from athletes, coaches, philosophers, or movie characters edited together.',
+      'Channels: Motiversity, Ben Lionel Scott, Mateusz M, Absolute Motivation, T&H Inspiration, RedFrost Motivation.',
+      'DO NOT recommend: TED talks, TEDx talks, talking-head lectures, podcasts, interviews. No Mel Robbins, no Tim Urban.',
+      '',
+      'Verified IDs: ZBPY4Boczf8 = "True Beast Mentality" (Motiversity), 5reo3dXOicU = "How Your Thoughts Are Connected To Your Future" (Dispenza cinematic)'
+    ],
+    meditation: [
+      'CRITICAL — FORMAT REQUIRED:',
+      'The video MUST be a guided meditation or breathwork session — calm, focused, ideally 5-20 minutes.',
+      'Channels: Headspace, Calm, Yoga With Adriene, Great Meditation, Michael Sealey, Jason Stephenson.',
+      'DO NOT recommend: motivational speeches, workout videos, lectures.',
+      '',
+      'Match length and tone to state: low/avoiding = short and gentle (5-10 min); resistant = grounding body scan; ready = deeper sit.'
+    ],
+    workout: [
+      'CRITICAL — FORMAT REQUIRED:',
+      'The video MUST be a follow-along workout or movement session — something the user can actually do right now.',
+      'Channels: MadFit, Heather Robertson, Juice & Toya, Sydney Cummings, POPSUGAR Fitness, Athlean-X.',
+      'DO NOT recommend: motivational speeches, meditation, lectures.',
+      '',
+      'Match intensity to state: low/avoiding = gentle movement or stretching; resistant = moderate; ready = high intensity.'
+    ],
+    auto: [
+      'CRITICAL — FORMAT REQUIRED:',
+      'Choose the best video type for this person\'s current state:',
+      '- If they need fire and momentum: cinematic motivational compilation (Motiversity, Ben Lionel Scott, Mateusz M)',
+      '- If they need to calm down or reset: guided meditation (Headspace, Calm, Yoga With Adriene)',
+      '- If they need to move their body: follow-along workout (MadFit, Heather Robertson)',
+      'DO NOT recommend: TED talks, TEDx, podcasts, lectures, talking-head interviews. No Mel Robbins.',
+      '',
+      'Verified IDs: ZBPY4Boczf8 = "True Beast Mentality" (Motiversity), 5reo3dXOicU = "How Your Thoughts Are Connected To Your Future" (Dispenza)'
+    ]
+  };
+
+  const typeLines = videoTypeInstructions[video_type] || videoTypeInstructions['auto'];
+
   const prompt = [
-    'You are Franklyn. Recommend one YouTube motivational speech video for this person.',
+    'You are Franklyn. Recommend one YouTube video for this person right now.',
     '',
-    'CRITICAL — FORMAT REQUIRED:',
-    'The video MUST be a cinematic motivational speech compilation — the kind with dramatic background music, scenes cutting between nature/sports/film footage, and voice clips from athletes, coaches, philosophers, or movie characters edited together.',
-    'These are sometimes called "motivational speech" or "best motivational video" compilations.',
-    'Channels that make this format: Motiversity, Ben Lionel Scott, Mateusz M, Absolute Motivation, T&H Inspiration, RedFrost Motivation.',
-    '',
-    'DO NOT recommend: TED talks, TEDx talks, talking-head lectures, podcasts, interviews where someone sits and speaks to camera. No Mel Robbins, no Tim Urban, no conference stages.',
+    ...typeLines,
     '',
     'Person:',
     '- Identity anchors: ' + anchorList,
@@ -69,17 +103,13 @@ module.exports = async function handler(req, res) {
     mindset_text ? '- What they said: ' + mindset_text : '',
     excludeLine,
     '',
-    'Verified video IDs you can trust (same format as what this person wants):',
-    '  ZBPY4Boczf8 = "True Beast Mentality" — Motiversity style compilation',
-    '  5reo3dXOicU = "How Your Thoughts Are Connected To Your Future" — Joe Dispenza cinematic',
-    '',
     'Match energy to state: low/avoiding = raw honesty, quiet intensity; resistant = direct and clear; ready = can handle full fire.',
     '',
     'VIDEO_ID: only include if you are certain the ID is correct. A wrong ID breaks the embed — leave it blank if unsure.',
     'FRAMING: one sentence in Franklyn\'s voice. Specific to this person\'s anchors or what they said. No clichés, no em dashes.',
     '',
     'Reply with exactly:',
-    'SPEAKER: channel or curator name',
+    'SPEAKER: channel or creator name',
     'TITLE: exact video title',
     'FRAMING: one sentence',
     'VIDEO_ID: 11-char id or blank'
