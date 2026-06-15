@@ -1957,7 +1957,7 @@ function selectSpeech(input, library){
 }
 
 function mciSubmit(){
-  if(!mciState)return;
+  if(!mciState&&!document.getElementById('mci-text').value.trim())return;
   var user=DB.get('user')||{};
   var text=document.getElementById('mci-text').value.trim();
 
