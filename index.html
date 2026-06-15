@@ -304,6 +304,17 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .speech-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px}
 .speech-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#0f1f4b;text-decoration:none;border-bottom:1px solid rgba(15,31,75,0.25);padding-bottom:1px;transition:border-color 0.15s}
 .speech-link:hover{border-color:#0f1f4b}
+.speech-save-btn{background:none;border:none;cursor:pointer;font-size:18px;padding:0;line-height:1;transition:transform 0.15s;flex-shrink:0}
+.speech-save-btn:hover{transform:scale(1.2)}
+.saved-talks-section{margin-top:2rem}
+.saved-talk-card{border:1.5px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:10px;background:var(--cream)}
+.saved-talk-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.saved-talk-framing{font-size:12px;color:var(--ink3);font-weight:300;line-height:1.55;font-style:italic;margin-bottom:10px}
+.saved-talk-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.saved-talk-toggle{font-size:12px;font-weight:600;font-family:var(--fb);color:#0f1f4b;background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:3px}
+.saved-talk-remove{font-size:12px;color:var(--ink4);background:none;border:none;cursor:pointer;font-family:var(--fb);padding:0;text-decoration:underline;text-underline-offset:3px}
+.saved-talk-embed{margin-top:10px;display:none}
+.saved-talk-embed.open{display:block}
 .ev-list{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
 .ev-item{display:flex;align-items:center;gap:10px;border-radius:8px;padding:12px 16px;font-size:14px;line-height:1.5;font-weight:400;border:none}
 .ev-item[data-age="today"]{background:var(--ev-today);color:var(--ev-today-ink)}
@@ -986,6 +997,11 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       <div id="mci-result" style="display:none"></div>
     </div>
 
+    <div class="mirror-section saved-talks-section" id="saved-talks-section" style="display:none">
+      <span class="mirror-label">Saved talks</span>
+      <div id="saved-talks-list"></div>
+    </div>
+
     <div class="mirror-section">
       <span class="mirror-label">Your habits</span>
       <p style="font-size:13px;color:var(--ink4);font-weight:300;margin-bottom:1rem;line-height:1.6">Tap to mark done today. Each habit has its own color — tap the dot next to the name to change it. Consistency is invisible until you can see it stacking up.</p>
@@ -1313,6 +1329,7 @@ function initApp(user){
   loadMeaningFields();
   renderHabits();
   renderCalendar();
+  renderSavedTalks();
 
   // Start chat with user context
   chatInit(user);
@@ -2004,6 +2021,8 @@ function mciSubmit(){
     var watchUrl=data.youtube_watch_url||data.youtube_search_url;
     var watchLabel=data.video_id?'Watch on YouTube →':'Search on YouTube →';
     var skipTitles=(DB.get('mci_skipped')||[]).concat(data.title).join(' | ');
+    var savePayload=encodeURIComponent(JSON.stringify({speaker:data.speaker,title:data.title,framing:data.framing,video_id:data.video_id,youtube_search_url:data.youtube_search_url,youtube_watch_url:data.youtube_watch_url}));
+    var alreadySaved=(DB.get('saved_speeches')||[]).some(function(s){return s.title===data.title;});
     resultEl.innerHTML=
       '<div class="speech-card">'+
         embedHtml+
@@ -2012,6 +2031,7 @@ function mciSubmit(){
         '<div style="display:flex;align-items:center;gap:12px;margin-top:10px;flex-wrap:wrap">'+
           '<a class="speech-link" href="'+watchUrl+'" target="_blank" rel="noopener">'+watchLabel+'</a>'+
           '<button onclick="mciSkip(\''+encodeURIComponent(skipTitles)+'\')" style="background:none;border:none;font-size:12px;color:var(--ink4);cursor:pointer;font-family:var(--fb);padding:0;text-decoration:underline;text-underline-offset:3px">Try a different one</button>'+
+          '<button class="speech-save-btn" id="mci-save-btn" onclick="speechSave(\''+savePayload+'\',this)" title="Save this talk">'+(alreadySaved?'❤️':'🤍')+'</button>'+
         '</div>'+
       '</div>';
     resultEl.style.display='block';
@@ -2061,6 +2081,8 @@ function mciSkip(encodedSkipped){
     var watchUrl=data.youtube_watch_url||data.youtube_search_url;
     var watchLabel=data.video_id?'Watch on YouTube →':'Search on YouTube →';
     var newSkipped=(DB.get('mci_skipped')||[]).concat(data.title).join(' | ');
+    var savePayload2=encodeURIComponent(JSON.stringify({speaker:data.speaker,title:data.title,framing:data.framing,video_id:data.video_id,youtube_search_url:data.youtube_search_url,youtube_watch_url:data.youtube_watch_url}));
+    var alreadySaved2=(DB.get('saved_speeches')||[]).some(function(s){return s.title===data.title;});
     resultEl.innerHTML=
       '<div class="speech-card">'+
         embedHtml+
@@ -2069,6 +2091,7 @@ function mciSkip(encodedSkipped){
         '<div style="display:flex;align-items:center;gap:12px;margin-top:10px;flex-wrap:wrap">'+
           '<a class="speech-link" href="'+watchUrl+'" target="_blank" rel="noopener">'+watchLabel+'</a>'+
           '<button onclick="mciSkip(\''+encodeURIComponent(newSkipped)+'\')" style="background:none;border:none;font-size:12px;color:var(--ink4);cursor:pointer;font-family:var(--fb);padding:0;text-decoration:underline;text-underline-offset:3px">Try a different one</button>'+
+          '<button class="speech-save-btn" onclick="speechSave(\''+savePayload2+'\',this)" title="Save this talk">'+(alreadySaved2?'❤️':'🤍')+'</button>'+
         '</div>'+
       '</div>';
     resultEl.style.display='block';
@@ -2078,6 +2101,64 @@ function mciSkip(encodedSkipped){
     label.textContent='Find something for where I am →';
     resultEl.innerHTML='<p style="font-size:13px;color:var(--ink4);margin-top:1rem">Could not load another one right now.</p>';
   });
+}
+
+function speechSave(encodedPayload, btn){
+  var s=JSON.parse(decodeURIComponent(encodedPayload));
+  var saved=DB.get('saved_speeches')||[];
+  var idx=saved.findIndex(function(x){return x.title===s.title;});
+  if(idx>-1){
+    saved.splice(idx,1);
+    if(btn)btn.textContent='🤍';
+  } else {
+    s.saved_at=Date.now();
+    saved.unshift(s);
+    if(btn)btn.textContent='❤️';
+  }
+  DB.set('saved_speeches',saved);
+  renderSavedTalks();
+}
+
+function renderSavedTalks(){
+  var saved=DB.get('saved_speeches')||[];
+  var section=document.getElementById('saved-talks-section');
+  var list=document.getElementById('saved-talks-list');
+  if(!section||!list)return;
+  if(!saved.length){section.style.display='none';return;}
+  section.style.display='';
+  list.innerHTML=saved.map(function(s,i){
+    var embedHtml=s.video_id
+      ?'<div class="saved-talk-embed" id="ste-'+i+'">'
+        +'<div class="speech-embed-wrap"><iframe class="speech-embed" src="https://www.youtube.com/embed/'+s.video_id+'?rel=0" frameborder="0" allowfullscreen loading="lazy"></iframe></div>'
+        +'</div>'
+      :'';
+    var watchUrl=s.youtube_watch_url||s.youtube_search_url;
+    return '<div class="saved-talk-card">'
+      +'<p class="saved-talk-title">'+stripMd(s.speaker+' — '+s.title)+'</p>'
+      +'<p class="saved-talk-framing">'+stripMd(s.framing)+'</p>'
+      +'<div class="saved-talk-actions">'
+        +(embedHtml?'<button class="saved-talk-toggle" onclick="savedTalkToggle('+i+')">▶ Watch</button>':'')
+        +(watchUrl?'<a class="speech-link" href="'+watchUrl+'" target="_blank" rel="noopener" style="font-size:12px">Open in YouTube</a>':'')
+        +'<button class="saved-talk-remove" onclick="savedTalkRemove('+i+')">Remove</button>'
+      +'</div>'
+      +embedHtml
+      +'</div>';
+  }).join('');
+}
+
+function savedTalkToggle(i){
+  var embed=document.getElementById('ste-'+i);
+  if(!embed)return;
+  var btn=embed.closest('.saved-talk-card').querySelector('.saved-talk-toggle');
+  var isOpen=embed.classList.toggle('open');
+  if(btn)btn.textContent=isOpen?'▼ Hide':'▶ Watch';
+}
+
+function savedTalkRemove(i){
+  var saved=DB.get('saved_speeches')||[];
+  saved.splice(i,1);
+  DB.set('saved_speeches',saved);
+  renderSavedTalks();
 }
 
 function openChatFromFoundations(){
