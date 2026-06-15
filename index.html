@@ -298,8 +298,9 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .mci-name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px}
 .mci-desc{font-size:12px;color:var(--ink3);font-weight:300}
 .speech-card{border:1.5px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;margin-top:1.25rem;background:var(--cream)}
-.speech-embed-wrap{position:relative;width:100%;padding-bottom:56.25%;margin-bottom:1rem;border-radius:8px;overflow:hidden;background:#000}
+.speech-embed-wrap{position:relative;width:100%;padding-bottom:56.25%;margin-bottom:0.5rem;border-radius:8px;overflow:hidden;background:#000}
 .speech-embed{position:absolute;inset:0;width:100%;height:100%;border:none}
+.speech-pip-hint{font-size:11px;color:var(--ink4);font-weight:300;margin-bottom:0.75rem;line-height:1.5}
 .speech-framing{font-size:14px;color:var(--ink2);font-weight:300;line-height:1.65;margin-bottom:1rem;font-style:italic}
 .speech-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px}
 .speech-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#0f1f4b;text-decoration:none;border-bottom:1px solid rgba(15,31,75,0.25);padding-bottom:1px;transition:border-color 0.15s}
@@ -2017,7 +2018,8 @@ function mciSubmit(){
     DB.set('mci_history',mciHistory);
 
     var embedHtml=data.video_id
-      ?'<div class="speech-embed-wrap"><iframe class="speech-embed" src="https://www.youtube.com/embed/'+data.video_id+'?rel=0" frameborder="0" allowfullscreen loading="lazy"></iframe></div>'
+      ?'<div class="speech-embed-wrap"><iframe class="speech-embed" src="https://www.youtube.com/embed/'+data.video_id+'?rel=0" frameborder="0" allow="autoplay; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>'
+       +'<p class="speech-pip-hint">Tap the video, then tap ⧉ to keep it playing while you use other apps.</p>'
       :'';
     var watchUrl=data.youtube_watch_url||data.youtube_search_url;
     var watchLabel=data.video_id?'Watch on YouTube →':'Search on YouTube →';
@@ -2082,7 +2084,8 @@ function mciSkip(encodedSkipped){
   .then(function(r){return r.json();})
   .then(function(data){
     var embedHtml=data.video_id
-      ?'<div class="speech-embed-wrap"><iframe class="speech-embed" src="https://www.youtube.com/embed/'+data.video_id+'?rel=0" frameborder="0" allowfullscreen loading="lazy"></iframe></div>'
+      ?'<div class="speech-embed-wrap"><iframe class="speech-embed" src="https://www.youtube.com/embed/'+data.video_id+'?rel=0" frameborder="0" allow="autoplay; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>'
+       +'<p class="speech-pip-hint">Tap the video, then tap ⧉ to keep it playing while you use other apps.</p>'
       :'';
     var watchUrl=data.youtube_watch_url||data.youtube_search_url;
     var watchLabel=data.video_id?'Watch on YouTube →':'Search on YouTube →';
@@ -2147,7 +2150,8 @@ function renderSavedTalks(){
   list.innerHTML=saved.map(function(s,i){
     var embedHtml=s.video_id
       ?'<div class="saved-talk-embed" id="ste-'+i+'">'
-        +'<div class="speech-embed-wrap"><iframe class="speech-embed" src="https://www.youtube.com/embed/'+s.video_id+'?rel=0" frameborder="0" allowfullscreen loading="lazy"></iframe></div>'
+        +'<div class="speech-embed-wrap"><iframe class="speech-embed" src="https://www.youtube.com/embed/'+s.video_id+'?rel=0" frameborder="0" allow="autoplay; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>'
+        +'<p class="speech-pip-hint">Tap the video, then tap ⧉ to keep it playing while you use other apps.</p>'
         +'</div>'
       :'';
     var watchUrl=s.youtube_watch_url||s.youtube_search_url;
