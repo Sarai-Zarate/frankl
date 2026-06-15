@@ -383,6 +383,14 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .chat-crisis{background:#fdf5f0;border:1px solid #e8c4b0;border-radius:var(--r);padding:1rem 1.25rem;font-size:13px;color:var(--ink2);line-height:1.7;font-weight:300}
 .chat-ground-btn{width:100%;padding:10px;font-size:13px;font-family:var(--fb);font-weight:500;border:1px solid var(--border);border-radius:24px;background:transparent;color:var(--ink3);cursor:pointer;margin-top:8px;transition:all var(--tr)}
 .chat-ground-btn:hover{background:var(--cream-d);border-color:var(--charcoal);color:var(--ink)}
+.chat-voice-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid var(--border);background:var(--cream-d)}
+.chat-voice-btn{display:flex;align-items:center;gap:8px;padding:9px 18px;border-radius:24px;border:1.5px solid var(--borderS);background:var(--cream);color:var(--ink3);font-size:13px;font-weight:600;font-family:var(--fb);cursor:pointer;transition:all var(--tr);flex-shrink:0}
+.chat-voice-btn:hover{border-color:var(--charcoal);color:var(--ink)}
+.chat-voice-btn.listening{background:#1a3a7a;border-color:#1a3a7a;color:#fff}
+.chat-voice-btn.speaking{background:#5a7a64;border-color:#5a7a64;color:#fff}
+.chat-voice-status{font-size:12px;color:var(--ink4);font-weight:300;font-family:var(--fb);flex:1}
+@keyframes voicePulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.chat-voice-btn.listening .vbtn-icon,.chat-voice-btn.speaking .vbtn-icon{animation:voicePulse 1.2s ease-in-out infinite}
 .chat-context-opts{display:flex;flex-direction:column;gap:8px;padding:4px 0}
 .chat-context-opt{text-align:left;padding:11px 16px;border-radius:12px;border:1px solid var(--borderS);background:var(--cream);color:var(--ink);font-size:13px;font-family:var(--fb);cursor:pointer;transition:all 0.2s ease;font-weight:300;line-height:1.4}
 .chat-context-opt:hover{background:var(--cream-d);border-color:var(--charcoal);transform:translateX(3px)}
@@ -411,7 +419,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .chat-typing span:nth-child(3){animation-delay:0.4s}
 @keyframes typingDot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
 .chat-input-row{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border);background:var(--cream)}
-.chat-input{flex:1;font-size:14px;font-family:var(--fb);padding:10px 14px;border-radius:24px;border:1px solid var(--borderS);background:var(--cream);color:var(--ink);resize:none;line-height:1.5;max-height:100px}
+.chat-input{flex:1;font-size:14px;font-family:var(--fb);padding:10px 14px;border-radius:18px;border:1px solid var(--borderS);background:var(--cream);color:var(--ink);resize:none;line-height:1.5;max-height:200px;overflow-y:auto}
 .chat-input:focus{outline:none;border-color:var(--charcoal)}
 .chat-send{font-size:13px;font-weight:600;font-family:var(--fb);padding:10px 18px;border-radius:24px;border:none;background:var(--charcoal);color:var(--cream);cursor:pointer;white-space:nowrap;transition:background var(--tr);align-self:flex-end}
 .chat-send:hover{background:var(--charcoal-l)}
@@ -1025,8 +1033,15 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
   </div>
   <div class="chat-wrap">
     <div class="chat-msgs" id="chat-msgs"></div>
+    <div class="chat-voice-bar">
+      <button class="chat-voice-btn" id="chat-voice-btn" onclick="chatMicToggle()">
+        <span class="vbtn-icon" id="vbtn-icon">🎙</span>
+        <span id="vbtn-label">Voice conversation</span>
+      </button>
+      <span class="chat-voice-status" id="chat-voice-status">Tap to talk — Franklyn will speak back</span>
+    </div>
     <div class="chat-input-row">
-      <textarea class="chat-input" id="chat-input" rows="1" placeholder="What's going on right now…"></textarea>
+      <textarea class="chat-input" id="chat-input" rows="1" placeholder="Or type here…" oninput="chatInputGrow(this)"></textarea>
       <button class="chat-send" id="chat-send" onclick="chatSend()">Send</button>
     </div>
     <button class="chat-ground-btn" onclick="chatGroundMe()">I need help right now — what can I do?</button>
@@ -2555,19 +2570,40 @@ var micWaves='<div class="mic-waves"><span></span><span></span><span></span><spa
 
 function setMicState(state){
   var mic=document.getElementById('chat-mic');
-  mic.classList.remove('active','processing');
+  var vbtn=document.getElementById('chat-voice-btn');
+  var vicon=document.getElementById('vbtn-icon');
+  var vlabel=document.getElementById('vbtn-label');
+  var vstatus=document.getElementById('chat-voice-status');
+  if(mic){mic.classList.remove('active','processing');}
+  if(vbtn){vbtn.classList.remove('listening','speaking');}
   if(state==='listening'){
-    mic.innerHTML=micWaves;
-    mic.classList.add('active');
-    mic.title='Listening — click to stop';
+    if(mic){mic.innerHTML=micWaves;mic.classList.add('active');}
+    if(vbtn){vbtn.classList.add('listening');}
+    if(vicon)vicon.textContent='🎙';
+    if(vlabel)vlabel.textContent='Listening…';
+    if(vstatus)vstatus.textContent='Speak now — Franklyn is listening';
   } else if(state==='processing'){
-    mic.innerHTML=micSVG;
-    mic.classList.add('processing');
-    mic.title='Franklyn is thinking…';
+    if(mic){mic.innerHTML=micSVG;mic.classList.add('processing');}
+    if(vicon)vicon.textContent='⏳';
+    if(vlabel)vlabel.textContent='Thinking…';
+    if(vstatus)vstatus.textContent='Franklyn is thinking';
+  } else if(state==='speaking'){
+    if(mic){mic.innerHTML=micSVG;}
+    if(vbtn){vbtn.classList.add('speaking');}
+    if(vicon)vicon.textContent='🔊';
+    if(vlabel)vlabel.textContent='Franklyn speaking…';
+    if(vstatus)vstatus.textContent='Tap to interrupt';
   } else {
-    mic.innerHTML=micSVG;
-    mic.title='Start voice conversation';
+    if(mic){mic.innerHTML=micSVG;}
+    if(vicon)vicon.textContent='🎙';
+    if(vlabel)vlabel.textContent='Voice conversation';
+    if(vstatus)vstatus.textContent='Tap to talk — Franklyn will speak back';
   }
+}
+
+function chatInputGrow(el){
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,200)+'px';
 }
 
 function startListening(){
@@ -2594,7 +2630,7 @@ function voiceInit(){
     var inp=document.getElementById('chat-input');
     inp.value=finalText+interimText;
     inp.style.height='auto';
-    inp.style.height=Math.min(inp.scrollHeight,100)+'px';
+    inp.style.height=Math.min(inp.scrollHeight,200)+'px';
     clearTimeout(silenceTimer);
     silenceTimer=setTimeout(function(){
       if(inp.value.trim()&&!voiceAutoSending){
@@ -2660,7 +2696,11 @@ function franklySpeak(text){
   var utt=new SpeechSynthesisUtterance(text);
   utt.rate=0.92;utt.pitch=0.95;utt.volume=1;
   if(franklyVoice)utt.voice=franklyVoice;
-  utt.onend=function(){if(conversationMode)setTimeout(startListening,600);};
+  if(conversationMode)setMicState('speaking');
+  utt.onend=function(){
+    if(conversationMode){setMicState('listening');setTimeout(startListening,600);}
+    else{setMicState('off');}
+  };
   synthesis.speak(utt);
 }
 
