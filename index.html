@@ -2695,7 +2695,7 @@ function chatInputGrow(el){
 }
 
 function startListening(){
-  if(!conversationMode)return;
+  if(!conversationMode&&!dictateMode)return;
   var inp=document.getElementById('chat-input');
   inp.value='';inp.style.height='auto';
   try{recognition.start();}catch(e){setTimeout(function(){try{recognition.start();}catch(e2){}},300);}
@@ -2863,12 +2863,13 @@ function chatImgClear(){
 }
 
 function franklySpeak(text){
+  if(!conversationMode)return;  // only speak if user explicitly activated voice-to-voice
   if(!synthesis)return;
   synthesis.cancel();
   var utt=new SpeechSynthesisUtterance(text);
   utt.rate=0.92;utt.pitch=0.95;utt.volume=1;
   if(franklyVoice)utt.voice=franklyVoice;
-  if(conversationMode)setMicState('speaking');
+  setMicState('speaking');
   utt.onend=function(){
     if(conversationMode){setMicState('listening');setTimeout(startListening,600);}
     else{setMicState('off');}
