@@ -2073,8 +2073,6 @@ function mciSkip(encodedSkipped){
   })})
   .then(function(r){return r.json();})
   .then(function(data){
-    bar.style.transition='width 0.2s ease';bar.style.width='100%';
-    setTimeout(function(){bar.style.display='none';bar.style.width='0%';label.textContent='Find something for where I am →';},250);
     var embedHtml=data.video_id
       ?'<div class="speech-embed-wrap"><iframe class="speech-embed" src="https://www.youtube.com/embed/'+data.video_id+'?rel=0" frameborder="0" allowfullscreen loading="lazy"></iframe></div>'
       :'';
@@ -2097,9 +2095,7 @@ function mciSkip(encodedSkipped){
     resultEl.style.display='block';
   })
   .catch(function(){
-    bar.style.display='none';bar.style.width='0%';
-    label.textContent='Find something for where I am →';
-    resultEl.innerHTML='<p style="font-size:13px;color:var(--ink4);margin-top:1rem">Could not load another one right now.</p>';
+    resultEl.innerHTML='<p style="font-size:13px;color:var(--ink4);margin-top:1rem">Could not load another one right now. Try again.</p>';
   });
 }
 
