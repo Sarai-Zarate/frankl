@@ -387,7 +387,15 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .chat-context-opt{text-align:left;padding:11px 16px;border-radius:12px;border:1px solid var(--borderS);background:var(--cream);color:var(--ink);font-size:13px;font-family:var(--fb);cursor:pointer;transition:all 0.2s ease;font-weight:300;line-height:1.4}
 .chat-context-opt:hover{background:var(--cream-d);border-color:var(--charcoal);transform:translateX(3px)}
 
-.chat-wrap{display:flex;flex-direction:column;height:min(520px,calc(100svh - 280px));border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--cream)}
+/* Chat full-screen overlay */
+.chat-screen{position:fixed;inset:0;z-index:300;background:var(--cream);display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1)}
+.chat-screen.open{transform:translateY(0)}
+.chat-screen-header{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--cream);flex-shrink:0}
+.chat-back-btn{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;font-family:var(--fb);color:var(--ink3);background:none;border:none;cursor:pointer;padding:6px 0;transition:color var(--tr)}
+.chat-back-btn:hover{color:var(--ink)}
+.chat-back-btn svg{flex-shrink:0}
+.chat-screen-title{font-family:var(--fd);font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-0.02em;flex:1}
+.chat-wrap{display:flex;flex-direction:column;flex:1;overflow:hidden;background:var(--cream)}
 .chat-msgs{flex:1;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:14px}
 .chat-msg{display:flex;flex-direction:column;max-width:82%}
 .chat-msg.franklyn{align-self:flex-start}
@@ -1002,20 +1010,28 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     </div>
     <p class="disclaimer">Franklyn is not a substitute for therapy or professional mental health support. It is a personal operating system grounded in published psychological research by Stephen Porges, Viktor Frankl, Richard Ryan, and Edward Deci.</p>
   </div>
-  <div class="tab-panel" id="tab-chat">
-    <span class="sec-eyebrow">Franklyn</span>
-    <h3 style="font-family:var(--fd);font-size:clamp(20px,3vw,26px);font-weight:700;color:var(--ink);letter-spacing:-0.02em;margin-bottom:1.5rem">Say what is actually happening.</h3>
-    <div class="chat-wrap">
-      <div class="chat-msgs" id="chat-msgs"></div>
-      <div class="chat-input-row">
-        <button class="chat-mic" id="chat-mic" onclick="chatMicToggle()" title="Start voice conversation"><svg width="14" height="18" viewBox="0 0 14 18" fill="none"><rect x="3" y="0" width="8" height="11" rx="4" fill="currentColor"/><path d="M1 8c0 3.314 2.686 6 6 6s6-2.686 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="14" x2="7" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="17" x2="10" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
-        <textarea class="chat-input" id="chat-input" rows="1" placeholder="What's going on right now…"></textarea>
-        <button class="chat-send" id="chat-send" onclick="chatSend()">Send</button>
-      </div>
-      <button class="chat-ground-btn" onclick="chatGroundMe()">I need help right now — what can I do?</button>
-    </div>
-  </div>
+  <div class="tab-panel" id="tab-chat"></div>
 </section>
+
+<!-- Chat full-screen overlay -->
+<div class="chat-screen" id="chat-screen">
+  <div class="chat-screen-header">
+    <button class="chat-back-btn" onclick="closeChatScreen()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back
+    </button>
+    <span class="chat-screen-title">Franklyn</span>
+    <button class="chat-mic" id="chat-mic" onclick="chatMicToggle()" title="Voice conversation" style="margin-left:auto;width:34px;height:34px"><svg width="12" height="16" viewBox="0 0 14 18" fill="none"><rect x="3" y="0" width="8" height="11" rx="4" fill="currentColor"/><path d="M1 8c0 3.314 2.686 6 6 6s6-2.686 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="14" x2="7" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="17" x2="10" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+  </div>
+  <div class="chat-wrap">
+    <div class="chat-msgs" id="chat-msgs"></div>
+    <div class="chat-input-row">
+      <textarea class="chat-input" id="chat-input" rows="1" placeholder="What's going on right now…"></textarea>
+      <button class="chat-send" id="chat-send" onclick="chatSend()">Send</button>
+    </div>
+    <button class="chat-ground-btn" onclick="chatGroundMe()">I need help right now — what can I do?</button>
+  </div>
+</div>
 
 <script>
 function stripMd(t){
@@ -1325,6 +1341,7 @@ new IntersectionObserver((entries)=>{
 
 var chatGreeted=false;
 function activateTab(n,noScroll){
+  if(n==='chat'){openChatScreen();return;}
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active','pulse'));
   document.getElementById('tab-'+n).classList.add('active');
@@ -1335,12 +1352,22 @@ function activateTab(n,noScroll){
   btn.classList.add('pulse');
   btn.addEventListener('animationend',function(){btn.classList.remove('pulse');},{once:true});
   if(!noScroll)document.getElementById('tools').scrollIntoView({behavior:'smooth'});
-  if(n==='chat'&&chatReady&&!chatGreeted){
+}
+
+function openChatScreen(){
+  document.getElementById('chat-screen').classList.add('open');
+  document.body.style.overflow='hidden';
+  if(chatReady&&!chatGreeted){
     chatGreeted=true;
     var user=DB.get('user')||{};
     var greeting='Hey '+(user.name||'there')+'. What is going on right now?';
     chatAppend('franklyn',greeting);
   }
+}
+
+function closeChatScreen(){
+  document.getElementById('chat-screen').classList.remove('open');
+  document.body.style.overflow='';
 }
 
 var tSecs=30,tInt=null;
