@@ -1,21 +1,5 @@
 const https = require('https');
 
-function httpsGet(url) {
-  return new Promise((resolve) => {
-    https.get(url, (res) => {
-      resolve(res.statusCode);
-    }).on('error', () => resolve(0));
-  });
-}
-
-async function validateVideoId(id) {
-  if (!/^[A-Za-z0-9_-]{11}$/.test(id)) return false;
-  const status = await httpsGet(
-    'https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=' + id + '&format=json'
-  );
-  return status === 200;
-}
-
 function post(body) {
   return new Promise((resolve, reject) => {
     const options = {
@@ -112,10 +96,7 @@ module.exports = async function handler(req, res) {
     const title   = extractLine(raw, 'TITLE:');
     const framing = extractLine(raw, 'FRAMING:');
     const rawId   = extractLine(raw, 'VIDEO_ID:');
-
-    // Validate the ID actually exists on YouTube
-    const valid = rawId ? await validateVideoId(rawId) : false;
-    const video_id = valid ? rawId : null;
+    const video_id = /^[A-Za-z0-9_-]{11}$/.test(rawId) ? rawId : null;
 
     const searchQuery = encodeURIComponent((speaker + ' ' + title).trim());
     const youtube_search_url = 'https://www.youtube.com/results?search_query=' + searchQuery;
