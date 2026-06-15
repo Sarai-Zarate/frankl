@@ -1,19 +1,19 @@
 [
   {
-    "id": "placeholder_1",
-    "video_id": "REPLACE_WITH_YOUTUBE_ID",
-    "title": "REPLACE WITH TITLE — suggested theme: starting before you feel ready / doing it when you're resistant",
-    "themes": ["resistance", "starting", "avoiding", "showing up", "doing it anyway", "friction", "procrastination"],
-    "tone": "grounded",
-    "framing": "Resistance is not a sign you should stop. It is a sign you are at the edge of something that matters."
+    "id": "beast_mentality",
+    "video_id": "ZBPY4Boczf8",
+    "title": "True Beast Mentality — Motivational Speeches Compilation",
+    "themes": ["beast", "motivation", "discipline", "showing up", "doing it anyway", "resistance", "avoiding", "drive", "ready", "low", "push through", "identity", "relentless"],
+    "tone": "high-intensity grounded",
+    "framing": "This is the one for when part of you wants to, and part of you is looking for a reason not to. Let the part that wants to win."
   },
   {
-    "id": "placeholder_2",
-    "video_id": "REPLACE_WITH_YOUTUBE_ID",
-    "title": "REPLACE WITH TITLE — suggested theme: identity and discipline / who you become through consistent action",
-    "themes": ["identity", "discipline", "consistency", "compound", "building", "motivated", "ready", "who you are becoming"],
+    "id": "dispenza_thoughts",
+    "video_id": "5reo3dXOicU",
+    "title": "How Your Thoughts Are Connected To Your Future — Dr. Joe Dispenza",
+    "themes": ["thoughts", "observation", "mindset", "patterns", "awareness", "spiral", "anxiety", "resistance", "avoiding", "low", "nervous system", "future self", "identity", "rewire"],
     "tone": "grounded",
-    "framing": "Every rep, every session, every time you did the thing — it is already in you. This is just the next one."
+    "framing": "You can observe the thought without becoming it. That gap, between the thought and the reaction, is where everything changes."
   },
   {
     "id": "placeholder_3",
