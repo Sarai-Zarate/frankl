@@ -64,39 +64,38 @@ module.exports = async function handler(req, res) {
   };
   const stateDesc = stateDescriptions[mindset_state] || (mindset_text ? 'described below' : 'unspecified');
 
-  const favoritesLine = (favorites || []).length
-    ? 'Tone calibration — talks they already love: ' + favorites.join(' | ')
-    : '';
   const excludeLine = exclude_titles
-    ? 'SKIP these — already shown and skipped: ' + exclude_titles
+    ? 'ALREADY SHOWN — do not repeat any of these: ' + exclude_titles
     : '';
 
   const prompt = [
-    'You are Franklyn. Recommend one real YouTube video that fits this person right now.',
+    'You are Franklyn. Recommend one YouTube motivational speech video for this person.',
+    '',
+    'CRITICAL — FORMAT REQUIRED:',
+    'The video MUST be a cinematic motivational speech compilation — the kind with dramatic background music, scenes cutting between nature/sports/film footage, and voice clips from athletes, coaches, philosophers, or movie characters edited together.',
+    'These are sometimes called "motivational speech" or "best motivational video" compilations.',
+    'Channels that make this format: Motiversity, Ben Lionel Scott, Mateusz M, Absolute Motivation, T&H Inspiration, RedFrost Motivation.',
+    '',
+    'DO NOT recommend: TED talks, TEDx talks, talking-head lectures, podcasts, interviews where someone sits and speaks to camera. No Mel Robbins, no Tim Urban, no conference stages.',
     '',
     'Person:',
     '- Identity anchors: ' + anchorList,
     '- What knocks them off: ' + (pattern_trigger || 'unknown'),
     '- Mindset state: ' + stateDesc,
-    mindset_text ? '- In their own words: ' + mindset_text : '',
-    favoritesLine,
+    mindset_text ? '- What they said: ' + mindset_text : '',
     excludeLine,
     '',
-    'Rules:',
-    '- Pick ONE video that actually exists on YouTube. No invented titles.',
-    '- Prefer well-known talks with millions of views — these have stable, known video IDs.',
-    '- Match energy: low or avoiding = honest and grounded; resistant = clarity over hype; ready = can handle intensity.',
-    '- VIDEO_ID: only provide if you are certain it is correct. Well-known examples you can trust:',
-    '  ZBPY4Boczf8 = True Beast Mentality compilation',
-    '  5reo3dXOicU = Joe Dispenza on thoughts and your future',
-    '  arj7oStGLkU = TED talk "Inside the mind of a master procrastinator" Tim Urban',
-    '  8KkKuTCFvzI = Mel Robbins 5 Second Rule TEDx',
-    '  Lp7E973zozc = David Goggins — You are in danger of living a comfortable life',
-    '  If you are not certain the ID is real, leave VIDEO_ID blank — a wrong ID is worse than no ID.',
-    '- FRAMING: one sentence in Franklyn\'s voice, specific to their anchors or what they said. No clichés, no em dashes.',
+    'Verified video IDs you can trust (same format as what this person wants):',
+    '  ZBPY4Boczf8 = "True Beast Mentality" — Motiversity style compilation',
+    '  5reo3dXOicU = "How Your Thoughts Are Connected To Your Future" — Joe Dispenza cinematic',
+    '',
+    'Match energy to state: low/avoiding = raw honesty, quiet intensity; resistant = direct and clear; ready = can handle full fire.',
+    '',
+    'VIDEO_ID: only include if you are certain the ID is correct. A wrong ID breaks the embed — leave it blank if unsure.',
+    'FRAMING: one sentence in Franklyn\'s voice. Specific to this person\'s anchors or what they said. No clichés, no em dashes.',
     '',
     'Reply with exactly:',
-    'SPEAKER: name',
+    'SPEAKER: channel or curator name',
     'TITLE: exact video title',
     'FRAMING: one sentence',
     'VIDEO_ID: 11-char id or blank'
