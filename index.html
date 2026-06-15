@@ -221,9 +221,10 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .ms-edit-btn{font-size:11px;font-family:var(--fb);color:var(--ink4);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px}
 .ms-edit-btn:hover{color:var(--ink)}
 .meaning-sentence.claimed{border-color:var(--forest);background:var(--forest-l)}
-.habit-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
-.habit-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:var(--r);background:var(--cream);border:1px solid var(--border);transition:all 0.2s ease}
+.habit-list{display:flex;flex-direction:column;gap:10px;margin-bottom:1rem}
+.habit-item{display:flex;flex-direction:column;border-radius:var(--r);background:var(--cream);border:1px solid var(--border);transition:all 0.2s ease;overflow:hidden}
 .habit-item.done-today{background:var(--forest-l);border-color:var(--forest)}
+.habit-row{display:flex;align-items:center;gap:12px;padding:11px 14px}
 .habit-check{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--borderS);background:var(--cream);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all 0.2s ease;color:transparent}
 .habit-item.done-today .habit-check{background:var(--forest);border-color:var(--forest);color:#fff}
 .habit-name{flex:1;font-size:14px;font-weight:500;color:var(--ink)}
@@ -232,6 +233,16 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .habit-total{font-family:var(--fm);font-size:10px;color:var(--ink4)}
 .habit-del{background:none;border:none;color:var(--ink4);cursor:pointer;font-size:13px;padding:4px;opacity:0.35;transition:opacity 0.2s ease;line-height:1;flex-shrink:0}
 .habit-del:hover{opacity:1;color:var(--rose)}
+.habit-progress{padding:8px 14px 11px;border-top:1px solid var(--border)}
+.habit-item.done-today .habit-progress{border-top-color:rgba(42,92,58,0.15)}
+.habit-prog-labels{display:flex;justify-content:space-between;margin-bottom:6px}
+.habit-prog-label{font-family:var(--fm);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink4)}
+.habit-prog-label span{font-weight:600;color:var(--ink3)}
+.habit-week{display:flex;gap:4px}
+.habit-dot{width:10px;height:10px;border-radius:50%;background:var(--border);flex-shrink:0;position:relative}
+.habit-dot.done{background:var(--forest)}
+.habit-dot.today{outline:2px solid var(--forest);outline-offset:1px}
+.habit-dot-label{position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);font-size:8px;color:var(--ink4);white-space:nowrap}
 
 /* Mindset check-in */
 .mci-states{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
@@ -1887,17 +1898,46 @@ function renderHabits(){
     list.appendChild(empty);
   }
   habits.forEach(function(h,idx){
-    var doneToday=(h.dates||[]).indexOf(today)>-1;
+    var dates=h.dates||[];
+    var doneToday=dates.indexOf(today)>-1;
     var streak=habitStreak(h);
+
+    // last 7 days for week view
+    var dayNames=['S','M','T','W','T','F','S'];
+    var weekDots='';
+    for(var d=6;d>=0;d--){
+      var dt=new Date();dt.setDate(dt.getDate()-d);
+      var ds=dt.getFullYear()+'-'+(dt.getMonth()+1<10?'0':'')+(dt.getMonth()+1)+'-'+(dt.getDate()<10?'0':'')+dt.getDate();
+      var isDone=dates.indexOf(ds)>-1;
+      var isToday=d===0;
+      weekDots+='<div class="habit-dot'+(isDone?' done':'')+(isToday?' today':'')+'"><span class="habit-dot-label">'+dayNames[dt.getDay()]+'</span></div>';
+    }
+
+    // monthly count
+    var now=new Date();
+    var ym=now.getFullYear()+'-'+(now.getMonth()+1<10?'0':'')+(now.getMonth()+1);
+    var monthCount=dates.filter(function(d){return d.startsWith(ym);}).length;
+    var totalCount=dates.length;
+
     var div=document.createElement('div');
     div.className='habit-item'+(doneToday?' done-today':'');
-    div.innerHTML='<button class="habit-check" onclick="toggleHabit('+idx+')" aria-label="Mark done">✓</button>'+
-      '<span class="habit-name">'+h.name+'</span>'+
-      '<div class="habit-meta">'+
-        (streak>0?'<span class="habit-streak">'+streak+' day'+(streak===1?'':'s')+'</span>':'')+
-        '<span class="habit-total">'+(h.dates||[]).length+' total</span>'+
+    div.innerHTML=
+      '<div class="habit-row">'+
+        '<button class="habit-check" onclick="toggleHabit('+idx+')" aria-label="Mark done">✓</button>'+
+        '<span class="habit-name">'+h.name+'</span>'+
+        '<div class="habit-meta">'+
+          (streak>0?'<span class="habit-streak">'+streak+' day'+(streak===1?'':'s')+'</span>':'')+
+        '</div>'+
+        '<button class="habit-del" onclick="deleteHabit('+idx+')" title="Remove">✕</button>'+
       '</div>'+
-      '<button class="habit-del" onclick="deleteHabit('+idx+')" title="Remove">✕</button>';
+      '<div class="habit-progress">'+
+        '<div class="habit-prog-labels">'+
+          '<span class="habit-prog-label">This week</span>'+
+          '<span class="habit-prog-label">This month <span>'+monthCount+'</span></span>'+
+          '<span class="habit-prog-label">All time <span>'+totalCount+'</span></span>'+
+        '</div>'+
+        '<div class="habit-week" style="padding-bottom:16px">'+weekDots+'</div>'+
+      '</div>';
     list.appendChild(div);
   });
   var addRow=document.getElementById('habit-add-row');
