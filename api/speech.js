@@ -3,11 +3,14 @@ const https = require('https');
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { mindset_state, mindset_text, identity_anchors, pattern_trigger, favorites } = req.body;
+  const { mindset_state, mindset_text, identity_anchors, pattern_trigger, favorites, exclude_titles } = req.body;
 
   const anchorList = (identity_anchors || []).filter(Boolean).join(', ') || 'not set';
   const favoritesLine = (favorites || []).length
     ? 'Speeches this person already loves (use these to calibrate tone and intensity): ' + favorites.join(' | ')
+    : '';
+  const excludeLine = exclude_titles
+    ? 'Do NOT recommend any of these — the person already saw them and skipped: ' + exclude_titles
     : '';
 
   const stateDescriptions = {
@@ -27,6 +30,7 @@ module.exports = async function handler(req, res) {
     'Mindset going into their habits today: ' + stateDesc,
     mindset_text ? 'What they said: ' + mindset_text : '',
     favoritesLine,
+    excludeLine,
     '',
     'Rules:',
     '- Recommend ONE real, specific talk — a speech, a YouTube video, a TED talk, a podcast clip — that actually exists and is findable on YouTube',

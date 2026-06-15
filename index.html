@@ -978,7 +978,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
         </div>
       </div>
       <textarea id="mci-text" class="prime-context-input" rows="2" placeholder="e.g. I keep skipping this one, or motivation is low today..." oninput="mciTextInput()"></textarea>
-      <p style="font-size:12px;color:var(--ink4);font-weight:300;margin:0.5rem 0 0.75rem;line-height:1.5;text-align:center">Franklyn will find you a YouTube talk matched to exactly where you are.</p>
+      <p style="font-size:12px;color:#c0392b;font-weight:500;margin:0.5rem 0 0.75rem;line-height:1.5;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px"><svg width="16" height="12" viewBox="0 0 24 18" fill="#c0392b"><path d="M23.5 2.8S23.2.6 22.3.6C21.4-.3 20.4-.3 20 .2 16.7.5 12 .5 12 .5S7.3.5 4 .2C3.6-.3 2.6-.3 1.7.6.8.6.5 2.8.5 2.8S.1 5.4.1 8v2.2c0 2.6.4 5.2.4 5.2s.3 2.2 1.2 2.2c.9.9 1.9.8 2.4.9C5.8 18.7 12 18.7 12 18.7s4.7 0 8-.3c.4-.5 1.4-.5 2.3-1.4.9 0 1.2-2.2 1.2-2.2s.4-2.6.4-5.2V8c0-2.6-.4-5.2-.4-5.2zM9.7 12.5V5.2l6.5 3.7-6.5 3.6z"/></svg>Franklyn will find you a YouTube talk for exactly where you are.</p>
       <button class="ne-btn" id="mci-go" disabled onclick="mciSubmit()" style="margin-bottom:4px;position:relative;overflow:hidden">
         <span id="mci-go-label">Find something for where I am →</span>
         <div id="mci-progress-bar" style="display:none;position:absolute;bottom:0;left:0;height:3px;background:rgba(255,255,255,0.6);width:0%;transition:width 0.3s ease"></div>
@@ -2003,12 +2003,16 @@ function mciSubmit(){
       :'';
     var watchUrl=data.youtube_watch_url||data.youtube_search_url;
     var watchLabel=data.video_id?'Watch on YouTube →':'Search on YouTube →';
+    var skipTitles=(DB.get('mci_skipped')||[]).concat(data.title).join(' | ');
     resultEl.innerHTML=
       '<div class="speech-card">'+
         embedHtml+
         '<p class="speech-framing">'+stripMd(data.framing)+'</p>'+
         '<p class="speech-title">'+stripMd(data.speaker+' — '+data.title)+'</p>'+
-        '<a class="speech-link" href="'+watchUrl+'" target="_blank" rel="noopener">'+watchLabel+'</a>'+
+        '<div style="display:flex;align-items:center;gap:12px;margin-top:10px;flex-wrap:wrap">'+
+          '<a class="speech-link" href="'+watchUrl+'" target="_blank" rel="noopener">'+watchLabel+'</a>'+
+          '<button onclick="mciSkip(\''+encodeURIComponent(skipTitles)+'\')" style="background:none;border:none;font-size:12px;color:var(--ink4);cursor:pointer;font-family:var(--fb);padding:0;text-decoration:underline;text-underline-offset:3px">Try a different one</button>'+
+        '</div>'+
       '</div>';
     resultEl.style.display='block';
     goBtn.style.display='none';
@@ -2019,6 +2023,56 @@ function mciSubmit(){
     resultEl.innerHTML='<p style="font-size:13px;color:var(--ink4);margin-top:1rem">Could not load a recommendation right now.</p>';
     resultEl.style.display='block';
     goBtn.disabled=false;
+  });
+}
+
+function mciSkip(encodedSkipped){
+  var skippedTitles=decodeURIComponent(encodedSkipped);
+  DB.set('mci_skipped',(skippedTitles).split(' | ').filter(Boolean));
+  var user=DB.get('user')||{};
+  var text=document.getElementById('mci-text').value.trim();
+  var resultEl=document.getElementById('mci-result');
+  var bar=document.getElementById('mci-progress-bar');
+  var label=document.getElementById('mci-go-label');
+  label.textContent='Searching YouTube...';
+  bar.style.display='block';bar.style.transition='none';bar.style.width='0%';
+  setTimeout(function(){bar.style.transition='width 0.6s ease';bar.style.width='70%';},30);
+  setTimeout(function(){bar.style.transition='width 3s ease';bar.style.width='88%';},700);
+  var favorites=['True Beast Mentality — Motivational Speeches Compilation','How Your Thoughts Are Connected To Your Future — Dr. Joe Dispenza'];
+  fetch('/api/speech',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    mindset_state:mciState,
+    mindset_text:text,
+    identity_anchors:user.anchors||[],
+    pattern_trigger:user.spiralTrigger||'',
+    favorites:favorites,
+    exclude_titles:skippedTitles
+  })})
+  .then(function(r){return r.json();})
+  .then(function(data){
+    bar.style.transition='width 0.2s ease';bar.style.width='100%';
+    setTimeout(function(){bar.style.display='none';bar.style.width='0%';label.textContent='Find something for where I am →';},250);
+    var embedHtml=data.video_id
+      ?'<div class="speech-embed-wrap"><iframe class="speech-embed" src="https://www.youtube.com/embed/'+data.video_id+'?rel=0" frameborder="0" allowfullscreen loading="lazy"></iframe></div>'
+      :'';
+    var watchUrl=data.youtube_watch_url||data.youtube_search_url;
+    var watchLabel=data.video_id?'Watch on YouTube →':'Search on YouTube →';
+    var newSkipped=(DB.get('mci_skipped')||[]).concat(data.title).join(' | ');
+    resultEl.innerHTML=
+      '<div class="speech-card">'+
+        embedHtml+
+        '<p class="speech-framing">'+stripMd(data.framing)+'</p>'+
+        '<p class="speech-title">'+stripMd(data.speaker+' — '+data.title)+'</p>'+
+        '<div style="display:flex;align-items:center;gap:12px;margin-top:10px;flex-wrap:wrap">'+
+          '<a class="speech-link" href="'+watchUrl+'" target="_blank" rel="noopener">'+watchLabel+'</a>'+
+          '<button onclick="mciSkip(\''+encodeURIComponent(newSkipped)+'\')" style="background:none;border:none;font-size:12px;color:var(--ink4);cursor:pointer;font-family:var(--fb);padding:0;text-decoration:underline;text-underline-offset:3px">Try a different one</button>'+
+        '</div>'+
+      '</div>';
+    resultEl.style.display='block';
+  })
+  .catch(function(){
+    bar.style.display='none';bar.style.width='0%';
+    label.textContent='Find something for where I am →';
+    resultEl.innerHTML='<p style="font-size:13px;color:var(--ink4);margin-top:1rem">Could not load another one right now.</p>';
   });
 }
 
@@ -2824,9 +2878,13 @@ function franklySpeak(text){
 
 voiceInit();
 
-document.getElementById('chat-input').addEventListener('input',function(){
-  this.style.height='auto';
-  this.style.height=Math.min(this.scrollHeight,200)+'px';
+// Auto-grow every textarea in the app
+document.addEventListener('input',function(e){
+  if(e.target.tagName!=='TEXTAREA')return;
+  var el=e.target;
+  var maxH=el.classList.contains('chat-input')?200:320;
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,maxH)+'px';
 });
 document.getElementById('chat-input').addEventListener('keydown',function(e){
   if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();chatSend();}
