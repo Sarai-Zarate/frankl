@@ -301,6 +301,8 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .speech-embed-wrap{position:relative;width:100%;padding-bottom:56.25%;margin-bottom:0.5rem;border-radius:8px;overflow:hidden;background:#000}
 .speech-embed{position:absolute;inset:0;width:100%;height:100%;border:none}
 
+.mci-type-chip{font-family:var(--fb);font-size:12px;font-weight:500;padding:7px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--cream);color:var(--ink3);cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.mci-type-chip.active{border-color:var(--blue);background:rgba(100,130,180,0.10);color:var(--ink);font-weight:600}
 .video-type-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 .video-type-btn{font-family:var(--fb);font-size:12px;font-weight:500;padding:9px 6px;border-radius:10px;border:1.5px solid var(--border);background:var(--cream);color:var(--ink3);cursor:pointer;text-align:center;transition:all 0.15s}
 .video-type-btn.active{border-color:var(--blue);background:rgba(100,130,180,0.08);color:var(--ink)}
@@ -1017,10 +1019,15 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       </div>
       <textarea id="mci-text" class="prime-context-input" rows="2" placeholder="e.g. I keep skipping this one, or motivation is low today..." oninput="mciTextInput()"></textarea>
       <p style="font-size:12px;color:#c0392b;font-weight:500;margin:0.5rem 0 0.75rem;line-height:1.5;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px"><svg width="16" height="12" viewBox="0 0 24 18" fill="#c0392b"><path d="M23.5 2.8S23.2.6 22.3.6C21.4-.3 20.4-.3 20 .2 16.7.5 12 .5 12 .5S7.3.5 4 .2C3.6-.3 2.6-.3 1.7.6.8.6.5 2.8.5 2.8S.1 5.4.1 8v2.2c0 2.6.4 5.2.4 5.2s.3 2.2 1.2 2.2c.9.9 1.9.8 2.4.9C5.8 18.7 12 18.7 12 18.7s4.7 0 8-.3c.4-.5 1.4-.5 2.3-1.4.9 0 1.2-2.2 1.2-2.2s.4-2.6.4-5.2V8c0-2.6-.4-5.2-.4-5.2zM9.7 12.5V5.2l6.5 3.7-6.5 3.6z"/></svg>Franklyn will find you a YouTube talk for exactly where you are.</p>
-      <div style="display:flex;gap:8px;margin-bottom:12px" id="mci-vibe-row">
-        <button class="video-type-btn" id="vibe-peaceful" data-type="peaceful" onclick="setMciVibe('peaceful')" style="flex:1;padding:10px 6px">🌊 Peaceful</button>
-        <button class="video-type-btn" id="vibe-tough" data-type="tough" onclick="setMciVibe('tough')" style="flex:1;padding:10px 6px">🔥 Tough love</button>
-        <button class="video-type-btn active" id="vibe-auto" data-type="auto" onclick="setMciVibe('auto')" style="flex:1;padding:10px 6px">✦ Franklyn picks</button>
+      <p style="font-size:11px;color:var(--ink4);font-family:var(--fm);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">What kind of content do you want?</p>
+      <div id="mci-vibe-row" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">
+        <button class="mci-type-chip" data-type="toughness" onclick="setMciVibe('toughness')">💪 Mental toughness</button>
+        <button class="mci-type-chip" data-type="meditation" onclick="setMciVibe('meditation')">🧘 Meditation</button>
+        <button class="mci-type-chip" data-type="manifesting" onclick="setMciVibe('manifesting')">✨ Manifesting</button>
+        <button class="mci-type-chip" data-type="observe" onclick="setMciVibe('observe')">👁 Observe your thoughts</button>
+        <button class="mci-type-chip" data-type="affirmations" onclick="setMciVibe('affirmations')">🌱 Affirmations</button>
+        <button class="mci-type-chip" data-type="selflove" onclick="setMciVibe('selflove')">❤️ Self love</button>
+        <button class="mci-type-chip" data-type="dopamine" onclick="setMciVibe('dopamine')">🧠 Dopamine &amp; habits</button>
       </div>
       <button class="ne-btn" id="mci-go" disabled onclick="mciSubmit()" style="margin-bottom:4px;position:relative;overflow:hidden">
         <span id="mci-go-label">Find something for where I am →</span>
@@ -1373,6 +1380,7 @@ function initApp(user){
   renderHabits();
   renderCalendar();
   renderSavedTalks();
+  initMciVibe();
 
   // Start chat with user context
   chatInit(user);
@@ -2250,8 +2258,7 @@ function openChatFromFoundations(){
 // reset mindset check-in when tab re-activates
 function resetMci(){
   mciState=null;
-  mciVibe='auto';
-  document.querySelectorAll('#mci-vibe-row .video-type-btn').forEach(function(b){b.classList.toggle('active',b.dataset.type==='auto');});
+  // content type persists — user only changes it deliberately
   document.querySelectorAll('.mci-card').forEach(function(c){c.classList.remove('selected');});
   document.getElementById('mci-text').value='';
   document.getElementById('mci-go').disabled=true;
@@ -2580,12 +2587,20 @@ function toggleMilestone(gi, mi) {
 }
 
 
-// === MCI VIBE SELECTOR ===
-var mciVibe = 'auto';
+// === MCI CONTENT TYPE SELECTOR ===
+var mciVibe = DB.get('mci_content_type') || 'toughness';
 function setMciVibe(type) {
   mciVibe = type;
-  document.querySelectorAll('#mci-vibe-row .video-type-btn').forEach(function(b){
+  DB.set('mci_content_type', type);
+  document.querySelectorAll('#mci-vibe-row .mci-type-chip').forEach(function(b){
     b.classList.toggle('active', b.dataset.type===type);
+  });
+}
+function initMciVibe() {
+  var saved = DB.get('mci_content_type') || 'toughness';
+  mciVibe = saved;
+  document.querySelectorAll('#mci-vibe-row .mci-type-chip').forEach(function(b){
+    b.classList.toggle('active', b.dataset.type===saved);
   });
 }
 

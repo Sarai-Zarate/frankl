@@ -52,44 +52,76 @@ module.exports = async function handler(req, res) {
     ? 'DO NOT repeat any of these already-shown titles: ' + exclude_titles
     : '';
 
-  // Verified video IDs Claude can use with confidence
-  const verifiedIds = [
-    'ZBPY4Boczf8 = "True Beast Mentality" by Motiversity — cinematic speech compilation',
-    '5reo3dXOicU = "How Your Thoughts Are Connected To Your Future" by Be Inspired — Joe Dispenza cinematic',
-    'mgMb1tgQjGE = "You Were Born For This" by Motiversity — cinematic speech compilation',
-    'lsSC2vx7zFQ = "Its Not Over" by Ben Lionel Scott — cinematic speech compilation',
-    'k0C9-4K7M_g = "Just Breathe - Guided Meditation" by Great Meditation — 10 min guided meditation',
-    'inpok4MKVLM = "Yoga For Beginners" by Yoga With Adriene — 20 min follow-along',
-  ];
-
-  const vibeInstructions = {
-    tough: [
-      'VIBE: The user wants to be pushed hard. Choose a cinematic motivational SPEECH compilation.',
-      'Format: dramatic music, scenes cutting between nature/sports/film, voice clips from athletes, coaches, philosophers.',
-      'Channels: Motiversity, Ben Lionel Scott, Mateusz M, Absolute Motivation, T&H Inspiration, RedFrost Motivation.',
-      'DO NOT pick: TED talks, TEDx, podcasts, lectures, sit-down interviews. No Mel Robbins. No Tim Urban.',
-    ],
-    peaceful: [
-      'VIBE: The user wants calm and restoration. Choose a GUIDED MEDITATION or gentle breathwork video.',
-      'Format: calm voice, ambient music, eyes-closed practice, 5-20 minutes.',
-      'Channels: Great Meditation, Michael Sealey, Jason Stephenson, Headspace, Yoga With Adriene.',
-      'DO NOT pick: motivational speeches, workout videos, lectures.',
-    ],
-    auto: [
-      'VIBE: Choose the best format for this person right now based on their state:',
-      '- Avoiding or low energy → cinematic motivational compilation (Motiversity, Ben Lionel Scott)',
-      '- Resistant or anxious → guided meditation or breathwork (Great Meditation, Michael Sealey)',
-      '- Ready → your call — push them or ground them based on what they said',
-      'DO NOT pick: TED talks, TEDx, podcasts, sit-down lectures, Mel Robbins.',
-    ]
+  const contentTypes = {
+    toughness: {
+      desc: 'Mental toughness / motivational speech compilation',
+      instructions: [
+        'Find a cinematic motivational speech compilation — dramatic music, scenes cutting between nature/sports/film footage, voice clips from athletes, coaches, philosophers, or movie characters edited together.',
+        'Channels: Motiversity, Ben Lionel Scott, Mateusz M, Absolute Motivation, T&H Inspiration, RedFrost Motivation.',
+        'DO NOT pick: TED talks, TEDx, podcasts, sit-down interviews. No Mel Robbins. No Tim Urban.',
+        'Verified IDs: ZBPY4Boczf8 = "True Beast Mentality" (Motiversity), lsSC2vx7zFQ = "Its Not Over" (Ben Lionel Scott), mgMb1tgQjGE = "You Were Born For This" (Motiversity)',
+      ]
+    },
+    meditation: {
+      desc: 'Guided meditation or breathwork',
+      instructions: [
+        'Find a guided meditation or breathwork session — calm voice, ambient music, eyes-closed practice, 5-20 minutes.',
+        'Channels: Great Meditation, Michael Sealey, Jason Stephenson, Headspace, Calm, Yoga With Adriene.',
+        'DO NOT pick: motivational speeches, workout videos, lectures.',
+        'Verified IDs: k0C9-4K7M_g = "Just Breathe Guided Meditation" (Great Meditation), inpok4MKVLM = "Yoga For Beginners" (Yoga With Adriene)',
+      ]
+    },
+    manifesting: {
+      desc: 'Manifesting / law of attraction / visualization',
+      instructions: [
+        'Find a video about manifesting, law of attraction, visualization, or calling in what you want — the kind that blends neuroscience, spiritual insight, and practical technique.',
+        'Speakers/channels: Joe Dispenza, Abraham Hicks, Jake Ducey, Leeor Alexandra, Your Youniverse.',
+        'DO NOT pick: generic motivation, workout content, or pure meditation with no manifesting element.',
+        'Verified IDs: 5reo3dXOicU = "How Your Thoughts Are Connected To Your Future" (Joe Dispenza cinematic)',
+      ]
+    },
+    observe: {
+      desc: 'Observe your thoughts / mindfulness / inner work',
+      instructions: [
+        'Find a video about observing your own thoughts, mindfulness, inner peace, or detachment from the mind — Eckhart Tolle style, non-dual, or insight meditation.',
+        'Speakers/channels: Eckhart Tolle, Mooji, Tara Brach, Adyashanti, Alan Watts, Rupert Spira.',
+        'DO NOT pick: pure exercise motivation, manifesting hype, or TED lectures.',
+      ]
+    },
+    affirmations: {
+      desc: 'Affirmation video',
+      instructions: [
+        'Find an affirmation video — positive statements spoken directly to the listener, often with music, designed to rewire self-belief.',
+        'Channels: YouAreCreators, Rockstar Affirmations, Bob Baker, Minds in Unison, Growing Forever.',
+        'DO NOT pick: meditation without affirmations, motivational speeches without I-statements, lectures.',
+      ]
+    },
+    selflove: {
+      desc: 'Self love / self compassion / inner healing',
+      instructions: [
+        'Find a video about self love, self compassion, healing your inner world, or releasing self-judgment.',
+        'Speakers/channels: Louise Hay, Tara Brach, Brene Brown, Kyle Cease, Lisa Nichols.',
+        'DO NOT pick: hardcore hustle motivation, diet/fitness content, generic positive thinking.',
+      ]
+    },
+    dopamine: {
+      desc: 'Dopamine, habits, and the science of behavior',
+      instructions: [
+        'Find a podcast clip, short lecture, or explainer video about dopamine, habit formation, motivation science, or the neuroscience of behavior change.',
+        'Speakers/channels: Andrew Huberman, Huberman Lab, Lex Fridman, Ali Abdaal, Thomas Frank, Dr. Anna Lembke.',
+        'This can be a talking-head format — science content is the exception where lecture style works.',
+        'DO NOT pick: pure motivation, meditation, or affirmations.',
+      ]
+    }
   };
 
-  const vibeLines = vibeInstructions[video_type] || vibeInstructions['auto'];
+  const chosen = contentTypes[video_type] || contentTypes['toughness'];
 
   const prompt = [
-    'You are Franklyn. Recommend one YouTube video for this person right now.',
+    'You are Franklyn. Recommend one YouTube video for this person.',
     '',
-    ...vibeLines,
+    'Content type requested: ' + chosen.desc,
+    ...chosen.instructions,
     '',
     'Person:',
     '- Identity anchors: ' + anchorList,
@@ -98,10 +130,7 @@ module.exports = async function handler(req, res) {
     mindset_text ? '- What they said: ' + mindset_text : '',
     excludeLine,
     '',
-    'Verified video IDs you can use with confidence:',
-    ...verifiedIds,
-    '',
-    'You may recommend any video you know well — not just those above. But VIDEO_ID must be an 11-character YouTube ID you are certain is correct. A wrong ID breaks the embed. Leave blank if unsure.',
+    'VIDEO_ID: 11-character YouTube ID you are certain is correct. A wrong ID breaks the embed — leave blank if unsure.',
     'FRAMING: one sentence in Franklyn\'s voice, specific to this person\'s anchors or what they typed. No clichés, no em dashes.',
     '',
     'Reply with exactly these four lines:',
