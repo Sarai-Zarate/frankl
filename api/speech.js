@@ -36,7 +36,7 @@ function extractLine(t, label) {
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { mindset_state, mindset_text, identity_anchors, pattern_trigger, favorites, exclude_titles, video_type } = req.body;
+  const { mindset_state, mindset_text, identity_anchors, pattern_trigger, exclude_titles, video_type } = req.body;
 
   const anchorList = (identity_anchors || []).filter(Boolean).join(', ') || 'not set';
 
@@ -49,52 +49,47 @@ module.exports = async function handler(req, res) {
   const stateDesc = stateDescriptions[mindset_state] || (mindset_text ? 'described below' : 'unspecified');
 
   const excludeLine = exclude_titles
-    ? 'ALREADY SHOWN — do not repeat any of these: ' + exclude_titles
+    ? 'DO NOT repeat any of these already-shown titles: ' + exclude_titles
     : '';
 
-  const videoTypeInstructions = {
-    speech: [
-      'CRITICAL — FORMAT REQUIRED:',
-      'The video MUST be a cinematic motivational speech compilation — dramatic background music, scenes cutting between nature/sports/film footage, voice clips from athletes, coaches, philosophers, or movie characters edited together.',
+  // Verified video IDs Claude can use with confidence
+  const verifiedIds = [
+    'ZBPY4Boczf8 = "True Beast Mentality" by Motiversity — cinematic speech compilation',
+    '5reo3dXOicU = "How Your Thoughts Are Connected To Your Future" by Be Inspired — Joe Dispenza cinematic',
+    'mgMb1tgQjGE = "You Were Born For This" by Motiversity — cinematic speech compilation',
+    'lsSC2vx7zFQ = "Its Not Over" by Ben Lionel Scott — cinematic speech compilation',
+    'k0C9-4K7M_g = "Just Breathe - Guided Meditation" by Great Meditation — 10 min guided meditation',
+    'inpok4MKVLM = "Yoga For Beginners" by Yoga With Adriene — 20 min follow-along',
+  ];
+
+  const vibeInstructions = {
+    tough: [
+      'VIBE: The user wants to be pushed hard. Choose a cinematic motivational SPEECH compilation.',
+      'Format: dramatic music, scenes cutting between nature/sports/film, voice clips from athletes, coaches, philosophers.',
       'Channels: Motiversity, Ben Lionel Scott, Mateusz M, Absolute Motivation, T&H Inspiration, RedFrost Motivation.',
-      'DO NOT recommend: TED talks, TEDx talks, talking-head lectures, podcasts, interviews. No Mel Robbins, no Tim Urban.',
-      '',
-      'Verified IDs: ZBPY4Boczf8 = "True Beast Mentality" (Motiversity), 5reo3dXOicU = "How Your Thoughts Are Connected To Your Future" (Dispenza cinematic)'
+      'DO NOT pick: TED talks, TEDx, podcasts, lectures, sit-down interviews. No Mel Robbins. No Tim Urban.',
     ],
-    meditation: [
-      'CRITICAL — FORMAT REQUIRED:',
-      'The video MUST be a guided meditation or breathwork session — calm, focused, ideally 5-20 minutes.',
-      'Channels: Headspace, Calm, Yoga With Adriene, Great Meditation, Michael Sealey, Jason Stephenson.',
-      'DO NOT recommend: motivational speeches, workout videos, lectures.',
-      '',
-      'Match length and tone to state: low/avoiding = short and gentle (5-10 min); resistant = grounding body scan; ready = deeper sit.'
-    ],
-    workout: [
-      'CRITICAL — FORMAT REQUIRED:',
-      'The video MUST be a follow-along workout or movement session — something the user can actually do right now.',
-      'Channels: MadFit, Heather Robertson, Juice & Toya, Sydney Cummings, POPSUGAR Fitness, Athlean-X.',
-      'DO NOT recommend: motivational speeches, meditation, lectures.',
-      '',
-      'Match intensity to state: low/avoiding = gentle movement or stretching; resistant = moderate; ready = high intensity.'
+    peaceful: [
+      'VIBE: The user wants calm and restoration. Choose a GUIDED MEDITATION or gentle breathwork video.',
+      'Format: calm voice, ambient music, eyes-closed practice, 5-20 minutes.',
+      'Channels: Great Meditation, Michael Sealey, Jason Stephenson, Headspace, Yoga With Adriene.',
+      'DO NOT pick: motivational speeches, workout videos, lectures.',
     ],
     auto: [
-      'CRITICAL — FORMAT REQUIRED:',
-      'Choose the best video type for this person\'s current state:',
-      '- If they need fire and momentum: cinematic motivational compilation (Motiversity, Ben Lionel Scott, Mateusz M)',
-      '- If they need to calm down or reset: guided meditation (Headspace, Calm, Yoga With Adriene)',
-      '- If they need to move their body: follow-along workout (MadFit, Heather Robertson)',
-      'DO NOT recommend: TED talks, TEDx, podcasts, lectures, talking-head interviews. No Mel Robbins.',
-      '',
-      'Verified IDs: ZBPY4Boczf8 = "True Beast Mentality" (Motiversity), 5reo3dXOicU = "How Your Thoughts Are Connected To Your Future" (Dispenza)'
+      'VIBE: Choose the best format for this person right now based on their state:',
+      '- Avoiding or low energy → cinematic motivational compilation (Motiversity, Ben Lionel Scott)',
+      '- Resistant or anxious → guided meditation or breathwork (Great Meditation, Michael Sealey)',
+      '- Ready → your call — push them or ground them based on what they said',
+      'DO NOT pick: TED talks, TEDx, podcasts, sit-down lectures, Mel Robbins.',
     ]
   };
 
-  const typeLines = videoTypeInstructions[video_type] || videoTypeInstructions['auto'];
+  const vibeLines = vibeInstructions[video_type] || vibeInstructions['auto'];
 
   const prompt = [
     'You are Franklyn. Recommend one YouTube video for this person right now.',
     '',
-    ...typeLines,
+    ...vibeLines,
     '',
     'Person:',
     '- Identity anchors: ' + anchorList,
@@ -103,16 +98,17 @@ module.exports = async function handler(req, res) {
     mindset_text ? '- What they said: ' + mindset_text : '',
     excludeLine,
     '',
-    'Match energy to state: low/avoiding = raw honesty, quiet intensity; resistant = direct and clear; ready = can handle full fire.',
+    'Verified video IDs you can use with confidence:',
+    ...verifiedIds,
     '',
-    'VIDEO_ID: only include if you are certain the ID is correct. A wrong ID breaks the embed — leave it blank if unsure.',
-    'FRAMING: one sentence in Franklyn\'s voice. Specific to this person\'s anchors or what they said. No clichés, no em dashes.',
+    'You may recommend any video you know well — not just those above. But VIDEO_ID must be an 11-character YouTube ID you are certain is correct. A wrong ID breaks the embed. Leave blank if unsure.',
+    'FRAMING: one sentence in Franklyn\'s voice, specific to this person\'s anchors or what they typed. No clichés, no em dashes.',
     '',
-    'Reply with exactly:',
+    'Reply with exactly these four lines:',
     'SPEAKER: channel or creator name',
     'TITLE: exact video title',
     'FRAMING: one sentence',
-    'VIDEO_ID: 11-char id or blank'
+    'VIDEO_ID: 11-char id or blank',
   ].filter(Boolean).join('\n');
 
   try {

@@ -690,17 +690,6 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       <input class="settings-field" id="s-s4" type="text" placeholder="Fourth signal (optional)" autocomplete="off">
     </div>
 
-    <span class="settings-group-label">Video recommendations</span>
-    <div class="settings-section">
-      <span class="settings-label">When I need a push, show me</span>
-      <div class="video-type-row" id="video-type-row">
-        <button class="video-type-btn" data-type="speech" onclick="setVideoType('speech')">Motivational speech</button>
-        <button class="video-type-btn" data-type="meditation" onclick="setVideoType('meditation')">Guided meditation</button>
-        <button class="video-type-btn" data-type="workout" onclick="setVideoType('workout')">Workout / movement</button>
-        <button class="video-type-btn" data-type="auto" onclick="setVideoType('auto')">Let Franklyn decide</button>
-      </div>
-    </div>
-
     <span class="settings-group-label">Daily reminder</span>
     <div class="settings-section">
       <span class="settings-label">Pair your morning anchor with a habit</span>
@@ -1028,6 +1017,11 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       </div>
       <textarea id="mci-text" class="prime-context-input" rows="2" placeholder="e.g. I keep skipping this one, or motivation is low today..." oninput="mciTextInput()"></textarea>
       <p style="font-size:12px;color:#c0392b;font-weight:500;margin:0.5rem 0 0.75rem;line-height:1.5;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px"><svg width="16" height="12" viewBox="0 0 24 18" fill="#c0392b"><path d="M23.5 2.8S23.2.6 22.3.6C21.4-.3 20.4-.3 20 .2 16.7.5 12 .5 12 .5S7.3.5 4 .2C3.6-.3 2.6-.3 1.7.6.8.6.5 2.8.5 2.8S.1 5.4.1 8v2.2c0 2.6.4 5.2.4 5.2s.3 2.2 1.2 2.2c.9.9 1.9.8 2.4.9C5.8 18.7 12 18.7 12 18.7s4.7 0 8-.3c.4-.5 1.4-.5 2.3-1.4.9 0 1.2-2.2 1.2-2.2s.4-2.6.4-5.2V8c0-2.6-.4-5.2-.4-5.2zM9.7 12.5V5.2l6.5 3.7-6.5 3.6z"/></svg>Franklyn will find you a YouTube talk for exactly where you are.</p>
+      <div style="display:flex;gap:8px;margin-bottom:12px" id="mci-vibe-row">
+        <button class="video-type-btn" id="vibe-peaceful" data-type="peaceful" onclick="setMciVibe('peaceful')" style="flex:1;padding:10px 6px">🌊 Peaceful</button>
+        <button class="video-type-btn" id="vibe-tough" data-type="tough" onclick="setMciVibe('tough')" style="flex:1;padding:10px 6px">🔥 Tough love</button>
+        <button class="video-type-btn active" id="vibe-auto" data-type="auto" onclick="setMciVibe('auto')" style="flex:1;padding:10px 6px">✦ Franklyn picks</button>
+      </div>
       <button class="ne-btn" id="mci-go" disabled onclick="mciSubmit()" style="margin-bottom:4px;position:relative;overflow:hidden">
         <span id="mci-go-label">Find something for where I am →</span>
         <div id="mci-progress-bar" style="display:none;position:absolute;bottom:0;left:0;height:3px;background:rgba(255,255,255,0.6);width:0%;transition:width 0.3s ease"></div>
@@ -1833,10 +1827,6 @@ function settingsOpen(){
   document.getElementById('s-s4').value=sigs[3]||'';
   document.getElementById('settings-overlay').classList.add('open');
   loadProfileCard();
-  var vt=(user.videoType)||'auto';
-  document.querySelectorAll('.video-type-btn').forEach(function(b){
-    b.classList.toggle('active', b.dataset.type===vt);
-  });
 }
 function settingsClose(){
   document.getElementById('settings-overlay').classList.remove('open');
@@ -1859,8 +1849,6 @@ function settingsSave(){
     document.getElementById('s-s3').value.trim(),
     document.getElementById('s-s4').value.trim()
   ].filter(function(s){return s.length>0;});
-  var activeVT=document.querySelector('.video-type-btn.active');
-  user.videoType=activeVT?activeVT.dataset.type:'auto';
   DB.set('user',user);
   initApp(user);
   settingsClose();
@@ -2059,7 +2047,7 @@ function mciSubmit(){
     identity_anchors:user.anchors||[],
     pattern_trigger:user.spiralTrigger||'',
     favorites:favorites,
-    video_type:user.videoType||'auto'
+    video_type:mciVibe||'auto'
   })})
   .then(function(r){return r.json();})
   .then(function(data){
@@ -2135,7 +2123,7 @@ function mciSkip(encodedSkipped){
     pattern_trigger:user.spiralTrigger||'',
     favorites:favorites,
     exclude_titles:skippedTitles,
-    video_type:(DB.get('user')||{}).videoType||'auto'
+    video_type:mciVibe||'auto'
   })})
   .then(function(r){return r.json();})
   .then(function(data){
@@ -2262,6 +2250,8 @@ function openChatFromFoundations(){
 // reset mindset check-in when tab re-activates
 function resetMci(){
   mciState=null;
+  mciVibe='auto';
+  document.querySelectorAll('#mci-vibe-row .video-type-btn').forEach(function(b){b.classList.toggle('active',b.dataset.type==='auto');});
   document.querySelectorAll('.mci-card').forEach(function(c){c.classList.remove('selected');});
   document.getElementById('mci-text').value='';
   document.getElementById('mci-go').disabled=true;
@@ -2590,9 +2580,11 @@ function toggleMilestone(gi, mi) {
 }
 
 
-// === VIDEO TYPE PREFERENCE ===
-function setVideoType(type) {
-  document.querySelectorAll('.video-type-btn').forEach(function(b){
+// === MCI VIBE SELECTOR ===
+var mciVibe = 'auto';
+function setMciVibe(type) {
+  mciVibe = type;
+  document.querySelectorAll('#mci-vibe-row .video-type-btn').forEach(function(b){
     b.classList.toggle('active', b.dataset.type===type);
   });
 }
