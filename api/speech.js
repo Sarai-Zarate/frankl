@@ -1,5 +1,18 @@
 const https = require('https');
 
+function httpsGet(url) {
+  return new Promise((resolve, reject) => {
+    https.get(url, (resp) => {
+      let data = '';
+      resp.on('data', chunk => data += chunk);
+      resp.on('end', () => {
+        try { resolve(JSON.parse(data)); }
+        catch(e) { reject(new Error(data)); }
+      });
+    }).on('error', reject);
+  });
+}
+
 function post(body) {
   return new Promise((resolve, reject) => {
     const options = {
@@ -33,6 +46,34 @@ function extractLine(t, label) {
   return t.slice(i + label.length).split('\n')[0].trim();
 }
 
+async function searchYouTube(query, excludeTitles) {
+  const key = process.env.YOUTUBE_API_KEY;
+  if (!key) return null;
+  const q = encodeURIComponent(query);
+  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=${q}&key=${key}&videoEmbeddable=true&safeSearch=none`;
+  const data = await httpsGet(url);
+  if (!data.items || !data.items.length) return null;
+
+  // Skip any video whose title matches something already shown
+  const excluded = (excludeTitles || '').toLowerCase();
+  for (const item of data.items) {
+    const title = item.snippet.title;
+    if (excluded && excluded.includes(title.toLowerCase())) continue;
+    return {
+      video_id: item.id.videoId,
+      title: title,
+      speaker: item.snippet.channelTitle
+    };
+  }
+  // If all excluded, just return first
+  const first = data.items[0];
+  return {
+    video_id: first.id.videoId,
+    title: first.snippet.title,
+    speaker: first.snippet.channelTitle
+  };
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -48,117 +89,108 @@ module.exports = async function handler(req, res) {
   };
   const stateDesc = stateDescriptions[mindset_state] || (mindset_text ? 'described below' : 'unspecified');
 
-  const excludeLine = exclude_titles
-    ? 'DO NOT repeat any of these already-shown titles: ' + exclude_titles
-    : '';
-
   const contentTypes = {
-    toughness: {
-      desc: 'Mental toughness / motivational speech compilation',
-      instructions: [
-        'Find a cinematic motivational speech compilation — dramatic music, scenes cutting between nature/sports/film footage, voice clips from athletes, coaches, philosophers, or movie characters edited together.',
-        'Channels: Motiversity, Ben Lionel Scott, Mateusz M, Absolute Motivation, T&H Inspiration, RedFrost Motivation.',
-        'DO NOT pick: TED talks, TEDx, podcasts, sit-down interviews. No Mel Robbins. No Tim Urban.',
-        'Verified IDs: ZBPY4Boczf8 = "True Beast Mentality" (Motiversity), lsSC2vx7zFQ = "Its Not Over" (Ben Lionel Scott), mgMb1tgQjGE = "You Were Born For This" (Motiversity)',
-      ]
-    },
-    meditation: {
-      desc: 'Guided meditation or breathwork',
-      instructions: [
-        'Find a guided meditation or breathwork session — calm voice, ambient music, eyes-closed practice, 5-20 minutes.',
-        'Channels: Great Meditation, Michael Sealey, Jason Stephenson, Headspace, Calm, Yoga With Adriene.',
-        'DO NOT pick: motivational speeches, workout videos, lectures.',
-        'Verified IDs: k0C9-4K7M_g = "Just Breathe Guided Meditation" (Great Meditation), inpok4MKVLM = "Yoga For Beginners" (Yoga With Adriene)',
-      ]
-    },
-    manifesting: {
-      desc: 'Manifesting / law of attraction / visualization',
-      instructions: [
-        'Find a video about manifesting, law of attraction, visualization, or calling in what you want — the kind that blends neuroscience, spiritual insight, and practical technique.',
-        'Speakers/channels: Joe Dispenza, Abraham Hicks, Jake Ducey, Leeor Alexandra, Your Youniverse.',
-        'DO NOT pick: generic motivation, workout content, or pure meditation with no manifesting element.',
-        'Verified IDs: 5reo3dXOicU = "How Your Thoughts Are Connected To Your Future" (Joe Dispenza cinematic)',
-      ]
-    },
-    observe: {
-      desc: 'Observe your thoughts / mindfulness / inner work',
-      instructions: [
-        'Find a video about observing your own thoughts, mindfulness, inner peace, or detachment from the mind — Eckhart Tolle style, non-dual, or insight meditation.',
-        'Speakers/channels: Eckhart Tolle, Mooji, Tara Brach, Adyashanti, Alan Watts, Rupert Spira.',
-        'DO NOT pick: pure exercise motivation, manifesting hype, or TED lectures.',
-      ]
-    },
-    affirmations: {
-      desc: 'Affirmation video',
-      instructions: [
-        'Find an affirmation video — positive statements spoken directly to the listener, often with music, designed to rewire self-belief.',
-        'Channels: YouAreCreators, Rockstar Affirmations, Bob Baker, Minds in Unison, Growing Forever.',
-        'DO NOT pick: meditation without affirmations, motivational speeches without I-statements, lectures.',
-      ]
-    },
-    selflove: {
-      desc: 'Self love / self compassion / inner healing',
-      instructions: [
-        'Find a video about self love, self compassion, healing your inner world, or releasing self-judgment.',
-        'Speakers/channels: Louise Hay, Tara Brach, Brene Brown, Kyle Cease, Lisa Nichols.',
-        'DO NOT pick: hardcore hustle motivation, diet/fitness content, generic positive thinking.',
-      ]
-    },
-    dopamine: {
-      desc: 'Dopamine, habits, and the science of behavior',
-      instructions: [
-        'Find a podcast clip, short lecture, or explainer video about dopamine, habit formation, motivation science, or the neuroscience of behavior change.',
-        'Speakers/channels: Andrew Huberman, Huberman Lab, Lex Fridman, Ali Abdaal, Thomas Frank, Dr. Anna Lembke.',
-        'This can be a talking-head format — science content is the exception where lecture style works.',
-        'DO NOT pick: pure motivation, meditation, or affirmations.',
-      ]
-    }
+    toughness:    'cinematic motivational speech compilation site:youtube.com -ted -tedx -mel robbins',
+    meditation:   'guided meditation breathing calm site:youtube.com',
+    manifesting:  'manifesting law of attraction visualization joe dispenza site:youtube.com',
+    observe:      'observe your thoughts mindfulness eckhart tolle inner peace site:youtube.com',
+    affirmations: 'positive affirmations self belief rewire your mind site:youtube.com',
+    selflove:     'self love self compassion inner healing site:youtube.com',
+    dopamine:     'dopamine habits motivation science huberman site:youtube.com'
   };
 
-  const chosen = contentTypes[video_type] || contentTypes['toughness'];
+  const searchQueries = {
+    toughness:    ['motivational speech compilation mental toughness', 'cinematic motivational video best speeches', 'mental toughness motivational compilation Motiversity'],
+    meditation:   ['guided meditation calm breathing', 'guided meditation for focus and clarity', 'morning meditation mindfulness'],
+    manifesting:  ['joe dispenza manifesting thoughts become reality', 'law of attraction visualization meditation', 'manifesting your future self guided'],
+    observe:      ['eckhart tolle observe your thoughts inner peace', 'mindfulness watching your thoughts meditation', 'observer of thoughts awareness meditation'],
+    affirmations: ['positive affirmations self belief morning', 'I am affirmations confidence self worth', 'powerful affirmations rewire subconscious mind'],
+    selflove:     ['self love meditation heal yourself', 'self compassion affirmations inner child', 'love yourself deeply guided meditation'],
+    dopamine:     ['andrew huberman dopamine motivation podcast', 'dopamine detox habits science explained', 'neuroscience of motivation habits dopamine']
+  };
 
-  const prompt = [
-    'You are Franklyn. Recommend one YouTube video for this person.',
+  // Ask Claude for the best search query for this specific person
+  const queryPrompt = [
+    'You are Franklyn. Pick the single best YouTube search query to find a video for this person.',
     '',
-    'Content type requested: ' + chosen.desc,
-    ...chosen.instructions,
+    'Content type: ' + (video_type || 'toughness'),
+    'Person mindset state: ' + stateDesc,
+    mindset_text ? 'What they said: ' + mindset_text : '',
+    'Identity anchors: ' + anchorList,
+    'What knocks them off: ' + (pattern_trigger || 'unknown'),
     '',
-    'Person:',
-    '- Identity anchors: ' + anchorList,
-    '- What knocks them off: ' + (pattern_trigger || 'unknown'),
-    '- Mindset state: ' + stateDesc,
-    mindset_text ? '- What they said: ' + mindset_text : '',
-    excludeLine,
+    'Choose one of these queries or write a better variation (keep it under 8 words, YouTube-style):',
+    ...(searchQueries[video_type] || searchQueries['toughness']),
     '',
-    'VIDEO_ID: 11-character YouTube ID you are certain is correct. A wrong ID breaks the embed — leave blank if unsure.',
-    'FRAMING: one sentence in Franklyn\'s voice, specific to this person\'s anchors or what they typed. No clichés, no em dashes.',
-    '',
-    'Reply with exactly these four lines:',
-    'SPEAKER: channel or creator name',
-    'TITLE: exact video title',
-    'FRAMING: one sentence',
-    'VIDEO_ID: 11-char id or blank',
+    'Reply with just the search query on one line. Nothing else.'
   ].filter(Boolean).join('\n');
 
+  let searchQuery = (searchQueries[video_type] || searchQueries['toughness'])[0];
+
   try {
-    const raw = await post(JSON.stringify({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 300,
-      messages: [{ role: 'user', content: prompt }]
+    const queryResult = await post(JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 30,
+      messages: [{ role: 'user', content: queryPrompt }]
     }));
+    if (queryResult && queryResult.trim()) searchQuery = queryResult.trim();
+  } catch(e) {
+    // fall through to default query
+  }
 
-    const speaker = extractLine(raw, 'SPEAKER:');
-    const title   = extractLine(raw, 'TITLE:');
-    const framing = extractLine(raw, 'FRAMING:');
-    const rawId   = extractLine(raw, 'VIDEO_ID:');
-    const video_id = /^[A-Za-z0-9_-]{11}$/.test(rawId) ? rawId : null;
+  // Search YouTube for a real working video
+  let videoData = null;
+  try {
+    videoData = await searchYouTube(searchQuery, exclude_titles);
+  } catch(e) {
+    // fall through
+  }
 
-    const searchQuery = encodeURIComponent((speaker + ' ' + title).trim());
-    const youtube_search_url = 'https://www.youtube.com/results?search_query=' + searchQuery;
-    const youtube_watch_url  = video_id ? 'https://www.youtube.com/watch?v=' + video_id : null;
+  // Ask Claude for a personalized framing sentence
+  const framingPrompt = [
+    'You are Franklyn. Write one sentence introducing this video to the user.',
+    '',
+    'Video: ' + (videoData ? `"${videoData.title}" by ${videoData.speaker}` : 'a ' + (video_type || 'motivational') + ' video'),
+    'Person mindset state: ' + stateDesc,
+    mindset_text ? 'What they said: ' + mindset_text : '',
+    'Identity anchors: ' + anchorList,
+    '',
+    'One sentence. Franklyn\'s voice. Specific to this person. No clichés, no em dashes, no quotes around the sentence.'
+  ].filter(Boolean).join('\n');
 
-    res.status(200).json({ speaker, title, framing, video_id, youtube_search_url, youtube_watch_url });
-  } catch(error) {
-    res.status(500).json({ error: error.message });
+  let framing = 'This one is for exactly where you are right now.';
+  try {
+    const framingResult = await post(JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 80,
+      messages: [{ role: 'user', content: framingPrompt }]
+    }));
+    if (framingResult && framingResult.trim()) framing = framingResult.trim();
+  } catch(e) {
+    // use default framing
+  }
+
+  if (videoData) {
+    const youtube_watch_url = `https://www.youtube.com/watch?v=${videoData.video_id}`;
+    const youtube_search_url = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`;
+    res.status(200).json({
+      speaker: videoData.speaker,
+      title: videoData.title,
+      framing,
+      video_id: videoData.video_id,
+      youtube_watch_url,
+      youtube_search_url
+    });
+  } else {
+    // Fallback: no YouTube API key or search failed — return search link only
+    const youtube_search_url = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`;
+    res.status(200).json({
+      speaker: '',
+      title: searchQuery,
+      framing,
+      video_id: null,
+      youtube_watch_url: null,
+      youtube_search_url
+    });
   }
 };
