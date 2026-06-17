@@ -191,6 +191,8 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .ne-btn{width:100%;padding:12px;font-size:14px;font-weight:600;font-family:var(--fb);border-radius:24px;cursor:pointer;border:none;background:var(--charcoal);color:var(--cream);transition:background var(--tr);margin-bottom:8px}
 .ne-btn:hover{background:var(--charcoal-l)}
 .ne-btn:disabled{opacity:0.35;cursor:default}
+#mci-go{background:#a83232}
+#mci-go:hover:not(:disabled){background:#8f2222}
 .ne-ghost{width:100%;padding:11px;font-size:13px;font-family:var(--fb);border-radius:24px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--ink3);transition:border-color var(--tr)}
 .ne-ghost:hover{border-color:var(--borderS)}
 
@@ -1017,8 +1019,8 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
       </div>
       <textarea id="mci-text" class="prime-context-input" rows="2" placeholder="e.g. I keep skipping this one, or motivation is low today..." oninput="mciTextInput()"></textarea>
       
-      <button class="ne-btn" id="mci-go" disabled onclick="mciSubmit()" style="margin-bottom:4px;position:relative;overflow:hidden">
-        <span id="mci-go-label">Find something for where I am →</span>
+      <button class="ne-btn" id="mci-go" disabled onclick="mciSubmit()" style="margin-bottom:4px;position:relative;overflow:hidden;background:#a83232;">
+        <span id="mci-go-label">Find me a YouTube video for this →</span>
         <div id="mci-progress-bar" style="display:none;position:absolute;bottom:0;left:0;height:3px;background:rgba(255,255,255,0.6);width:0%;transition:width 0.3s ease"></div>
       </button>
       <div id="mci-result" style="display:none"></div>
@@ -2085,11 +2087,11 @@ function mciSubmit(){
     resultEl.innerHTML += partnerSuggestionHtml();
     resultEl.style.display='block';
     goBtn.disabled=false;
-    label.textContent='Find something for where I am →';
+    label.textContent='Find me a YouTube video for this →';
   })
   .catch(function(){
     bar.style.display='none';bar.style.width='0%';
-    label.textContent='Find something for where I am →';
+    label.textContent='Find me a YouTube video for this →';
     resultEl.innerHTML='<p style="font-size:13px;color:var(--ink4);margin-top:1rem">Could not load a recommendation right now.</p>';
     resultEl.style.display='block';
     goBtn.disabled=false;
