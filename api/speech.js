@@ -40,21 +40,13 @@ function post(body) {
   });
 }
 
-function extractLine(t, label) {
-  const i = t.indexOf(label);
-  if (i === -1) return '';
-  return t.slice(i + label.length).split('\n')[0].trim();
-}
-
 async function searchYouTube(query, excludeTitles) {
   const key = process.env.YOUTUBE_API_KEY;
   if (!key) return null;
-  const q = encodeURIComponent(query);
-  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=${q}&key=${key}&videoEmbeddable=true&safeSearch=none`;
+  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=8&q=${encodeURIComponent(query)}&key=${key}&videoEmbeddable=true`;
   const data = await httpsGet(url);
   if (!data.items || !data.items.length) return null;
 
-  // Skip any video whose title matches something already shown
   const excluded = (excludeTitles || '').toLowerCase();
   for (const item of data.items) {
     const title = item.snippet.title;
@@ -65,7 +57,6 @@ async function searchYouTube(query, excludeTitles) {
       speaker: item.snippet.channelTitle
     };
   }
-  // If all excluded, just return first
   const first = data.items[0];
   return {
     video_id: first.id.videoId,
@@ -77,7 +68,7 @@ async function searchYouTube(query, excludeTitles) {
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { mindset_state, mindset_text, identity_anchors, pattern_trigger, exclude_titles, video_type } = req.body;
+  const { mindset_state, mindset_text, identity_anchors, pattern_trigger, exclude_titles } = req.body;
 
   const anchorList = (identity_anchors || []).filter(Boolean).join(', ') || 'not set';
 
@@ -89,108 +80,86 @@ module.exports = async function handler(req, res) {
   };
   const stateDesc = stateDescriptions[mindset_state] || (mindset_text ? 'described below' : 'unspecified');
 
-  const contentTypes = {
-    toughness:    'cinematic motivational speech compilation site:youtube.com -ted -tedx -mel robbins',
-    meditation:   'guided meditation breathing calm site:youtube.com',
-    manifesting:  'manifesting law of attraction visualization joe dispenza site:youtube.com',
-    observe:      'observe your thoughts mindfulness eckhart tolle inner peace site:youtube.com',
-    affirmations: 'positive affirmations self belief rewire your mind site:youtube.com',
-    selflove:     'self love self compassion inner healing site:youtube.com',
-    dopamine:     'dopamine habits motivation science huberman site:youtube.com'
-  };
-
-  const searchQueries = {
-    toughness:    ['motivational speech compilation mental toughness', 'cinematic motivational video best speeches', 'mental toughness motivational compilation Motiversity'],
-    meditation:   ['guided meditation calm breathing', 'guided meditation for focus and clarity', 'morning meditation mindfulness'],
-    manifesting:  ['joe dispenza manifesting thoughts become reality', 'law of attraction visualization meditation', 'manifesting your future self guided'],
-    observe:      ['eckhart tolle observe your thoughts inner peace', 'mindfulness watching your thoughts meditation', 'observer of thoughts awareness meditation'],
-    affirmations: ['positive affirmations self belief morning', 'I am affirmations confidence self worth', 'powerful affirmations rewire subconscious mind'],
-    selflove:     ['self love meditation heal yourself', 'self compassion affirmations inner child', 'love yourself deeply guided meditation'],
-    dopamine:     ['andrew huberman dopamine motivation podcast', 'dopamine detox habits science explained', 'neuroscience of motivation habits dopamine']
-  };
-
-  // Ask Claude for the best search query for this specific person
+  // Step 1: Claude reads context and decides the best search query
   const queryPrompt = [
-    'You are Franklyn. Pick the single best YouTube search query to find a video for this person.',
+    'You are Franklyn. Based on what this person shared, choose the single best YouTube search query to find them a helpful video right now.',
     '',
-    'Content type: ' + (video_type || 'toughness'),
-    'Person mindset state: ' + stateDesc,
-    mindset_text ? 'What they said: ' + mindset_text : '',
-    'Identity anchors: ' + anchorList,
-    'What knocks them off: ' + (pattern_trigger || 'unknown'),
+    'Person:',
+    '- Mindset state: ' + stateDesc,
+    mindset_text ? '- What they said: ' + mindset_text : '',
+    '- Identity anchors: ' + anchorList,
+    '- What knocks them off: ' + (pattern_trigger || 'unknown'),
     '',
-    'Choose one of these queries or write a better variation (keep it under 8 words, YouTube-style):',
-    ...(searchQueries[video_type] || searchQueries['toughness']),
+    'Read what they said and pick the right type of content:',
+    '- Tired, sore, burnt out → recovery, rest, gentle movement, or calming meditation',
+    '- Anxious, overthinking → breathwork, mindfulness, observe your thoughts',
+    '- Avoiding, resistant, low motivation → cinematic motivational speech compilation (Motiversity, Ben Lionel Scott)',
+    '- Wants to manifest or visualize → Joe Dispenza, law of attraction, visualization',
+    '- Needs self compassion → self love, inner healing, Louise Hay',
+    '- Curious about science of behavior → Huberman dopamine habits neuroscience',
+    '- Ready and wants fire → high energy motivational speech compilation',
     '',
-    'Reply with just the search query on one line. Nothing else.'
+    'Write a YouTube search query of 4-7 words that would find the right video. No quotes, no punctuation. Just the query.',
+    'Reply with only the search query on one line.'
   ].filter(Boolean).join('\n');
 
-  let searchQuery = (searchQueries[video_type] || searchQueries['toughness'])[0];
-
+  let searchQuery = 'motivational speech compilation mental toughness';
   try {
-    const queryResult = await post(JSON.stringify({
+    const q = await post(JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 30,
+      max_tokens: 20,
       messages: [{ role: 'user', content: queryPrompt }]
     }));
-    if (queryResult && queryResult.trim()) searchQuery = queryResult.trim();
-  } catch(e) {
-    // fall through to default query
-  }
+    if (q && q.trim()) searchQuery = q.trim().replace(/^["']|["']$/g, '');
+  } catch(e) { /* use default */ }
 
-  // Search YouTube for a real working video
+  // Step 2: Search YouTube for a real working video
   let videoData = null;
   try {
     videoData = await searchYouTube(searchQuery, exclude_titles);
-  } catch(e) {
-    // fall through
-  }
+  } catch(e) { /* fall through */ }
 
-  // Ask Claude for a personalized framing sentence
+  // Step 3: Claude writes a personalized framing sentence
   const framingPrompt = [
     'You are Franklyn. Write one sentence introducing this video to the user.',
+    videoData
+      ? `Video: "${videoData.title}" by ${videoData.speaker}`
+      : `Video type: ${searchQuery}`,
+    '- Mindset state: ' + stateDesc,
+    mindset_text ? '- What they said: ' + mindset_text : '',
+    '- Identity anchors: ' + anchorList,
     '',
-    'Video: ' + (videoData ? `"${videoData.title}" by ${videoData.speaker}` : 'a ' + (video_type || 'motivational') + ' video'),
-    'Person mindset state: ' + stateDesc,
-    mindset_text ? 'What they said: ' + mindset_text : '',
-    'Identity anchors: ' + anchorList,
-    '',
-    'One sentence. Franklyn\'s voice. Specific to this person. No clichés, no em dashes, no quotes around the sentence.'
+    'One sentence only. Franklyn voice — direct, warm, specific to this person. No clichés, no em dashes.'
   ].filter(Boolean).join('\n');
 
   let framing = 'This one is for exactly where you are right now.';
   try {
-    const framingResult = await post(JSON.stringify({
+    const f = await post(JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 80,
       messages: [{ role: 'user', content: framingPrompt }]
     }));
-    if (framingResult && framingResult.trim()) framing = framingResult.trim();
-  } catch(e) {
-    // use default framing
-  }
+    if (f && f.trim()) framing = f.trim();
+  } catch(e) { /* use default */ }
 
   if (videoData) {
-    const youtube_watch_url = `https://www.youtube.com/watch?v=${videoData.video_id}`;
-    const youtube_search_url = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`;
     res.status(200).json({
       speaker: videoData.speaker,
       title: videoData.title,
       framing,
       video_id: videoData.video_id,
-      youtube_watch_url,
-      youtube_search_url
+      youtube_watch_url: `https://www.youtube.com/watch?v=${videoData.video_id}`,
+      youtube_search_url: `https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`
     });
   } else {
-    // Fallback: no YouTube API key or search failed — return search link only
-    const youtube_search_url = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`;
+    // YouTube API unavailable — return search link only, no broken embed
     res.status(200).json({
-      speaker: '',
-      title: searchQuery,
+      speaker: null,
+      title: null,
       framing,
       video_id: null,
       youtube_watch_url: null,
-      youtube_search_url
+      youtube_search_url: `https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`
     });
   }
 };
