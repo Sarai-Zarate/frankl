@@ -20,7 +20,7 @@
   --nearblk:#1a1814;--rose:#c4848a;
   --state-grounded:#ABB9C4;--state-scattered:#B8A460;
   --state-anxious:#B08878;--state-spiral:#6A5A50;
-  --ink:#1a1814;--ink2:#3a3632;--ink3:#6a6560;--ink4:#9e9990;
+  --ink:#1a1814;--ink2:#3a3632;--ink3:#4a4642;--ink4:#7a7670;
   --border:rgba(26,24,20,0.10);--borderS:rgba(26,24,20,0.18);
   --fd:'DM Serif Display',Georgia,serif;--fb:'Inter',system-ui,sans-serif;--fm:'JetBrains Mono',monospace;
   --r:10px;--rs:6px;--tr:0.2s ease
@@ -196,7 +196,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .ne-ghost{width:100%;padding:11px;font-size:13px;font-family:var(--fb);border-radius:24px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--ink3);transition:border-color var(--tr)}
 .ne-ghost:hover{border-color:var(--borderS)}
 
-.mirror-label{font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px;display:block}
+.mirror-label{font-family:var(--fm);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:12px;display:inline-block;padding:3px 10px;border-radius:20px;border:1.5px solid var(--border);background:var(--cream)}
 .mirror-section{margin-top:2.5rem}
 .meaning-sentence{background:var(--cream-d);border-radius:var(--r);border:1px solid var(--border);padding:1.25rem 1.5rem;margin-bottom:2.5rem}
 .ms-label{font-family:var(--fd);font-size:15px;font-style:italic;color:var(--burgundy);margin-bottom:10px;display:block}
@@ -227,7 +227,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .habit-item{display:flex;flex-direction:column;border-radius:var(--r);background:var(--cream);border:1px solid var(--border);transition:all 0.2s ease;overflow:visible}
 .habit-item.done-today{border-color:currentColor}
 .habit-row{display:flex;align-items:center;gap:12px;padding:11px 14px}
-.habit-check{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--borderS);background:var(--cream);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all 0.2s ease;color:transparent}
+.habit-check{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--borderS);background:var(--cream);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all 0.2s ease;color:#d0cdc8}
 .habit-item.done-today .habit-check{color:#fff}
 .habit-name{flex:1;font-size:14px;font-weight:500;color:var(--ink)}
 .habit-meta{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
@@ -307,16 +307,16 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
 .video-type-btn{font-family:var(--fb);font-size:12px;font-weight:500;padding:9px 6px;border-radius:10px;border:1.5px solid var(--border);background:var(--cream);color:var(--ink3);cursor:pointer;text-align:center;transition:all 0.15s}
 .video-type-btn.active{border-color:var(--blue);background:rgba(100,130,180,0.08);color:var(--ink)}
 .goals-section{margin-top:2rem}
-.goal-card{border-radius:var(--r);background:var(--cream);border:1px solid var(--border);padding:1rem;margin-bottom:10px}
+.goal-card{border-radius:var(--r);background:var(--cream);border:1px solid var(--border);border-left:4px solid #2a7a6a;padding:1rem;margin-bottom:10px}
 .goal-title-row{display:flex;align-items:center;gap:10px}
 .goal-name{font-size:15px;font-weight:600;color:var(--ink);flex:1}
 .goal-remove{background:none;border:none;cursor:pointer;color:var(--ink4);font-size:18px;line-height:1;padding:0 2px}
 .goal-progress{height:4px;background:var(--border);border-radius:2px;margin:10px 0 6px}
-.goal-progress-fill{height:100%;border-radius:2px;background:var(--blue);transition:width 0.3s}
+.goal-progress-fill{height:100%;border-radius:2px;background:#2a7a6a;transition:width 0.3s}
 .goal-meta{font-size:11px;color:var(--ink4);font-weight:300}
 .goal-milestones{margin-top:10px;display:flex;flex-direction:column;gap:6px}
 .goal-milestone{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink3)}
-.goal-milestone input[type=checkbox]{width:15px;height:15px;cursor:pointer;accent-color:var(--blue);flex-shrink:0}
+.goal-milestone input[type=checkbox]{width:15px;height:15px;cursor:pointer;accent-color:#2a7a6a;flex-shrink:0}
 .goal-milestone.done span{text-decoration:line-through;color:var(--ink4)}
 .goal-add-milestone{font-size:12px;color:var(--blue);background:none;border:none;cursor:pointer;font-family:var(--fb);padding:4px 0;text-align:left}
 .partner-suggestion{margin-top:1rem;border:1px solid var(--border);border-radius:12px;padding:12px 14px;background:var(--cream-d)}
@@ -1032,7 +1032,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     </div>
 
     <div class="mirror-section goals-section">
-      <span class="mirror-label">Your goals</span>
+      <span class="mirror-label" style="color:#2a7a6a;border-color:#2a7a6a;background:rgba(42,122,106,0.06)">Your goals</span>
       <p style="font-size:13px;color:var(--ink4);font-weight:300;margin-bottom:1rem;line-height:1.6">Goals live above habits. Break each one into milestones — Franklyn will help you see what daily habits actually move it forward.</p>
       <div id="goal-list"></div>
       <div class="add-row" id="goal-add-row">
@@ -1042,7 +1042,7 @@ hr.div{max-width:900px;margin:0 auto 64px;border:none;border-top:1px solid var(-
     </div>
 
     <div class="mirror-section">
-      <span class="mirror-label">Your habits</span>
+      <span class="mirror-label" style="color:#8a6020;border-color:#c09040;background:rgba(192,144,64,0.07)">Your habits</span>
       <p style="font-size:13px;color:var(--ink4);font-weight:300;margin-bottom:1rem;line-height:1.6">Tap to mark done today. Each habit has its own color — tap the dot next to the name to change it. Consistency is invisible until you can see it stacking up.</p>
       <div class="habit-list" id="habit-list"></div>
       <div class="add-row" id="habit-add-row">
