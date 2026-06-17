@@ -42,10 +42,11 @@ function post(body) {
 
 async function searchYouTube(query, excludeTitles) {
   const key = process.env.YOUTUBE_API_KEY;
-  if (!key) return null;
-  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=8&q=${encodeURIComponent(query)}&key=${key}&videoEmbeddable=true`;
+  if (!key) { console.error('YOUTUBE_API_KEY not set'); return null; }
+  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=10&q=${encodeURIComponent(query)}&key=${key}&relevanceLanguage=en&safeSearch=none`;
   const data = await httpsGet(url);
-  if (!data.items || !data.items.length) return null;
+  if (data.error) { console.error('YouTube API error:', JSON.stringify(data.error)); return null; }
+  if (!data.items || !data.items.length) { console.error('YouTube returned no items for:', query); return null; }
 
   const excluded = (excludeTitles || '').toLowerCase();
   for (const item of data.items) {
